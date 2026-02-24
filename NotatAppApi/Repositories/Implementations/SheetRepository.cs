@@ -5,7 +5,7 @@ using NotatAppApi.Repositories.Interfaces;
 
 namespace NotatAppApi.Repositories.Implementations
 {
-    public class SheetRepository(AppDbContext context, ILogger logger) : ISheetRepository
+    public class SheetRepository(AppDbContext context, ILogger<ISheetRepository> logger) : ISheetRepository
     {
         private readonly AppDbContext _context = context;
         private readonly ILogger _logger = logger;

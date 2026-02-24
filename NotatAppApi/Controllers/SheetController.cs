@@ -7,12 +7,12 @@ namespace NotatAppApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class SheetController(ISheetRepository sheetRepository, ILogger logger) : ControllerBase
+    public class SheetController(ISheetRepository sheetRepository, ILogger<SheetController> logger) : ControllerBase
     {
         private readonly ISheetRepository _sheetRepository = sheetRepository;
-        private readonly ILogger _logger = logger;
+        private readonly ILogger<SheetController> _logger = logger;
 
-        [HttpGet("/getAll")]
+        [HttpGet("getAll")]
         public async Task<IActionResult> GetAll()
         {
             var sheets = await _sheetRepository.GetAll();
@@ -25,7 +25,7 @@ namespace NotatAppApi.Controllers
             return Ok(sheets);
         }
 
-        [HttpGet("/getById/{id}")]
+        [HttpGet("getById/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var sheet = await _sheetRepository.GetById(id);
@@ -38,7 +38,7 @@ namespace NotatAppApi.Controllers
             return Ok(sheet);
         }
 
-        [HttpPost("/create")]
+        [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] Sheet sheet)
         {
             if (sheet == null)
@@ -55,7 +55,7 @@ namespace NotatAppApi.Controllers
             return StatusCode(500, "Internal server error");
         }
 
-        [HttpPut("/update/{id}")]
+        [HttpPut("update/{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] Sheet sheet)
         {
             if (sheet == null)
@@ -88,7 +88,7 @@ namespace NotatAppApi.Controllers
             return StatusCode(500, "Internal server error");
         }
 
-        [HttpDelete("/delet/{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             bool returnOk = await _sheetRepository.Delete(id);

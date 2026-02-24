@@ -8,13 +8,12 @@ using Serilog.Events;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql("AppDbContextConnection")
+    options.UseNpgsql(builder.Configuration.GetConnectionString("AppDbContextConnection"))
 );
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var app = builder.Build();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -27,13 +26,15 @@ builder.Services.AddScoped<ISheetRepository, SheetRepository>();
 
 var loggerConfiguration = new LoggerConfiguration()
     .MinimumLevel.Information()
-    .WriteTo.File($"BackendLogs/app_{DateTime.Now:yyyyMMdd_HHmmss}.log")
+    .WriteTo.File($"Logs/app_{DateTime.Now:yyyyMMdd_HHmmss}.log")
     .Filter.ByExcluding(e => e.Properties.TryGetValue("SourceContext", out var value) &&
                             e.Level == LogEventLevel.Information &&
                             e.MessageTemplate.Text.Contains("Executed DbCommand"));
 
 var logger = loggerConfiguration.CreateLogger();
 builder.Logging.AddSerilog(logger);
+
+var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -43,5 +44,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.MapControllers();
 
 app.Run();
