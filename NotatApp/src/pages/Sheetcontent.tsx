@@ -6,9 +6,10 @@ import "./sheetTest.css";
 interface SheetContentProps {
     content: string;
     onChange: (content: string) => void;
+    handleTextAreaScroll: (cursorY: number) => void;
 }
 
-const SheetContent: React.FC<SheetContentProps> = ({ content, onChange }) => {
+const SheetContent: React.FC<SheetContentProps> = ({ content, onChange, handleTextAreaScroll }) => {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const cursorPosRef = useRef<number | null>(null);
 
@@ -74,14 +75,43 @@ const SheetContent: React.FC<SheetContentProps> = ({ content, onChange }) => {
                 ta.selectionStart = ta.selectionEnd = start + 1 + leadingWhitespace.length;
             }, 0);
         }
+
+        if (e.ctrlKey && e.key === "Enter") {
+            e.preventDefault();
+
+            // Find the end of the current line
+            const value = content;
+            const lineEnd = value.indexOf("\n", start);
+            const insertPos = lineEnd === -1 ? value.length : lineEnd;
+
+            // Insert a newline after the current line
+            const newContent = value.slice(0, insertPos) + "\n" + value.slice(insertPos);
+            onChange(newContent);
+
+            // Move cursor to the beginning of the new line
+            setTimeout(() => {
+                ta.selectionStart = ta.selectionEnd = insertPos + 1;
+            }, 0);
+        }
     };
 
     useEffect(() => {
         const ta = textareaRef.current;
-        if (ta) {
-            ta.style.height = "auto";              // reset height
-            ta.style.height = ta.scrollHeight + "px"; // expand to fit content
-        }
+        if (!ta) return;
+
+        ta.style.height = "auto";
+        ta.style.height = ta.scrollHeight + "px";
+
+        const selectionEnd = ta.selectionEnd;
+        const line = ta.value.substr(0, selectionEnd).split("\n").length - 1;
+        const lineHeight = parseInt(getComputedStyle(ta).lineHeight || "20");
+        const cursorY = line * lineHeight;
+
+        handleTextAreaScroll(cursorY);
+
+        // Ensure cursor is visible in the textarea itself
+        ta.selectionEnd = selectionEnd;
+        ta.scrollTop = Math.max(ta.scrollTop, cursorY - ta.clientHeight + lineHeight);
     }, [content]);
 
     return (
