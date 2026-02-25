@@ -1,44 +1,72 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./sheetTest.css";
-import SheetContent from "./Sheetcontent";
+import type { Sheet } from "../types/sheet";
+import Editor from "react-simple-code-editor";
+import TextEditor from "./TextEditor";
 
 const SheetTest: React.FC = () => {
     const containerRef = useRef<HTMLDivElement>(null);
+
+    const [sheet, setSheet] = useState<Sheet>({ title: '', content: '' });
+
+    const handleUpdateTitle = (newTitle: string) => {
+        setSheet(prev => ({
+            ...prev, title: newTitle
+        }));
+    };
+
+    const handleUpdatecontent = (newContent: string) => {
+        setSheet(prev => ({
+            ...prev, content: newContent
+        }));
+    };
     
-    const [title, setTitle] = useState<string>("");
-    const [content, setContent] = useState<string>("");
-
-    const handleTextAreaScroll = (cursorY: number) => {
-        const container = containerRef.current;
-        if (!container) return;
-
-        const containerTop = container.scrollTop;
-        const containerHeight = container.clientHeight;
-
-        // Keep cursor visible with padding
-        const padding = 100;
-        if (cursorY < containerTop + padding) {
-            container.scrollTop = cursorY - padding;
-        } else if (cursorY > containerTop + containerHeight - padding) {
-            container.scrollTop = cursorY - containerHeight + padding;
+    const handleResponse = async (response: Response) => {
+        if (response.ok) {  // HTTP status code success 200-299
+            if (response.status === 204) { // Detele returns 204 No content
+                return null;
+            }
+            return await response.json(); // other returns response body as JSON
+        } else {
+            const errorText = await response.text();
+            throw new Error(errorText || 'Network response was not ok');
         }
-    }
+    };
+
+    const fetchData = async (id: number) => {
+        try {
+            const response = await fetch(`http://localhost:5106/api/sheet/getById/${id}`);
+            const data = await handleResponse(response);
+            console.log(data);
+            setSheet(data);
+
+
+        } catch {
+
+        }
+    };
+
+    useEffect(() => {
+        fetchData(2);
+    }, [])
 
     return(
         <div className="sheet-wrapper">
             <div ref={containerRef} className="sheet-content">
                 <input 
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
+                    value={sheet?.title}
+                    onChange={(e) => handleUpdateTitle(e.target.value)}
                     placeholder="Title..." />
 
-                <SheetContent content={content} onChange={setContent} handleTextAreaScroll={handleTextAreaScroll} />
+                {/* <SheetContent content={content} onChange={setContent} handleTextAreaScroll={handleTextAreaScroll} /> */}
+                <TextEditor content={sheet.content} handleUpdatecontent={handleUpdatecontent} />
             </div>
 
             <div className="sheet-sidebar">
 
             </div>
         </div>
+        
     )
 }
 
