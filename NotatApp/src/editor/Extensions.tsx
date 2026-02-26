@@ -11,10 +11,11 @@ import Italic from "@tiptap/extension-italic";
 import Strike from "@tiptap/extension-strike";
 import { UndoRedo } from '@tiptap/extensions'
 import CodeBlock from "@tiptap/extension-code-block";
+import { CustomParagraphKeybinds } from "../pages/CustomKeybinds";
 
 export const extensions = [
         Document, 
-        Paragraph, 
+        CustomParagraphKeybinds, 
         Text, Bold, Italic, Strike, 
         UndoRedo, 
         HardBreak,
@@ -25,5 +26,5 @@ export const extensions = [
         CodeBlock,
         Heading.configure({
             levels: [1, 2, 3],
-        })
-    ,];
+        }),
+    ];

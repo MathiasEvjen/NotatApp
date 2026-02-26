@@ -54,7 +54,7 @@ const SheetTest: React.FC = () => {
 
         const lines = text.split("\n");
         lines.forEach(line => {
-            if (line[0] === "#") {
+            if (line[0] === "#" && line.length > 1) {
                 console.log(`POI ${count}: ${line}`);
                 count ++;
             }
@@ -65,9 +65,9 @@ const SheetTest: React.FC = () => {
         handlePointsOfInterest();
     }, [text]);
 
-    useEffect(() => {
-        fetchData(2);
-    }, [])
+    // useEffect(() => {
+    //     fetchData(2);
+    // }, [])
 
     return(
         <div className="sheet-wrapper">
@@ -82,7 +82,6 @@ const SheetTest: React.FC = () => {
             </div>
 
             <div className="sheet-sidebar">
-                <button onClick={handlePointsOfInterest}>test</button>
             </div>
         </div>
         

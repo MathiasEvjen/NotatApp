@@ -61,7 +61,7 @@ const TextEditor: React.FC<TextEditorProps> = ({ content, handleUpdatecontent })
             <DragHandle editor={editor} nested={nested ? NESTED_CONFIG : false}>
                 <div className="custom-drag-handle" />
             </DragHandle>
-            <EditorContent editor={editor} className="text-editor" />
+            <EditorContent editor={editor} className="text-editor" onClick={() => editor?.commands.focus()} />
         </>
     )
 }
