@@ -14,54 +14,34 @@ export const CustomParagraphKeybinds = Paragraph.extend({
             },
             "Mod-Enter": () => {
 
-                const state = this.editor.state;
+                const { state, commands } = this.editor
+                const cursorPos = state.selection.from
 
-                const cursorPos = state.selection.from;
-                console.log("CursorPos: ", cursorPos);
-                const resolvedPos = state.doc.resolve(cursorPos);
+                let nodeIndex = 0
+                let nodeStartPos = 0
+                let currentIndex = 0
 
-                if (resolvedPos.parent.type.name === "paragraph") {
-                    const paragraphStart = resolvedPos.start()
-                    console.log("ParagraphStart:", paragraphStart);
+                state.doc.forEach((node, pos) => {
+                    if (node.type.name === 'paragraph') {
+                        const nodeEnd = pos + node.nodeSize
 
-                    const paragraphEnd = resolvedPos.end()
-                    console.log("ParagraphEnd", paragraphEnd);
-
-                    const paragraphText = state.doc.textBetween(paragraphStart, paragraphEnd)
-                    const asciiText: number[] = paragraphText.split('').map(c => c.charCodeAt(0));
-                    console.log("ASCII", asciiText);
-
-                    console.log("Text", paragraphText);
-
-                    const cursorOffsetInParagraph = cursorPos - paragraphStart;
-                    console.log("CursorOffsetInParagraph:", cursorOffsetInParagraph);
-
-                    const newLines: number[] = [];
-                    for (let i = cursorOffsetInParagraph; i < asciiText.length; i++) {
-                        if (asciiText[i] === 10) newLines.push(i);
-                    }
-
-                    let nearest = null;
-                    let minDistance = Infinity;
-                    for (const pos of newLines) {
-                        const distance = Math.abs(pos - cursorOffsetInParagraph);
-                        if (distance < minDistance) {
-                            minDistance = distance;
-                            nearest = pos;
+                        if (cursorPos >= pos && cursorPos <= nodeEnd) {
+                            nodeIndex = currentIndex
+                            nodeStartPos = pos
                         }
+                        currentIndex += 1
                     }
+                })
 
-                    console.log("Nearest", nearest);
+                console.log('Cursor is in paragraph node index:', nodeIndex)
+                console.log('Node start position in document:', nodeStartPos)
 
-                    if (nearest !== null) {
-                        const insertPos = paragraphStart + nearest;
-                        console.log("InsertPos:", insertPos);
-                        this.editor.commands.insertContentAt(insertPos, "\n");
-                    } else {
-                        console.log("ParagraphEnd:", paragraphEnd);
-                        this.editor.commands.insertContentAt(paragraphEnd, "\n");
-                    }
-                }
+                const insertPos = nodeStartPos + state.doc.child(nodeIndex).nodeSize
+
+                commands.insertContentAt(insertPos, {
+                    type: 'paragraph',
+                    content: []
+                })
 
 
                 return true;
