@@ -2,12 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import "./sheetTest.css";
 import type { Sheet } from "../types/sheet";
 import Editor from "react-simple-code-editor";
-import TextEditor from "./TextEditor";
+import TextEditor from "../editor/TextEditor";
 
 const SheetTest: React.FC = () => {
     const containerRef = useRef<HTMLDivElement>(null);
 
     const [sheet, setSheet] = useState<Sheet>({ title: '', content: '' });
+
+    const [text, setText] = useState<string>("");
 
     const handleUpdateTitle = (newTitle: string) => {
         setSheet(prev => ({
@@ -15,10 +17,11 @@ const SheetTest: React.FC = () => {
         }));
     };
 
-    const handleUpdatecontent = (newContent: string) => {
+    const handleUpdatecontent = (htmlText: string, plainText: string) => {
         setSheet(prev => ({
-            ...prev, content: newContent
+            ...prev, content: htmlText
         }));
+        setText(plainText);
     };
     
     const handleResponse = async (response: Response) => {
@@ -46,6 +49,22 @@ const SheetTest: React.FC = () => {
         }
     };
 
+    const handlePointsOfInterest = () => {
+        let count = 1;
+
+        const lines = text.split("\n");
+        lines.forEach(line => {
+            if (line[0] === "#") {
+                console.log(`POI ${count}: ${line}`);
+                count ++;
+            }
+        });
+    };
+
+    useEffect(() => {
+        handlePointsOfInterest();
+    }, [text]);
+
     useEffect(() => {
         fetchData(2);
     }, [])
@@ -63,7 +82,7 @@ const SheetTest: React.FC = () => {
             </div>
 
             <div className="sheet-sidebar">
-
+                <button onClick={handlePointsOfInterest}>test</button>
             </div>
         </div>
         

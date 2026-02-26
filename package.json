@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@tiptap/extension-drag-handle": "^3.20.0"
+  }
+}
