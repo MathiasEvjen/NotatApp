@@ -46,9 +46,7 @@
     }
   }
 
-  color: white;
   height: 80vh;
-  background-color: rgb(20, 20, 20);
 }
 
 .ProseMirror:focus {
