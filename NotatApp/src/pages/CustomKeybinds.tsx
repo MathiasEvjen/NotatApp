@@ -49,48 +49,75 @@ export const CustomParagraphKeybinds = Paragraph.extend({
             },
             "Alt-ArrowUp": () => {
                 const { state, view } = this.editor
-                const cursorPos = state.selection.from
+                const { $from } = state.selection
 
-                let nodeIndex: number = 0;
-                let nodeStartPos: number = 0;
-                let prevNodeStartPos: number = 0;
-                let currentIndex: number = 0;
+                if ($from.parent.type.name !== "paragraph") return true
 
-                state.doc.forEach((node, pos) => {
-                    if (node.type.name === 'paragraph') {
-                        const nodeEnd = pos + node.nodeSize
+                const currPos: number = $from.before()
+                const parent: Node = $from.node($from.depth - 1)
+                const index: number = $from.index($from.depth - 1)
 
-                        if (cursorPos >= pos && cursorPos <= nodeEnd) {
-                            nodeIndex = currentIndex;
-                            nodeStartPos = pos;
-                        }
-                        nodeStartPos === 0 ? prevNodeStartPos = pos : prevNodeStartPos;
-                        currentIndex++;
-                    }
-                })
+                if (index === 0) return true; // already at top
+
+                const prevNode: Node = parent.child(index - 1)
+                const prevPos: number = currPos - prevNode.nodeSize
+
+                const currNode: Node = $from.parent
+                const offset: number = $from.parentOffset
+
+                const tr: Transaction = state.tr
+
+                // delete the whole paragraph node
+                tr.delete(currPos, currPos + currNode.nodeSize)
+
+                // insert it above previous paragraph
+                tr.insert(prevPos, currNode.copy(currNode.content))
+
+                // restore cursor
+                tr.setSelection(
+                    TextSelection.create(
+                        tr.doc,
+                        prevPos + offset + 1
+                    )
+                );
+
+                view.dispatch(tr);
                 
-                if (nodeIndex === 0) return true;
+                return true;
+            },
+            "Alt-ArrowDown": () => {
+                const { state, view } = this.editor
+                const { $from } = state.selection
 
-                console.log("Her");
+                if ($from.parent.type.name !== "paragraph") return true
 
-                // TODO: Tillate tomme linjer å flyttes, stoppe den fra å legge til en ekstra linje under flyttet node (tror det er den samme node som den flyttede, bare tom)
-                
-                const $pos: ResolvedPos = state.doc.resolve(cursorPos);  
-                const nodeSel: NodeSelection = NodeSelection.create(state.doc, $pos.start());
-                const node: Node = $pos.node();
-                const offsetInNode: number = cursorPos - nodeStartPos;
+                const totalNodes: number = linesInDock(this.editor);
 
-                console.log("Prev:", prevNodeStartPos, "Curr:", nodeStartPos);
+                const currPosBefore: number = $from.before();
+                const currPosAfter: number = $from.after();
+                const parent: Node = $from.node($from.depth - 1);
+                const index: number = $from.index($from.depth - 1);
+
+                if (index + 1 === totalNodes) return true; // already at bottom
+
+                const nextNode: Node = parent.child(index + 1);
+                const nextPos: number = currPosBefore + nextNode.nodeSize;
+
+                const currNode: Node = $from.parent;
+                const offset: number = $from.parentOffset;
 
                 const tr: Transaction = state.tr;
 
-                tr.setSelection(nodeSel);
+                tr.insert(currPosAfter + nextNode.nodeSize, currNode.copy(currNode.content));
                 
-                tr.deleteSelection();
+                tr.delete(currPosBefore, currPosBefore + currNode.nodeSize)
 
-                tr.insert(prevNodeStartPos, node);
-
-                tr.setSelection(TextSelection.create(tr.doc, prevNodeStartPos + offsetInNode));
+                tr.setSelection(
+                    TextSelection.create(
+                        tr.doc,
+                        nextPos + offset + 1
+                    )
+                );
 
                 view.dispatch(tr);
                 
@@ -130,18 +157,9 @@ const linesInDock = (editor: Editor) => {
 
   editor.state.doc.descendants((node) => {
     if (node.type.name === "paragraph") {
-      let linesInNode = 1;
 
-      node.descendants((child) => {
-        if (child.type.name === 'hardBreak') {
-          linesInNode += 1
-        }
-      })
-
-      lines += linesInNode
+      lines++;
     }
   })
-
-  console.log("Lines:", lines)
   return lines
 }
