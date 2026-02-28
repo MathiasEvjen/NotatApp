@@ -124,22 +124,30 @@ export const CustomParagraphKeybinds = Paragraph.extend({
                 return true;
             },
             "Shift-Tab": () => {
-                const { state, view } = this.editor;
-                const { $from } = state.selection;
+                const { state, view } = this.editor
+                const { from, to } = state.selection
 
-                const node: Node = $from.parent;
-                const text: string = node.textContent;
+                const tr = state.tr
+                const positions: number[] = []
+                state.doc.nodesBetween(from, to, (node, pos) => {
+                    if (node.type.name === "paragraph") {
+                    const text = node.textContent
+                    if (text.startsWith("\t")) {
+                        positions.push(pos + 1) 
+                    }
+                    }
+                })
 
-                
-                if (text[0] === "\t") {
-                    const tr: Transaction = state.tr;
-
-                    tr.deleteRange($from.before(), $from.before() + 2);
-
-                    view.dispatch(tr);
+                for (let i = positions.length - 1; i >= 0; i--) {
+                    const start = positions[i]
+                    tr.deleteRange(start, start + 1)
                 }
 
-                return true;
+                if (tr.docChanged) {
+                    view.dispatch(tr)
+                }
+
+                return true
             },
             "Mod-Shift-Enter": () => {
                 
