@@ -12,6 +12,7 @@ export const CustomParagraphKeybinds = Paragraph.extend({
             "Tab": () => {
                 const { state, view, commands } = this.editor;
                 const { from, to } = state.selection;
+                const { $from } = state.selection;
 
                 const tr: Transaction = state.tr;
                 const positions: number[] = [];
@@ -20,17 +21,35 @@ export const CustomParagraphKeybinds = Paragraph.extend({
                         positions.push(pos + 1);
                     }
                 });
+
+
                 
                 if (positions.length === 1) {
-                    commands.insertContent("\t")
+                    const node: Node = $from.parent;
+                    const text: string = node.textContent;
+
+                    let tabCount: number = 0;
+                    for (let i = 0; i < text.length; i++) {
+                        if (text[i] !== "\t") break;
+                        tabCount++;
+                    }
+
+                    const startOfLine: number = positions[0];
+
+                    if (tabCount > 0 && from <= startOfLine + tabCount) {
+                        tr.insertText("\t", startOfLine);
+                    } else {
+                        commands.insertContent("\t");
+                    }
+
                 } else {                    
                     for (let i = positions.length - 1; i >= 0; i--) {
                         tr.insertText("\t", positions[i]);
                     }
     
-                    if (tr.docChanged)
-                    view.dispatch(tr);
                 }
+                
+                if (tr.docChanged) view.dispatch(tr);
 
                 return true;
             },
