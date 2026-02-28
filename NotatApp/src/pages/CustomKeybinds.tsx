@@ -1,6 +1,6 @@
-import { Editor, Extension, NodePos, type NodeType } from "@tiptap/core";
+import { Editor } from "@tiptap/core";
 import Paragraph from "@tiptap/extension-paragraph";
-import { Slice, Node, type ResolvedPos } from "@tiptap/pm/model";
+import { Node, ResolvedPos } from "@tiptap/pm/model";
 import { NodeSelection, TextSelection, Transaction } from "@tiptap/pm/state";
 
 export const CustomParagraphKeybinds = Paragraph.extend({
@@ -121,6 +121,24 @@ export const CustomParagraphKeybinds = Paragraph.extend({
 
                 view.dispatch(tr);
                 
+                return true;
+            },
+            "Shift-Tab": () => {
+                const { state, view } = this.editor;
+                const { $from } = state.selection;
+
+                const node: Node = $from.parent;
+                const text: string = node.textContent;
+
+                
+                if (text[0] === "\t") {
+                    const tr: Transaction = state.tr;
+
+                    tr.deleteRange($from.before(), $from.before() + 2);
+
+                    view.dispatch(tr);
+                }
+
                 return true;
             },
             "Mod-Shift-Enter": () => {
