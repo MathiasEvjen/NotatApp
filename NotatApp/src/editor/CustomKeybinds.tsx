@@ -14,8 +14,15 @@ export const CustomKeybinds = Paragraph.extend({
                 const { state, view, commands } = this.editor;
                 const { from, to } = state.selection;
                 const { $from } = state.selection;
+
+                let isTableCell: boolean = false;
+
+                if ($from.depth > 1) {
+                    
+                    isTableCell = $from.node($from.depth - 3).type.name === "table" && $from.depth === 4;
+                }
                 
-                const isTableCell: boolean = $from.node($from.depth - 3).type.name === "table" && $from.depth === 4;
+                const isCodeblock: boolean = $from.parent.type.name === "codeBlock" && $from.depth === 1;
                 const isListItem: boolean = $from.node($from.depth - 1).type.name === "listItem" && $from.depth > 1;
                 const isTopLevelParagraph: boolean = $from.parent.type.name === "paragraph" && $from.depth === 1;
 
@@ -51,7 +58,8 @@ export const CustomKeybinds = Paragraph.extend({
                     const tr: Transaction = state.tr;
                     const positions: number[] = [];
                     state.doc.nodesBetween(from, to, (node, pos) => {
-                        if (node.type.name === "paragraph") {
+                        const nodeType: string = node.type.name;
+                        if (nodeType === "paragraph" || nodeType === "codeBlock") {
                             positions.push(pos + 1);
                         }
                     });
@@ -70,12 +78,80 @@ export const CustomKeybinds = Paragraph.extend({
                             commands.insertContent("\t");
                         }
     
-                    } else {                    
+                    } else {
                         for (let i = positions.length - 1; i >= 0; i--) {
                             tr.insertText("\t", positions[i]);
                         }
                     }
                     
+                    if (tr.docChanged) view.dispatch(tr);
+                }
+
+                if (isCodeblock) {
+                    const node: Node = $from.parent;
+                    const text: string = node.textContent;
+                    const lines: string[] = text.split("\n");
+
+                    const tr: Transaction = state.tr;
+
+                    if (from === to) {
+                        commands.insertContentAt(from, "\t");
+                    } else {
+                        const toNoLnBreak: number = to - lines.length;
+                        
+                        let fromLine: number = 0;
+                        let toLine: number = 0;
+                        let tempText: string = "";
+                        let prevTemptText: string = "";
+                        let fromAtLineStart: boolean = false;
+
+                        
+                        for (let i = 0; i < lines.length; i++) {
+                            tempText += lines[i];
+                            if (from-i <= tempText.length && from-i >= prevTemptText.length) {
+                                fromLine = i;
+
+                                let tabCount: number = getTabCount(lines[i]);
+                                if (from-i-1-tabCount === prevTemptText.length) fromAtLineStart = true;
+                            }
+                            if (toNoLnBreak > prevTemptText.length && toNoLnBreak <= tempText.length) {
+                                toLine = i;
+                                break;
+                            }
+                            
+                            prevTemptText = tempText;
+                        }
+                        
+                        if (fromLine === toLine && !fromAtLineStart) {
+                            commands.insertContent("\t");
+                        } else {
+                            tr.delete(1, $from.after());
+                            
+                            let newText: string = "";
+                            for (let i = 0; i < lines.length; i++) {
+                                if (i === toLine && i === lines.length - 1) {
+                                    newText += "\t" + lines[i];
+                                } else if (i >= fromLine && i <= toLine) {
+                                    newText += "\t" + lines[i] + "\n";
+                                } else if (i === lines.length - 1) {
+                                    newText += lines[i];
+                                } else {
+                                    newText += lines[i] + "\n"
+                                }
+                            }
+                            
+                            tr.insertText(newText, 1);
+
+                        }
+                        tr.setSelection(
+                            TextSelection.create(
+                                tr.doc,
+                                from + 1,
+                                to + 1
+                            )
+                        );
+                    }
+
                     if (tr.docChanged) view.dispatch(tr);
                 }
 
@@ -85,8 +161,14 @@ export const CustomKeybinds = Paragraph.extend({
                 const { state, view } = this.editor;
                 const { $from } = state.selection;
                 const { from, to } = state.selection;
+                
+                let isTableCell: boolean = false;
+                if ($from.depth > 1) {
+                    
+                    isTableCell = $from.node($from.depth - 3).type.name === "table" && $from.depth === 4;
+                }
 
-                const isTableCell: boolean = $from.node($from.depth - 3).type.name === "table" && $from.depth === 4;
+                const isCodeblock: boolean = $from.parent.type.name === "codeBlock" && $from.depth === 1;
                 const isListItem: boolean = $from.node($from.depth - 1).type.name === "listItem" && $from.depth > 1;
                 const isTopLevelParagraph: boolean = $from.parent.type.name === "paragraph" && $from.depth === 1;
 
@@ -99,11 +181,12 @@ export const CustomKeybinds = Paragraph.extend({
                     this.editor.chain().liftListItem("listItem").run();
                 }
 
-                if (isTopLevelParagraph) {
+                if (isTopLevelParagraph || isCodeblock) {
                     const tr: Transaction = state.tr;
                     const positions: number[] = [];
                     state.doc.nodesBetween(from, to, (node, pos) => {
-                        if (node.type.name === "paragraph") {
+                        const nodeType: string = node.type.name;
+                        if (nodeType === "paragraph" || nodeType === "codeBlock") {
                             const text: string = node.textContent;
     
                             if (text.startsWith("\t")) {
@@ -128,6 +211,9 @@ export const CustomKeybinds = Paragraph.extend({
             "Enter": () => {
                 const { state, commands } = this.editor;
                 const { $from } = state.selection;
+
+                const isCodeblock: boolean = $from.parent.type.name === "codeBlock" && $from.depth === 1;
+                if (isCodeblock) return false;
 
                 const node: Node = $from.parent;
                 const text: string = node.textContent;
@@ -195,9 +281,6 @@ export const CustomKeybinds = Paragraph.extend({
                 const isTableCell: boolean = $from.node($from.depth - 3).type.name === "table" && $from.depth === 4;
                 
                 if (isTableCell) {
-
-                    const tableNode: Node = $from.node($from.depth - 3);
-
                     let tableIndex: number = 0;
                     state.doc.nodesBetween(0, to, (node, pos) => {
                         if (node.type.name === "table") {
@@ -324,6 +407,18 @@ export const CustomKeybinds = Paragraph.extend({
                 
                 return false;
             },
+            "Alt-ArrowRight": () => {
+                const { state } = this.editor;
+                const { $from } = state.selection;
+
+                console.log($from.depth)
+                console.log($from.node($from.depth))
+                console.log($from.node($from.depth).type.name)
+                console.log($from.node($from.depth).textContent[0] === "\t")
+
+                console.log()
+                return false;
+            }
         }
     }
 })
