@@ -11,9 +11,29 @@ button svg {
 .menu-wrapper {
     height: 5rem;
     display: flex;
+    align-items: flex-end;
+
+    flex-direction: column;
+    gap: 8px;
+
+    flex: 1;
+}
+
+.menu-row {
+    display: flex;
     flex-wrap: wrap;
     align-items: center;
 
+    gap: 16px;   
+}
+
+.menu-row h5 {
+    margin: 0;
+    padding: 0;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: row;
     gap: 4px;
-    flex: 1;
 }

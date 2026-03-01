@@ -13,31 +13,29 @@ import CodeBlock from "@tiptap/extension-code-block";
 import Math from "@tiptap/extension-mathematics";
 import Typography from "@tiptap/extension-typography";
 import { UndoRedo } from '@tiptap/extensions';
-import { CustomParagraphKeybinds } from "./CustomKeybinds";
-import { BulletList, ListItem, OrderedList, TaskItem, TaskList } from '@tiptap/extension-list';
+import { CustomKeybinds } from "./CustomKeybinds";
+import { ListKit } from '@tiptap/extension-list';
+import { TableKit } from '@tiptap/extension-table'
 
 
 export const extensions = [
         Document, 
-        CustomParagraphKeybinds, 
+        CustomKeybinds, 
         Text, Bold, Italic, Strike, Underline,
         UndoRedo, 
         HardBreak,
-        BulletList,
-        ListItem,
-        OrderedList,
+        ListKit,
         Blockquote,
         CodeBlock,
         Heading.configure({
             levels: [1, 2, 3],
-        }),
-        TaskList,
-        TaskItem.configure({
-            nested: true,
         }),
         Image.configure({
             inline: true,
         }),
         Typography,
         Math,
+        TableKit.configure({
+            table: { resizable: true },
+        }),
     ];

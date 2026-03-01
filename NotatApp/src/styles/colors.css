@@ -4,6 +4,7 @@
     --dark-grey: #161616;
     --medium-grey: #5c5c5c;
     --light-grey: #999999;
+    --transparent-grey: #99999949;
 
     --background: var(--dark-grey);
     --text: var(--white);
