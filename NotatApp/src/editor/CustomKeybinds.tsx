@@ -1,6 +1,6 @@
 import { Editor } from "@tiptap/core";
 import Paragraph from "@tiptap/extension-paragraph";
-import { Node, ResolvedPos } from "@tiptap/pm/model";
+import { Node } from "@tiptap/pm/model";
 import { NodeSelection, TextSelection, Transaction } from "@tiptap/pm/state";
 
 export const CustomParagraphKeybinds = Paragraph.extend({
@@ -22,17 +22,11 @@ export const CustomParagraphKeybinds = Paragraph.extend({
                     }
                 });
 
-
-                
                 if (positions.length === 1) {
                     const node: Node = $from.parent;
                     const text: string = node.textContent;
 
-                    let tabCount: number = 0;
-                    for (let i = 0; i < text.length; i++) {
-                        if (text[i] !== "\t") break;
-                        tabCount++;
-                    }
+                    const tabCount: number = getTabCount(text);
 
                     const startOfLine: number = positions[0];
 
@@ -46,7 +40,6 @@ export const CustomParagraphKeybinds = Paragraph.extend({
                     for (let i = positions.length - 1; i >= 0; i--) {
                         tr.insertText("\t", positions[i]);
                     }
-    
                 }
                 
                 if (tr.docChanged) view.dispatch(tr);
@@ -80,10 +73,30 @@ export const CustomParagraphKeybinds = Paragraph.extend({
 
                 return true
             },
+            "Enter": () => {
+                const { state, commands } = this.editor;
+                const { $from } = state.selection;
+
+                const node: Node = $from.parent;
+                const text: string = node.textContent;
+
+                const tabCount: number = getTabCount(text);
+
+                if (tabCount === 0) return false;
+
+                const insertText = createInsertTextWithTabs(tabCount);
+    
+                commands.insertContentAt($from.after(), insertText);
+
+                return true;
+            },
             "Mod-Enter": () => {
 
                 const { state, commands } = this.editor
+                const { $from } = state.selection;
                 const cursorPos = state.selection.from
+
+                if ($from.parent.type.name !== "paragraph") return false;
 
                 let nodeIndex = 0
                 let nodeStartPos = 0
@@ -101,14 +114,19 @@ export const CustomParagraphKeybinds = Paragraph.extend({
                     }
                 })
 
-                console.log('Cursor is in paragraph node index:', nodeIndex)
-                console.log('Node start position in document:', nodeStartPos)
-
                 const insertPos = nodeStartPos + state.doc.child(nodeIndex).nodeSize
+
+                const text: string = $from.parent.textContent;
+
+                const tabCount = getTabCount(text);
+                const insertText = createInsertTextWithTabs(tabCount);
 
                 commands.insertContentAt(insertPos, {
                     type: 'paragraph',
-                    content: []
+                    content: [{
+                        type: "text",
+                        text: insertText
+                    }]
                 })
 
 
@@ -229,4 +247,22 @@ const linesInDock = (editor: Editor) => {
     }
   })
   return lines
+}
+
+const getTabCount = (text: string) => {
+    let tabCount: number = 0;
+    for (let i = 0; i < text.length; i++) {
+        if (text[i] !== "\t") break;
+        tabCount++;
+    }
+
+    return tabCount;
+};
+
+const createInsertTextWithTabs = (tabCount: number) => {
+    let insertText: string = "";
+    for (let i = 0; i < tabCount; i++) {
+        insertText += "\t";
+    }
+    return insertText;
 }

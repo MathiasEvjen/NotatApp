@@ -1,0 +1,21 @@
+button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border: none;
+    border-radius: 5px;
+    padding: 5px 8px 5px 8px;
+
+    color: var(--white);
+    background-color: var(--medium-grey);
+}
+
+button:hover {
+    background-color: var(--light-grey);
+    cursor: pointer;
+}
+
+button.active {
+    background-color: var(--light-grey);
+}

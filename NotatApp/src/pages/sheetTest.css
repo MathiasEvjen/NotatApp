@@ -17,6 +17,8 @@
     box-sizing: border-box;
     
     overflow-y: scroll;
+
+    scrollbar-width: none;
 }
 
 .sheet-content input {
@@ -30,6 +32,8 @@
 
     border: none;
     border-bottom: 2px solid #c2c2c2;
+    background-color: var(--background);
+    color: var(--text);
 }
 
 .content-textarea {

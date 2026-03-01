@@ -1,0 +1,19 @@
+button {
+    width: auto;
+    height: 2rem;
+    font-size: 15px;
+}
+
+button svg {
+    font-size: 20px;
+}
+
+.menu-wrapper {
+    height: 5rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+
+    gap: 4px;
+    flex: 1;
+}

@@ -6,12 +6,31 @@ import type { EditorStateSnapshot } from '@tiptap/react'
  * Extracts the relevant editor state for rendering menu buttons.
  */
 export function menuBarStateSelector(ctx: EditorStateSnapshot<Editor>) {
+  const editor = ctx.editor
+
+  const isUnderlineActive = (name: string) => {
+    const { empty, $from } = editor.state.selection
+
+    if (empty) {
+      // check stored marks at collapsed cursor
+      return !!(
+        editor.state.storedMarks?.some(mark => mark.type.name === name) ||
+        $from.marks().some(mark => mark.type.name === name)
+      )
+    }
+
+    // check selection normally
+    return editor.isActive('underline')
+  }
+
   return {
     // Text formatting
     isBold: ctx.editor.isActive('bold') ?? false,
     canBold: ctx.editor.can().chain().toggleBold().run() ?? false,
     isItalic: ctx.editor.isActive('italic') ?? false,
     canItalic: ctx.editor.can().chain().toggleItalic().run() ?? false,
+    isUnderline: isUnderlineActive('underline') ?? false,
+    canUnderline: ctx.editor.can().chain().toggleUnderline().run() ?? false,
     isStrike: ctx.editor.isActive('strike') ?? false,
     canStrike: ctx.editor.can().chain().toggleStrike().run() ?? false,
     isCode: ctx.editor.isActive('code') ?? false,
