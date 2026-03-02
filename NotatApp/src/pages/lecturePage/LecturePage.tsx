@@ -5,6 +5,7 @@ import "./lecturePage.css";
 import { useEditor, type Editor } from "@tiptap/react";
 import { extensions } from "../../editor/Extensions";
 import { MenuBar } from "./MenuBar";
+import Sidebar from "./Sidebar";
 
 
 const LecturePage: React.FC = () => {
@@ -99,6 +100,7 @@ const LecturePage: React.FC = () => {
             </div>
 
             <div className="sheet-sidebar">
+                <Sidebar editor={editor} />
             </div>
         </div>
     )

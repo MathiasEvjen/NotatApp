@@ -1,6 +1,5 @@
 import "./textEditor.css";
 import Blockquote from '@tiptap/extension-blockquote';
-import HardBreak from '@tiptap/extension-hard-break';
 import Document from '@tiptap/extension-document';
 import Heading from '@tiptap/extension-heading';
 import Text from '@tiptap/extension-text';
@@ -20,10 +19,8 @@ import { TableKit } from '@tiptap/extension-table'
 
 export const extensions = [
         Document, 
-        CustomKeybinds, 
         Text, Bold, Italic, Strike, Underline,
         UndoRedo, 
-        HardBreak,
         ListKit,
         Blockquote,
         CodeBlock,
@@ -38,4 +35,5 @@ export const extensions = [
         TableKit.configure({
             table: { resizable: true },
         }),
+        CustomKeybinds, 
     ];

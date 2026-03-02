@@ -233,7 +233,10 @@ export const CustomKeybinds = Paragraph.extend({
                 const { state, commands } = this.editor
                 const { $from } = state.selection;
 
-                const isTableCell: boolean = $from.node($from.depth - 3).type.name === "table" && $from.depth === 4;
+                let isTableCell: boolean = false;
+                if ($from.depth > 1)
+                    isTableCell = $from.node($from.depth - 3).type.name === "table" && $from.depth === 4;
+
                 const isListItem: boolean = $from.node($from.depth - 1).type.name === "listItem" && $from.depth > 1;
                 const isTopLevelParagraph: boolean = $from.parent.type.name === "paragraph" && $from.depth === 1;
 
