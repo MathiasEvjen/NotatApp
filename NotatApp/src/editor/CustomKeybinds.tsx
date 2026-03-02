@@ -181,12 +181,14 @@ export const CustomKeybinds = Paragraph.extend({
                     this.editor.chain().liftListItem("listItem").run();
                 }
 
-                if (isTopLevelParagraph || isCodeblock) {
+                if (isTopLevelParagraph) {
+
+                    console.log("Ikke her ")
                     const tr: Transaction = state.tr;
                     const positions: number[] = [];
                     state.doc.nodesBetween(from, to, (node, pos) => {
                         const nodeType: string = node.type.name;
-                        if (nodeType === "paragraph" || nodeType === "codeBlock") {
+                        if (nodeType === "paragraph") {
                             const text: string = node.textContent;
     
                             if (text.startsWith("\t")) {
@@ -205,6 +207,75 @@ export const CustomKeybinds = Paragraph.extend({
                     }
                 }
 
+                if (isCodeblock) {
+                    const node: Node = $from.parent;
+                    const text: string = node.textContent;
+                    const lines: string[] = text.split("\n");
+
+                    const tr: Transaction = state.tr;
+
+                    const toNoLnBreak: number = to - lines.length;
+                        
+                    let fromLine: number = 0;
+                    let toLine: number = 0;
+                    let tempText: string = "";
+                    let prevTemptText: string = "";
+
+                    console.log(from)
+                    
+                    for (let i = 0; i < lines.length; i++) {
+                        tempText += lines[i];
+
+                        if (from - 1 - i - i >= prevTemptText.length - 1 && from - i - 1 <= tempText.length - 1) {
+                            fromLine = i;
+                        }
+                        if (toNoLnBreak > prevTemptText.length && toNoLnBreak <= tempText.length) {
+                            toLine = i;
+                            break;
+                        }
+                        
+                        prevTemptText = tempText;
+                    }
+
+                    console.log("FromLine:", fromLine, "ToLine:", toLine);
+                    console.log("TempText:", tempText.length, "PrevTempText:", prevTemptText.length);
+
+                    tr.delete(1, $from.after());
+
+                    let newText: string = "";
+                    let tabsDeleted: number = 0;
+                    for (let i = 0; i < lines.length; i++) {
+                        if (i >= fromLine && i <= toLine && lines[i][0] === "\t") {
+                            i === lines.length - 1 ? newText += lines[i].slice(1) : newText += lines[i].slice(1) + "\n";
+                            tabsDeleted++;
+                        } else if (i === lines.length-1) {
+                            newText += lines[i];
+                        } else {
+                            newText += lines[i] + "\n";
+                        }
+                    }
+
+                    tr.insertText(newText, 1);
+
+                    fromLine === toLine ?
+                        tr.setSelection(
+                            TextSelection.create(
+                                tr.doc,
+                                from - tabsDeleted,
+                                to - tabsDeleted
+                            )
+                        ) :
+                        tr.setSelection(
+                            TextSelection.create(
+                                tr.doc,
+                                from - tabsDeleted + tabsDeleted - 1,
+                                to - tabsDeleted
+                            )
+                        )
+                            
+
+                    if (tr.docChanged) view.dispatch(tr);
+            }
 
                 return true
             },
