@@ -2,7 +2,7 @@ import { Editor } from "@tiptap/core";
 import Paragraph from "@tiptap/extension-paragraph";
 import { Node } from "@tiptap/pm/model";
 import { TableMap } from "@tiptap/pm/tables";
-import { NodeSelection, TextSelection, Transaction } from "@tiptap/pm/state";
+import { TextSelection, Transaction } from "@tiptap/pm/state";
 
 export const CustomKeybinds = Paragraph.extend({
     priority: 1000,

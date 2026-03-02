@@ -16,19 +16,6 @@ const Sidebar: React.FC<SidebarProps> = ({ editor }) => {
 
     const [pointsOfInterest, setPointsOfInterest] = useState<PointOfInterest[]>([]);
 
-    // const handlePointsOfInterest = () => {
-    //     const newPointsOfInterest: string[] = [];
-
-    //     const lines = text.split("\n");
-    //     lines.forEach(line => {
-    //         if (line[0] === "!" && line.length > 1) {
-    //             newPointsOfInterest.push(line.slice(1));
-    //         }
-    //     });
-
-    //     setPointsOfInterest(newPointsOfInterest);
-    // };
-
     const handlePointOfInterestClick = (pos: number) => {
         editor.commands.focus(pos);
     };

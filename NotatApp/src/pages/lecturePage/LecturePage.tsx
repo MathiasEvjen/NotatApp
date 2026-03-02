@@ -11,8 +11,6 @@ import Sidebar from "./Sidebar";
 const LecturePage: React.FC = () => {
 
     const [sheet, setSheet] = useState<Sheet>({ title: '', content: '' });
-
-    const [text, setText] = useState<string>("");
     
     const timeoutRef = useRef<number | null>(null);
 
@@ -22,11 +20,10 @@ const LecturePage: React.FC = () => {
         }));
     };
 
-    const handleUpdatecontent = (htmlText: string, plainText: string) => {
+    const handleUpdatecontent = (htmlText: string) => {
         setSheet(prev => ({
             ...prev, content: htmlText
         }));
-        setText(plainText);
     };
 
 
@@ -72,7 +69,7 @@ const LecturePage: React.FC = () => {
             }
 
             timeoutRef.current = window.setTimeout(() => {
-                handleUpdatecontent(editor.getHTML(), editor.getText());
+                handleUpdatecontent(editor.getHTML());
             }, 300);
         }
     });
