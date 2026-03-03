@@ -211,7 +211,6 @@ export const CustomKeybinds = Paragraph.extend({
                     const node: Node = $from.parent;
                     const text: string = node.textContent;
                     const lines: string[] = text.split(/(?<=\n)/);
-                    console.log(lines);
 
                     const tr: Transaction = state.tr;
 
@@ -220,26 +219,19 @@ export const CustomKeybinds = Paragraph.extend({
                     let tempText: string = "";
                     let prevTemptText: string = "";
 
-                    console.log("From:", from)
-                    console.log("To:", to)
-
                     for (let i = 0; i < lines.length; i++) {
                         tempText += lines[i];
 
                         if (from - 1 >= prevTemptText.length && from - 1 <= tempText.length) {
                             fromLine = i;
                         }
-                        if (to - 1 >= prevTemptText.length && to - 1 <= tempText.length) {
+                        if (to - 1 >= prevTemptText.length && to <= tempText.length) {
                             toLine = i;
                             break;
                         }
 
                         prevTemptText = tempText;
                     }
-                    
-
-                    console.log("FromLine:", fromLine, "ToLine:", toLine);
-                    console.log("TempText:", tempText.length, "PrevTempText:", prevTemptText.length);
 
                     tr.delete(1, $from.after());
 
@@ -249,15 +241,12 @@ export const CustomKeybinds = Paragraph.extend({
                         if (i >= fromLine && i <= toLine && lines[i][0] === "\t") {
                             newText += lines[i].slice(1);
                             tabsDeleted++;
-                            console.log("FIRE")
                         } else {
                             newText += lines[i];
                         }
                     }
 
                     tr.insertText(newText, 1);
-
-                    console.log("Bing bong")
 
                     fromLine === toLine ?
                         tr.setSelection(
@@ -303,20 +292,23 @@ export const CustomKeybinds = Paragraph.extend({
             },
             "Mod-Enter": () => {
 
-                const { state, commands } = this.editor
+                const { state, commands, view } = this.editor
+                const { from, to } = state.selection;
                 const { $from } = state.selection;
 
                 let isTableCell: boolean = false;
                 if ($from.depth > 1)
                     isTableCell = $from.node($from.depth - 3).type.name === "table" && $from.depth === 4;
 
+                const isCodeblock: boolean = $from.parent.type.name === "codeBlock" && $from.depth === 1;
                 const isListItem: boolean = $from.node($from.depth - 1).type.name === "listItem" && $from.depth > 1;
                 const isTopLevelParagraph: boolean = $from.parent.type.name === "paragraph" && $from.depth === 1;
-
-                const insertPos: number = isTopLevelParagraph ? $from.after() : $from.after($from.depth - 2);
-                                
-
                 
+                
+                let insertPos: number = 0
+                if (isListItem ) $from.after($from.depth - 2);
+                else if (isTopLevelParagraph) $from.after();
+
 
                 if (isListItem) {
                     commands.insertContentAt(insertPos, {
@@ -345,6 +337,56 @@ export const CustomKeybinds = Paragraph.extend({
                         }]
                         : []
                     })
+                }
+
+                if (isCodeblock) {
+                    const node: Node = $from.parent;
+                    const text: string = node.textContent;
+                    const lines: string[] = text.split(/(?<=\n)/);
+                    
+                    const tr: Transaction = state.tr;
+
+                    let toLine: number = 0;
+                    let tempText: string = "";
+                    let prevTemptText: string = "";
+
+                    for (let i = 0; i < lines.length; i++) {
+                        tempText += lines[i];
+
+                        if (to - 1 >= prevTemptText.length && to <= tempText.length) {
+                            toLine = i;
+                            break;
+                        }
+
+                        prevTemptText = tempText;
+                    }
+
+                    console.log(toLine);
+
+                    tr.delete(1, $from.after());
+
+                    let newText: string = "";
+                    let newCursorPos: number = 0;
+                    for (let i = 0; i < lines.length; i++) {
+                        if (i === toLine) {
+                            newText += lines[i] + "\n";
+                            newCursorPos = newText.slice(newText.length-2) === "\n\n" ? newText.length : newText.length + 1;
+                        } else {
+                            newText += lines[i]
+                        }
+                    }
+
+                    tr.insertText(newText, 1);
+
+                    tr.setSelection(
+                        TextSelection.create(
+                            tr.doc,
+                            newCursorPos,
+                            newCursorPos
+                        )
+                    )
+                    
+                    if (tr.docChanged) view.dispatch(tr);
                 }
                 
                 return true;
