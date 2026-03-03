@@ -407,24 +407,26 @@ export const CustomKeybinds = Paragraph.extend({
                 const { from, to } = state.selection;
                 const { $from } = state.selection;
 
-                const isTableCell: boolean = $from.node($from.depth - 3).type.name === "table" && $from.depth === 4;
-                
-                if (isTableCell) {
-                    let tableIndex: number = 0;
-                    state.doc.nodesBetween(0, to, (node, pos) => {
-                        if (node.type.name === "table") {
-                            tableIndex = pos;
-                        }
-                    });
+                let isTableCell: boolean = false;
+                if ($from.depth > 1)
+                    isTableCell = $from.node($from.depth - 3).type.name === "table" && $from.depth === 4;
+                const isCodeblock: boolean = $from.parent.type.name === "codeBlock" && $from.depth === 1;
 
-                    console.log(state.doc.resolve(tableIndex + 1).after());
-                    const insertPos: number = state.doc.resolve(tableIndex + 1).after();
+                let nodeIndex: number = 0;
+                state.doc.nodesBetween(0, to, (node, pos) => {
+                    if (isTableCell && node.type.name === "table") {
+                        nodeIndex = pos;
+                    } else if (isCodeblock && node.type.name === "codeBlock") {
+                        nodeIndex = pos;
+                    }
+                })
+
+                const insertPos: number = state.doc.resolve(nodeIndex + 1).after();
 
                     commands.insertContentAt(insertPos, {
                         type: "paragraph",
                         content: []
                     });
-                }
 
                 return true;
             },
