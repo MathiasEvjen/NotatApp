@@ -87,17 +87,19 @@ export const CustomKeybinds = Paragraph.extend({
                     if (tr.docChanged) view.dispatch(tr);
                 }
 
+                // TODO: Rewrite with split that keeps "\n"
                 if (isCodeblock) {
                     const node: Node = $from.parent;
                     const text: string = node.textContent;
                     const lines: string[] = text.split("\n");
+                    const fromInCode: number = from - $from.before();
+                    const toInCode: number = to - $from.before();
 
                     const tr: Transaction = state.tr;
 
                     if (from === to) {
                         commands.insertContentAt(from, "\t");
                     } else {
-                        const toNoLnBreak: number = to - lines.length;
                         
                         let fromLine: number = 0;
                         let toLine: number = 0;
@@ -108,13 +110,13 @@ export const CustomKeybinds = Paragraph.extend({
                         
                         for (let i = 0; i < lines.length; i++) {
                             tempText += lines[i];
-                            if (from-i <= tempText.length && from-i >= prevTemptText.length) {
+                            if (fromInCode-i <= tempText.length && fromInCode-i >= prevTemptText.length) {
                                 fromLine = i;
 
                                 let tabCount: number = getTabCount(lines[i]);
                                 if (from-i-1-tabCount === prevTemptText.length) fromAtLineStart = true;
                             }
-                            if (toNoLnBreak > prevTemptText.length && toNoLnBreak <= tempText.length) {
+                            if (toInCode > prevTemptText.length && toInCode <= tempText.length) {
                                 toLine = i;
                                 break;
                             }
@@ -125,7 +127,7 @@ export const CustomKeybinds = Paragraph.extend({
                         if (fromLine === toLine && !fromAtLineStart) {
                             commands.insertContent("\t");
                         } else {
-                            tr.delete(1, $from.after());
+                            tr.deleteRange($from.before(), $from.after());
                             
                             let newText: string = "";
                             for (let i = 0; i < lines.length; i++) {
@@ -140,14 +142,23 @@ export const CustomKeybinds = Paragraph.extend({
                                 }
                             }
                             
-                            tr.insertText(newText, 1);
-
+                            tr.insert(
+                                $from.before(), 
+                                state.schema.nodes.codeBlock.create(
+                                    null,
+                                    state.schema.text(newText)
+                                )
+                            );
                         }
+
+                    const fromCorrected: number = $from.before() + fromInCode;
+                    const toCorrected: number = $from.before() + toInCode;
+
                         tr.setSelection(
                             TextSelection.create(
                                 tr.doc,
-                                from + 1,
-                                to + 1
+                                fromCorrected + 1,
+                                toCorrected + 1
                             )
                         );
                     }
@@ -211,6 +222,8 @@ export const CustomKeybinds = Paragraph.extend({
                     const node: Node = $from.parent;
                     const text: string = node.textContent;
                     const lines: string[] = text.split(/(?<=\n)/);
+                    const fromInCode: number = from - $from.before();
+                    const toInCode: number = to - $from.before();
 
                     const tr: Transaction = state.tr;
 
@@ -222,10 +235,10 @@ export const CustomKeybinds = Paragraph.extend({
                     for (let i = 0; i < lines.length; i++) {
                         tempText += lines[i];
 
-                        if (from - 1 >= prevTemptText.length && from - 1 <= tempText.length) {
+                        if (fromInCode - 1 >= prevTemptText.length && fromInCode - 1 <= tempText.length) {
                             fromLine = i;
                         }
-                        if (to - 1 >= prevTemptText.length && to <= tempText.length) {
+                        if (toInCode - 1 >= prevTemptText.length && toInCode <= tempText.length) {
                             toLine = i;
                             break;
                         }
@@ -233,7 +246,7 @@ export const CustomKeybinds = Paragraph.extend({
                         prevTemptText = tempText;
                     }
 
-                    tr.delete(1, $from.after());
+                    tr.deleteRange($from.before(), $from.after());
 
                     let newText: string = "";
                     let tabsDeleted: number = 0;
@@ -250,28 +263,37 @@ export const CustomKeybinds = Paragraph.extend({
                         }
                     }
 
-                    tr.insertText(newText, 1);
+                    tr.insert(
+                        $from.before(), 
+                        state.schema.nodes.codeBlock.create(
+                            null,
+                            state.schema.text(newText)
+                        )
+                    );
 
+                    const fromCorrected: number = $from.before() + fromInCode;
+                    const toCorrected: number = $from.before() + toInCode;
+                    
                     atLineStart ?
                         tr.setSelection(
                             TextSelection.create(
                                 tr.doc,
-                                from,
-                                to
+                                fromCorrected,
+                                toCorrected
                             )
                         ) : fromLine === toLine ?
                         tr.setSelection(
                             TextSelection.create(
                                 tr.doc,
-                                from - 1,
-                                to - 1
+                                fromCorrected - 1,
+                                toCorrected - 1
                             )
                         ) :
                         tr.setSelection(
                             TextSelection.create(
                                 tr.doc,
-                                from - 1,
-                                to - tabsDeleted
+                                fromCorrected - 1,
+                                toCorrected - tabsDeleted
                             )
                         )
                             
@@ -354,6 +376,7 @@ export const CustomKeybinds = Paragraph.extend({
                     const node: Node = $from.parent;
                     const text: string = node.textContent;
                     const lines: string[] = text.split(/(?<=\n)/);
+                    const toInCode: number = to - $from.before();
                     
                     const tr: Transaction = state.tr;
 
@@ -364,7 +387,7 @@ export const CustomKeybinds = Paragraph.extend({
                     for (let i = 0; i < lines.length; i++) {
                         tempText += lines[i];
 
-                        if (to - 1 >= prevTemptText.length && to <= tempText.length) {
+                        if (toInCode - 1 >= prevTemptText.length && toInCode <= tempText.length) {
                             toLine = i;
                             break;
                         }
@@ -374,7 +397,7 @@ export const CustomKeybinds = Paragraph.extend({
 
                     console.log(toLine);
 
-                    tr.delete(1, $from.after());
+                    tr.deleteRange($from.before(), $from.after());
 
                     let newText: string = "";
                     let newCursorPos: number = 0;
@@ -387,13 +410,20 @@ export const CustomKeybinds = Paragraph.extend({
                         }
                     }
 
-                    tr.insertText(newText, 1);
+
+                    tr.insert(
+                        $from.before(), 
+                        state.schema.nodes.codeBlock.create(
+                            null,
+                            state.schema.text(newText)
+                        )
+                    );
 
                     tr.setSelection(
                         TextSelection.create(
                             tr.doc,
-                            newCursorPos,
-                            newCursorPos
+                            $from.before() + newCursorPos,
+                            $from.before() + newCursorPos
                         )
                     )
                     
@@ -434,37 +464,49 @@ export const CustomKeybinds = Paragraph.extend({
                 const { state, view } = this.editor
                 const { $from } = state.selection
 
-                if ($from.parent.type.name !== "paragraph") return true
+                const isTopLevelParagraph: boolean = $from.parent.type.name === "paragraph" && $from.depth === 1;
+                const isCodeblock: boolean = $from.parent.type.name === "codeBlock" && $from.depth === 1;
 
-                const currPos: number = $from.before()
-                const parent: Node = $from.node($from.depth - 1)
-                const index: number = $from.index($from.depth - 1)
+                if (isTopLevelParagraph) {
+                    const currPos: number = $from.before()
+                    const parent: Node = $from.node($from.depth - 1)
+                    const index: number = $from.index($from.depth - 1)
+    
+                    if (index === 0) return true; // already at top
+    
+                    const prevNode: Node = parent.child(index - 1)
+                    const prevPos: number = currPos - prevNode.nodeSize
+    
+                    const currNode: Node = $from.parent
+                    const offset: number = $from.parentOffset
+    
+                    const tr: Transaction = state.tr
+    
+                    // delete the whole paragraph node
+                    tr.delete(currPos, currPos + currNode.nodeSize)
+    
+                    // insert it above previous paragraph
+                    tr.insert(prevPos, currNode.copy(currNode.content))
+    
+                    // restore cursor
+                    tr.setSelection(
+                        TextSelection.create(
+                            tr.doc,
+                            prevPos + offset + 1
+                        )
+                    );
+    
+                    view.dispatch(tr);
+                }
 
-                if (index === 0) return true; // already at top
+                if (isCodeblock) {
+                    const node: Node = $from.parent;
+                    const text: string = node.textContent;
+                    const lines: string[] = text.split(/(?<=\n)/);
 
-                const prevNode: Node = parent.child(index - 1)
-                const prevPos: number = currPos - prevNode.nodeSize
+                    const tr: Transaction = state.tr;
+                }
 
-                const currNode: Node = $from.parent
-                const offset: number = $from.parentOffset
-
-                const tr: Transaction = state.tr
-
-                // delete the whole paragraph node
-                tr.delete(currPos, currPos + currNode.nodeSize)
-
-                // insert it above previous paragraph
-                tr.insert(prevPos, currNode.copy(currNode.content))
-
-                // restore cursor
-                tr.setSelection(
-                    TextSelection.create(
-                        tr.doc,
-                        prevPos + offset + 1
-                    )
-                );
-
-                view.dispatch(tr);
                 
                 return true;
             },
