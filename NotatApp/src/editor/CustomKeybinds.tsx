@@ -210,32 +210,33 @@ export const CustomKeybinds = Paragraph.extend({
                 if (isCodeblock) {
                     const node: Node = $from.parent;
                     const text: string = node.textContent;
-                    const lines: string[] = text.split("\n");
+                    const lines: string[] = text.split(/(?<=\n)/);
+                    console.log(lines);
 
                     const tr: Transaction = state.tr;
 
-                    const toNoLnBreak: number = to - lines.length;
-                        
                     let fromLine: number = 0;
                     let toLine: number = 0;
                     let tempText: string = "";
                     let prevTemptText: string = "";
 
-                    console.log(from)
-                    
+                    console.log("From:", from)
+                    console.log("To:", to)
+
                     for (let i = 0; i < lines.length; i++) {
                         tempText += lines[i];
 
-                        if (from - 1 - i - i >= prevTemptText.length - 1 && from - i - 1 <= tempText.length - 1) {
+                        if (from - 1 >= prevTemptText.length && from - 1 <= tempText.length) {
                             fromLine = i;
                         }
-                        if (toNoLnBreak > prevTemptText.length && toNoLnBreak <= tempText.length) {
+                        if (to - 1 >= prevTemptText.length && to - 1 <= tempText.length) {
                             toLine = i;
                             break;
                         }
-                        
+
                         prevTemptText = tempText;
                     }
+                    
 
                     console.log("FromLine:", fromLine, "ToLine:", toLine);
                     console.log("TempText:", tempText.length, "PrevTempText:", prevTemptText.length);
@@ -246,29 +247,30 @@ export const CustomKeybinds = Paragraph.extend({
                     let tabsDeleted: number = 0;
                     for (let i = 0; i < lines.length; i++) {
                         if (i >= fromLine && i <= toLine && lines[i][0] === "\t") {
-                            i === lines.length - 1 ? newText += lines[i].slice(1) : newText += lines[i].slice(1) + "\n";
+                            newText += lines[i].slice(1);
                             tabsDeleted++;
-                        } else if (i === lines.length-1) {
-                            newText += lines[i];
+                            console.log("FIRE")
                         } else {
-                            newText += lines[i] + "\n";
+                            newText += lines[i];
                         }
                     }
 
                     tr.insertText(newText, 1);
 
+                    console.log("Bing bong")
+
                     fromLine === toLine ?
                         tr.setSelection(
                             TextSelection.create(
                                 tr.doc,
-                                from - tabsDeleted,
-                                to - tabsDeleted
+                                from - 1,
+                                to - 1
                             )
                         ) :
                         tr.setSelection(
                             TextSelection.create(
                                 tr.doc,
-                                from - tabsDeleted + tabsDeleted - 1,
+                                from - 1,
                                 to - tabsDeleted
                             )
                         )
