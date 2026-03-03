@@ -237,18 +237,29 @@ export const CustomKeybinds = Paragraph.extend({
 
                     let newText: string = "";
                     let tabsDeleted: number = 0;
+                    let atLineStart: boolean = false;
                     for (let i = 0; i < lines.length; i++) {
                         if (i >= fromLine && i <= toLine && lines[i][0] === "\t") {
+                            if (to-1 === newText.length) atLineStart = true;
                             newText += lines[i].slice(1);
                             tabsDeleted++;
+
                         } else {
+                            if (to-1 === newText.length) atLineStart = true;
                             newText += lines[i];
                         }
                     }
 
                     tr.insertText(newText, 1);
 
-                    fromLine === toLine ?
+                    atLineStart ?
+                        tr.setSelection(
+                            TextSelection.create(
+                                tr.doc,
+                                from,
+                                to
+                            )
+                        ) : fromLine === toLine ?
                         tr.setSelection(
                             TextSelection.create(
                                 tr.doc,
