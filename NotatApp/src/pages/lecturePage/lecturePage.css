@@ -29,9 +29,7 @@
     display: flex;
     flex-direction: row;
     gap: 1rem;
-
-    
-    
+   
     border-bottom: 2px solid #a0a0a0;
 }
 
@@ -47,6 +45,46 @@
     border: none;
     background-color: var(--background);
     color: var(--text);
+}
+
+.sheet-text-editor {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.sheet-text-editor .gutter {
+    width: 2%;
+    height: 100%;
+    
+    display: flex;
+    flex-direction: column;
+    position: relative;
+
+    margin-left: 1rem;
+    margin-right: 0.5rem;
+}
+
+.gutter .gutter-item {
+    position: absolute;
+    width: 100%;
+    height: 1.5rem;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.gutter-item svg {
+    font-size: 25px;
+    color: var(--text);
+}
+
+.sheet-text-editor .editor {
+    width: 97%;
+    height: 100%;
+
 }
 
 .sheet-sidebar {

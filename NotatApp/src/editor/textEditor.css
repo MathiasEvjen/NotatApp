@@ -3,14 +3,14 @@
 }
 
 .ProseMirror {
-    padding: 1rem 1rem 1rem 0;
+    padding: 1rem 1rem 1rem 0.5rem;
 
     * {
         margin-top: 0;
     }
 
     > * {
-        margin-left: 1.5rem;
+        margin-left: 0.5rem;
     }
 
     .ProseMirror-widget * {
@@ -243,4 +243,27 @@
 
         transform: translateX(-6px)
     }
+}
+
+[data-letter="!"] {
+    position: relative;
+}
+
+[data-letter="!"]::before {
+    content: ""; /* Empty content so we can style it as a shape */
+    position: absolute;
+    
+    /* Position it to the left of the text */
+    left: -1.5rem; 
+    top: 50%;
+    transform: translateY(-50%);
+    
+    /* The "Line" styling */
+    width: 1rem;
+    height: 2px;
+    background-color: #ff4757; /* A nice red to match the "!" energy */
+    border-radius: 2px;
+    
+    /* Ensure it doesn't interfere with clicking/typing */
+    pointer-events: none;
 }

@@ -54,4 +54,5 @@ export const extensions = [
             lowlight,
             defaultLanguage: "java",
         }),
+        // CustomParagraph
     ];
