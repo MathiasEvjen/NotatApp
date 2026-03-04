@@ -87,36 +87,39 @@ export const CustomKeybinds = Paragraph.extend({
                     if (tr.docChanged) view.dispatch(tr);
                 }
 
-                // TODO: Rewrite with split that keeps "\n"
                 if (isCodeblock) {
                     const node: Node = $from.parent;
                     const text: string = node.textContent;
-                    const lines: string[] = text.split("\n");
+                    const lines: string[] = text.split(/(?<=\n)/);
                     const fromInCode: number = from - $from.before();
                     const toInCode: number = to - $from.before();
 
                     const tr: Transaction = state.tr;
 
+                    const tabSize: number = 4;
+                    let tab: string = "";
+                    for (let i = 0; i < tabSize; i++) {
+                        tab += " ";
+                    }
+
                     if (from === to) {
-                        commands.insertContentAt(from, "\t");
+                        commands.insertContentAt(from, tab);
                     } else {
-                        
                         let fromLine: number = 0;
                         let toLine: number = 0;
                         let tempText: string = "";
                         let prevTemptText: string = "";
                         let fromAtLineStart: boolean = false;
 
-                        
                         for (let i = 0; i < lines.length; i++) {
                             tempText += lines[i];
-                            if (fromInCode-i <= tempText.length && fromInCode-i >= prevTemptText.length) {
+                            if (fromInCode - 1 >= prevTemptText.length && fromInCode - 1 <= tempText.length) {
                                 fromLine = i;
 
-                                let tabCount: number = getTabCount(lines[i]);
-                                if (from-i-1-tabCount === prevTemptText.length) fromAtLineStart = true;
+                                let tabCount: number = getTabCountCode(lines[i], tabSize);
+                                if (fromInCode-1-(tabCount * tabSize)  === prevTemptText.length) fromAtLineStart = true;
                             }
-                            if (toInCode > prevTemptText.length && toInCode <= tempText.length) {
+                            if (toInCode - 1 >= prevTemptText.length && toInCode - 1 <= tempText.length) {
                                 toLine = i;
                                 break;
                             }
@@ -125,20 +128,16 @@ export const CustomKeybinds = Paragraph.extend({
                         }
                         
                         if (fromLine === toLine && !fromAtLineStart) {
-                            commands.insertContent("\t");
+                            commands.insertContent(tab);
                         } else {
                             tr.deleteRange($from.before(), $from.after());
                             
                             let newText: string = "";
                             for (let i = 0; i < lines.length; i++) {
-                                if (i === toLine && i === lines.length - 1) {
-                                    newText += "\t" + lines[i];
-                                } else if (i >= fromLine && i <= toLine) {
-                                    newText += "\t" + lines[i] + "\n";
-                                } else if (i === lines.length - 1) {
-                                    newText += lines[i];
+                                if (i >= fromLine && i <= toLine) {
+                                    newText += tab + lines[i];
                                 } else {
-                                    newText += lines[i] + "\n"
+                                    newText += lines[i];
                                 }
                             }
                             
@@ -149,18 +148,19 @@ export const CustomKeybinds = Paragraph.extend({
                                     state.schema.text(newText)
                                 )
                             );
+                            
+                            const fromCorrected: number = $from.before() + fromInCode;
+                            const toCorrected: number = $from.before() + toInCode;
+    
+                            tr.setSelection(
+                                TextSelection.create(
+                                    tr.doc,
+                                    fromCorrected + tabSize,
+                                    fromLine === toLine ?  toCorrected + tabSize :toCorrected + (tabSize * 2)
+                                )
+                            );
                         }
 
-                    const fromCorrected: number = $from.before() + fromInCode;
-                    const toCorrected: number = $from.before() + toInCode;
-
-                        tr.setSelection(
-                            TextSelection.create(
-                                tr.doc,
-                                fromCorrected + 1,
-                                toCorrected + 1
-                            )
-                        );
                     }
 
                     if (tr.docChanged) view.dispatch(tr);
@@ -514,7 +514,7 @@ export const CustomKeybinds = Paragraph.extend({
                 const { state, view } = this.editor
                 const { $from } = state.selection
 
-                if ($from.parent.type.name !== "paragraph") return true
+                if ($from.parent.type.name !== "paragraph") return false
 
                 const totalNodes: number = linesInDock(this.editor);
 
@@ -608,10 +608,24 @@ const linesInDock = (editor: Editor) => {
   return lines
 }
 
-const getTabCount = (text: string) => {
+const getTabCountCode = (line: string, tabSize: number) => {
     let tabCount: number = 0;
-    for (let i = 0; i < text.length; i++) {
-        if (text[i] !== "\t") break;
+    let spaceCount: number = 0;
+    for (let i = 0; i < line.length; i++) {
+        if (spaceCount === tabSize) {
+            tabCount++;
+            spaceCount === 0;
+        }
+        if (line[i] !== " ") break;
+        spaceCount++;
+    }
+    return tabCount;
+};
+
+const getTabCount = (line: string) => {
+    let tabCount: number = 0;
+    for (let i = 0; i < line.length; i++) {
+        if (line[i] !== "\t") break;
         tabCount++;
     }
 
