@@ -9,6 +9,12 @@ export const CustomKeybinds = Paragraph.extend({
     
 
     addKeyboardShortcuts() {
+        const tabSize: number = 4;
+        let tab: string = "";
+        for (let i = 0; i < tabSize; i++) {
+            tab += " ";
+        }
+
         return {
             "Tab": () => {
                 const { state, view, commands } = this.editor;
@@ -96,11 +102,8 @@ export const CustomKeybinds = Paragraph.extend({
 
                     const tr: Transaction = state.tr;
 
-                    const tabSize: number = 4;
-                    let tab: string = "";
-                    for (let i = 0; i < tabSize; i++) {
-                        tab += " ";
-                    }
+                    
+                    
 
                     if (from === to) {
                         commands.insertContentAt(from, tab);
@@ -148,7 +151,7 @@ export const CustomKeybinds = Paragraph.extend({
                                     state.schema.text(newText)
                                 )
                             );
-                            
+
                             const fromCorrected: number = $from.before() + fromInCode;
                             const toCorrected: number = $from.before() + toInCode;
     
@@ -238,7 +241,7 @@ export const CustomKeybinds = Paragraph.extend({
                         if (fromInCode - 1 >= prevTemptText.length && fromInCode - 1 <= tempText.length) {
                             fromLine = i;
                         }
-                        if (toInCode - 1 >= prevTemptText.length && toInCode <= tempText.length) {
+                        if (toInCode - 1 >= prevTemptText.length && toInCode - 1 <= tempText.length) {
                             toLine = i;
                             break;
                         }
@@ -252,9 +255,9 @@ export const CustomKeybinds = Paragraph.extend({
                     let tabsDeleted: number = 0;
                     let atLineStart: boolean = false;
                     for (let i = 0; i < lines.length; i++) {
-                        if (i >= fromLine && i <= toLine && lines[i][0] === "\t") {
+                        if (i >= fromLine && i <= toLine && lines[i].slice(0, tabSize)) {
                             if (to-1 === newText.length) atLineStart = true;
-                            newText += lines[i].slice(1);
+                            newText += lines[i].slice(tabSize);
                             tabsDeleted++;
 
                         } else {
@@ -285,15 +288,15 @@ export const CustomKeybinds = Paragraph.extend({
                         tr.setSelection(
                             TextSelection.create(
                                 tr.doc,
-                                fromCorrected - 1,
-                                toCorrected - 1
+                                atLineStart ? fromCorrected - tabSize : fromCorrected,
+                                toCorrected - tabSize
                             )
                         ) :
                         tr.setSelection(
                             TextSelection.create(
                                 tr.doc,
-                                fromCorrected - 1,
-                                toCorrected - tabsDeleted
+                                fromCorrected - tabSize,
+                                toCorrected - (tabsDeleted * tabSize)
                             )
                         )
                             
