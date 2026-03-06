@@ -112,12 +112,11 @@ const LecturePage: React.FC = () => {
                 const nodeCoords = view.coordsAtPos(pos);
     
                 const relativeTop = nodeCoords.top - editorRect.top + editorElement.scrollTop;
-                const relativeBottom = nodeCoords.bottom - editorRect.top + editorElement.scrollTop;
     
                 coords.push({
                     pos: relativeTop,
                     text: node.textContent,
-                    type: node.type.name
+                    type: node.type.name,
                 });
 
                 console.log("hola")
@@ -166,13 +165,14 @@ const LecturePage: React.FC = () => {
                 <div className="sheet-text-editor">
                     <div className="gutter">
                         {nodePositions.map((node) => (
-                            node.type === "paragraph" && node.text.startsWith("!") &&  (
+                            (node.type === "paragraph" || node.type === "header") && node.text.startsWith("!") &&  (
                                 <div 
                                     key={node.pos}
                                     className="gutter-item"
                                     style={{
                                         top: `${node.pos}px`,
                                     }} 
+                                    onClick={() => console.log(node.text)}
                                 >
                                     <IoMdArrowDropdown />
                                 </div>

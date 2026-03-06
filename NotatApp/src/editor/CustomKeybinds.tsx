@@ -1,12 +1,17 @@
-import { Editor } from "@tiptap/core";
-import Paragraph from "@tiptap/extension-paragraph";
+import { Editor, Extension } from "@tiptap/core";
 import { Node } from "@tiptap/pm/model";
 import { TableMap } from "@tiptap/pm/tables";
 import { TextSelection, Transaction } from "@tiptap/pm/state";
+import { useState } from "react";
 
-export const CustomKeybinds = Paragraph.extend({
+export const CustomKeybinds = Extension.create({
     priority: 1000,
     
+    addStorage() {
+        return {
+            isInsideTab: false,
+        }
+    },
 
     addKeyboardShortcuts() {
         const tabSize: number = 4;
@@ -15,22 +20,43 @@ export const CustomKeybinds = Paragraph.extend({
             tab += " ";
         }
 
+        const getContext = () => {
+            const { state, view, commands } = this.editor;
+            const {from, to } = state.selection;
+            const { $from } = state.selection;
+            const node: Node = $from.parent;
+            const text: string = node.textContent;
+            const lines: string[] = text.split(/(?<=\n)/);
+            const fromInCode: number = from - $from.before() - 1;
+            const toInCode: number = to - $from.before() - 1;
+
+            return {
+                isCodeblock: this.editor.isActive('codeBlock'),
+                isListItem: this.editor.isActive('listItem'),
+                isTopLevelParagraph: $from.parent.type.name === "paragraph" && $from.depth === 1,
+                isTableCell: $from.depth > 1 && $from.node($from.depth - 3).type.name === "table" && $from.depth === 4,
+                $from,
+                node,
+                state,
+                view,
+                commands,
+                from,
+                to,
+                text,
+                lines,
+                fromInCode,
+                toInCode
+            };
+        };
+
         return {
             "Tab": () => {
-                const { state, view, commands } = this.editor;
-                const { from, to } = state.selection;
-                const { $from } = state.selection;
+                const { 
+                    isCodeblock, isListItem, isTopLevelParagraph, node,
+                    isTableCell, $from, state, view, commands, from, to,
+                    lines, fromInCode, toInCode
+                } = getContext();
 
-                let isTableCell: boolean = false;
-
-                if ($from.depth > 1) {
-                    
-                    isTableCell = $from.node($from.depth - 3).type.name === "table" && $from.depth === 4;
-                }
-                
-                const isCodeblock: boolean = $from.parent.type.name === "codeBlock" && $from.depth === 1;
-                const isListItem: boolean = $from.node($from.depth - 1).type.name === "listItem" && $from.depth > 1;
-                const isTopLevelParagraph: boolean = $from.parent.type.name === "paragraph" && $from.depth === 1;
 
                 if (isTableCell) {
                     
@@ -71,7 +97,6 @@ export const CustomKeybinds = Paragraph.extend({
                     });
     
                     if (positions.length === 1) {
-                        const node: Node = $from.parent;
                         const text: string = node.textContent;
     
                         const tabCount: number = getTabCount(text);
@@ -94,11 +119,6 @@ export const CustomKeybinds = Paragraph.extend({
                 }
 
                 if (isCodeblock) {
-                    const node: Node = $from.parent;
-                    const text: string = node.textContent;
-                    const lines: string[] = text.split(/(?<=\n)/);
-                    const fromInCode: number = from - $from.before();
-                    const toInCode: number = to - $from.before();
 
                     const tr: Transaction = state.tr;
 
@@ -116,13 +136,13 @@ export const CustomKeybinds = Paragraph.extend({
 
                         for (let i = 0; i < lines.length; i++) {
                             tempText += lines[i];
-                            if (fromInCode - 1 >= prevTemptText.length && fromInCode - 1 <= tempText.length) {
+                            if (fromInCode >= prevTemptText.length && fromInCode <= tempText.length) {
                                 fromLine = i;
 
                                 let tabCount: number = getTabCountCode(lines[i], tabSize);
                                 if (fromInCode-1-(tabCount * tabSize)  === prevTemptText.length) fromAtLineStart = true;
                             }
-                            if (toInCode - 1 >= prevTemptText.length && toInCode - 1 <= tempText.length) {
+                            if (toInCode >= prevTemptText.length && toInCode <= tempText.length) {
                                 toLine = i;
                                 break;
                             }
@@ -172,19 +192,11 @@ export const CustomKeybinds = Paragraph.extend({
                 return true;
             },
             "Shift-Tab": () => {
-                const { state, view } = this.editor;
-                const { $from } = state.selection;
-                const { from, to } = state.selection;
-                
-                let isTableCell: boolean = false;
-                if ($from.depth > 1) {
-                    
-                    isTableCell = $from.node($from.depth - 3).type.name === "table" && $from.depth === 4;
-                }
-
-                const isCodeblock: boolean = $from.parent.type.name === "codeBlock" && $from.depth === 1;
-                const isListItem: boolean = $from.node($from.depth - 1).type.name === "listItem" && $from.depth > 1;
-                const isTopLevelParagraph: boolean = $from.parent.type.name === "paragraph" && $from.depth === 1;
+                const { 
+                    isCodeblock, isListItem, isTopLevelParagraph, 
+                    isTableCell, $from, state, view, from, to,
+                    lines, fromInCode, toInCode
+                } = getContext();
 
 
                 if (isTableCell) {
@@ -222,11 +234,6 @@ export const CustomKeybinds = Paragraph.extend({
                 }
 
                 if (isCodeblock) {
-                    const node: Node = $from.parent;
-                    const text: string = node.textContent;
-                    const lines: string[] = text.split(/(?<=\n)/);
-                    const fromInCode: number = from - $from.before();
-                    const toInCode: number = to - $from.before();
 
                     const tr: Transaction = state.tr;
 
@@ -238,10 +245,10 @@ export const CustomKeybinds = Paragraph.extend({
                     for (let i = 0; i < lines.length; i++) {
                         tempText += lines[i];
 
-                        if (fromInCode - 1 >= prevTemptText.length && fromInCode - 1 <= tempText.length) {
+                        if (fromInCode >= prevTemptText.length && fromInCode <= tempText.length) {
                             fromLine = i;
                         }
-                        if (toInCode - 1 >= prevTemptText.length && toInCode - 1 <= tempText.length) {
+                        if (toInCode >= prevTemptText.length && toInCode <= tempText.length) {
                             toLine = i;
                             break;
                         }
@@ -307,11 +314,60 @@ export const CustomKeybinds = Paragraph.extend({
                 return true
             },
             "Enter": () => {
-                const { state, commands } = this.editor;
-                const { $from } = state.selection;
+                const { 
+                    isCodeblock, $from, commands, from, to 
+                } = getContext();
 
-                const isCodeblock: boolean = $from.parent.type.name === "codeBlock" && $from.depth === 1;
-                if (isCodeblock) return false;
+
+                if (isCodeblock) {
+                    const node: Node = $from.parent;
+                    const text: string = node.textContent;
+                    const lines: string[] = text.split(/(?<=\n)/);
+                    const toInCode: number = to - $from.before() - 1;
+
+                    let toLine: number = 0;
+                    let tempText: string = "";
+                    let prevTemptText: string = "";
+
+                    for (let i = 0; i < lines.length; i++) {
+                        tempText += lines[i];
+
+                        if (toInCode >= prevTemptText.length && toInCode <= tempText.length) {
+                            toLine = i;
+                            break;
+                        }
+
+                        prevTemptText = tempText;
+                    }
+                    
+                    const tabCount: number = getTabCountCode(lines[toLine], tabSize);
+                    console.log('Tabs:', tabCount);
+                    let insertTabs: string = "";
+                    for (let i = 0; i < tabCount; i++) {
+                        console.log("meow")
+                        insertTabs += tab;
+                    }
+                    
+                    console.log(text[toInCode-1])
+                    if (cursorInBrackets(text, toInCode)) {
+                        return this.editor
+                            .chain()
+                            .insertContent(`\n${insertTabs}${tab}\n${insertTabs}`)
+                            .setTextSelection(from + tabCount * tabSize + tabSize + 1)
+                            .run();
+                    }
+
+                    if (text[toInCode-1] === "{") {
+                        return this.editor
+                            .chain()
+                            .insertContent(`\n${insertTabs}${tab}\n${insertTabs}}`)
+                            .setTextSelection(from + tabCount * tabSize + tabSize + 1)
+                            .run();
+                    }
+
+                    commands.insertContent(`\n${insertTabs}`)
+                    return true;
+                }
 
                 const node: Node = $from.parent;
                 const text: string = node.textContent;
@@ -326,24 +382,17 @@ export const CustomKeybinds = Paragraph.extend({
 
                 return true;
             },
+
+            // TODO: Holde på indent
             "Mod-Enter": () => {
-
-                const { state, commands, view } = this.editor
-                const { from, to } = state.selection;
-                const { $from } = state.selection;
-
-                let isTableCell: boolean = false;
-                if ($from.depth > 1)
-                    isTableCell = $from.node($from.depth - 3).type.name === "table" && $from.depth === 4;
-
-                const isCodeblock: boolean = $from.parent.type.name === "codeBlock" && $from.depth === 1;
-                const isListItem: boolean = $from.node($from.depth - 1).type.name === "listItem" && $from.depth > 1;
-                const isTopLevelParagraph: boolean = $from.parent.type.name === "paragraph" && $from.depth === 1;
-                
+                const { 
+                    isCodeblock, isListItem, isTopLevelParagraph, 
+                    $from, state, view, commands, to 
+                } = getContext();
                 
                 let insertPos: number = 0
-                if (isListItem ) $from.after($from.depth - 2);
-                else if (isTopLevelParagraph) $from.after();
+                if (isListItem ) insertPos = $from.after($from.depth - 2);
+                else if (isTopLevelParagraph) insertPos = $from.after();
 
 
                 if (isListItem) {
@@ -436,14 +485,9 @@ export const CustomKeybinds = Paragraph.extend({
                 return true;
             },
             "Mod-Shift-Enter": () => {
-                const { state, commands } = this.editor
-                const { from, to } = state.selection;
-                const { $from } = state.selection;
-
-                let isTableCell: boolean = false;
-                if ($from.depth > 1)
-                    isTableCell = $from.node($from.depth - 3).type.name === "table" && $from.depth === 4;
-                const isCodeblock: boolean = $from.parent.type.name === "codeBlock" && $from.depth === 1;
+                const { 
+                    isCodeblock, isTableCell, state, commands, to 
+                } = getContext();
 
                 let nodeIndex: number = 0;
                 state.doc.nodesBetween(0, to, (node, pos) => {
@@ -464,11 +508,10 @@ export const CustomKeybinds = Paragraph.extend({
                 return true;
             },
             "Alt-ArrowUp": () => {
-                const { state, view } = this.editor
-                const { $from } = state.selection
-
-                const isTopLevelParagraph: boolean = $from.parent.type.name === "paragraph" && $from.depth === 1;
-                const isCodeblock: boolean = $from.parent.type.name === "codeBlock" && $from.depth === 1;
+                const { 
+                    isCodeblock, isTopLevelParagraph, 
+                    $from, state, view, node, lines
+                } = getContext();
 
                 if (isTopLevelParagraph) {
                     const currPos: number = $from.before()
@@ -503,9 +546,6 @@ export const CustomKeybinds = Paragraph.extend({
                 }
 
                 if (isCodeblock) {
-                    const node: Node = $from.parent;
-                    const text: string = node.textContent;
-                    const lines: string[] = text.split(/(?<=\n)/);
 
                     const tr: Transaction = state.tr;
                 }
@@ -514,8 +554,9 @@ export const CustomKeybinds = Paragraph.extend({
                 return true;
             },
             "Alt-ArrowDown": () => {
-                const { state, view } = this.editor
-                const { $from } = state.selection
+                const { 
+                    $from, state, view
+                } = getContext();
 
                 if ($from.parent.type.name !== "paragraph") return false
 
@@ -552,15 +593,11 @@ export const CustomKeybinds = Paragraph.extend({
                 return true;
             },
             "Backspace": () => {
-                const { state } = this.editor;
-                const { $from } = state.selection;
-
-                if ($from.depth < 3) return false;
-                
-                const isTableCell: boolean = $from.node($from.depth - 3).type.name === "table" && $from.depth === 4;
+                const { 
+                    isCodeblock, isTableCell, $from, text, fromInCode, commands, from
+                } = getContext();
 
                 if (isTableCell) {
-
                     const tableNode: Node = $from.node($from.depth - 3);
                     
                     const map: TableMap = TableMap.get(tableNode);
@@ -580,6 +617,15 @@ export const CustomKeybinds = Paragraph.extend({
                     if (isFirstCell && isFirstCellEmpty) 
                             this.editor.chain().focus().deleteTable().run();
                 }
+
+                console.log(text[fromInCode-1], text[fromInCode])
+
+                if (
+                    isCodeblock && this.storage.isInsideTab && 
+                    (text[fromInCode - 1] == "{" || text[fromInCode - 1] == "(" || text[fromInCode - 1] == "[")) {
+                        this.storage.isInsideTab = false;
+                        return commands.deleteRange({ from: from - 1, to: from + 1 });
+                }
                 
                 return false;
             },
@@ -593,6 +639,142 @@ export const CustomKeybinds = Paragraph.extend({
                 console.log($from.node($from.depth).textContent[0] === "\t")
 
                 console.log()
+                return false;
+            },
+            "{": () => {
+                const { 
+                    isCodeblock, from, to
+                } = getContext();
+
+                this.storage.isInsideTab = true;
+
+                if (isCodeblock) {
+                   if (from === to) {
+                        return this.editor.chain().insertContent("{}").setTextSelection(from + 1).run();
+                    } else {
+                        return this.editor.chain().insertContentAt(from, "{").insertContentAt(to+1, "}").setTextSelection({ from: from+1, to: to+1 }).run();
+                    }
+                }
+                return false;
+            },
+            "}": () => {
+                const { 
+                    isCodeblock, commands, from, text, fromInCode
+                } = getContext();
+
+
+                if (isCodeblock && this.storage.isInsideTab && text[fromInCode] === "}") {
+                    this.storage.isInsideTab = false;
+                    return commands.setTextSelection(from + 1);
+
+                }
+                return false;
+            },
+            "(": () => {
+               const { 
+                    isCodeblock, from, to
+                } = getContext();
+
+                this.storage.isInsideTab = true;
+
+                if (isCodeblock) {
+
+                    if (from === to) {
+                        return this.editor.chain().insertContent("()").setTextSelection(from + 1).run();
+                    } else {
+                        return this.editor.chain().insertContentAt(from, "(").insertContentAt(to+1, ")").setTextSelection({ from: from+1, to: to+1 }).run();
+                    }
+                }
+                return false;
+            },
+            ")": () => {
+                const { 
+                    isCodeblock, commands, from, text, fromInCode
+                } = getContext();
+
+
+                if (isCodeblock && this.storage.isInsideTab && text[fromInCode] === ")") {
+                    this.storage.isInsideTab = false;
+                    return commands.setTextSelection(from + 1);
+
+                }
+                return false;
+            },
+            "[": () => {
+                const { 
+                    isCodeblock, from, to
+                } = getContext();
+
+                this.storage.isInsideTab = true;
+
+                if (isCodeblock) {
+                    if (from === to) {
+                        return this.editor.chain().insertContent("[]").setTextSelection(from + 1).run();
+                    } else {
+                        return this.editor.chain().insertContentAt(from, "[").insertContentAt(to+1, "]").setTextSelection({ from: from+1, to: to+1 }).run();
+                    }
+                }
+                return false;
+            },
+            "]": () => {
+                const { 
+                    isCodeblock, $from, from, commands
+                } = getContext();
+
+                const node: Node = $from.parent;
+                const text: string = node.textContent;
+                const fromInCode: number = from - $from.before() - 1;
+
+
+                if (isCodeblock && this.storage.isInsideTab && text[fromInCode] === "]") {
+                    this.storage.isInsideTab = false;
+                    return commands.setTextSelection(from + 1);
+
+                }
+                return false;
+            },
+            "ArrowUp": () => {
+                const { 
+                    isCodeblock
+                } = getContext();
+                
+                if (isCodeblock && this.storage.isInsideTab) {
+                    this.storage.isInsideTab = false;
+                }
+
+                return false;
+            },
+            "ArrowDown": () => {
+                const { 
+                    isCodeblock
+                } = getContext();
+                
+                if (isCodeblock && this.storage.isInsideTab) {
+                    this.storage.isInsideTab = false;
+                }
+
+                return false;
+            },
+            "ArrowLeft": () => {
+                const { 
+                    isCodeblock
+                } = getContext();
+                
+                if (isCodeblock && this.storage.isInsideTab) {
+                    this.storage.isInsideTab = false;
+                }
+
+                return false;
+            },
+            "ArrowRight": () => {
+                const { 
+                    isCodeblock
+                } = getContext();
+                
+                if (isCodeblock && this.storage.isInsideTab) {
+                    this.storage.isInsideTab = false;
+                }
+
                 return false;
             }
         }
@@ -617,7 +799,7 @@ const getTabCountCode = (line: string, tabSize: number) => {
     for (let i = 0; i < line.length; i++) {
         if (spaceCount === tabSize) {
             tabCount++;
-            spaceCount === 0;
+            spaceCount = 0;
         }
         if (line[i] !== " ") break;
         spaceCount++;
@@ -641,4 +823,13 @@ const createInsertTextWithTabs = (tabCount: number) => {
         insertText += "\t";
     }
     return insertText;
-}
+};
+
+const cursorInBrackets = (text: string, cursorPos: number): boolean => {
+    if (
+        (text[cursorPos - 1] === "{" && text[cursorPos] === "}") ||
+        (text[cursorPos - 1] === "[" && text[cursorPos] === "]") ||
+        (text[cursorPos - 1] === "(" && text[cursorPos] === ")")
+    )  return true;
+    return false;
+};
