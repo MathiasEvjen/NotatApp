@@ -8,7 +8,7 @@ namespace NotatAppApi.Repositories.Implementations
     public class SheetRepository(AppDbContext context, ILogger<ISheetRepository> logger) : ISheetRepository
     {
         private readonly AppDbContext _context = context;
-        private readonly ILogger _logger = logger;
+        private readonly ILogger<ISheetRepository> _logger = logger;
 
         public async Task<List<Sheet>?> GetAll()
         {

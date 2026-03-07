@@ -11,6 +11,7 @@ namespace Backend.Data
         }
 
         public DbSet<Sheet> Sheets { get; set; }
+        public DbSet<LectureCourse> LectureCourses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

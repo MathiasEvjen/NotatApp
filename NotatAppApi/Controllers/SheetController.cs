@@ -79,6 +79,7 @@ namespace NotatAppApi.Controllers
 
             existingSheet.Title = sheet.Title;
             existingSheet.Content = sheet.Content;
+            existingSheet.EditedAt = sheet.EditedAt;
 
             bool returnOk = await _sheetRepository.Update(existingSheet);
             if (returnOk) 
