@@ -5,6 +5,7 @@ import { TextSelection, Transaction } from "@tiptap/pm/state";
 import { useState } from "react";
 
 export const CustomKeybinds = Extension.create({
+    name: 'customKeybinds',
     priority: 1000,
     
     addStorage() {
