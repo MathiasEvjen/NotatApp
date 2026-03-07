@@ -2,7 +2,6 @@ import "./textEditor.css";
 import Blockquote from '@tiptap/extension-blockquote';
 import Document from '@tiptap/extension-document';
 import Paragraph from '@tiptap/extension-paragraph';
-import Heading from '@tiptap/extension-heading';
 import Text from '@tiptap/extension-text';
 import Bold from "@tiptap/extension-bold";
 import Italic from "@tiptap/extension-italic";
@@ -42,9 +41,6 @@ export const extensions = [
         UndoRedo, 
         ListKit,
         Blockquote,
-        Heading.configure({
-            levels: [1, 2, 3],
-        }),
         Image.configure({
             inline: true,
         }),
@@ -59,5 +55,7 @@ export const extensions = [
             defaultLanguage: "java",
         }),
         CustomAttributes,
-        CustomHeader
+        CustomHeader.configure({
+            levels: [1, 2, 3]
+        })
     ];

@@ -6,21 +6,19 @@ export const CustomHeader = Heading.extend({
 
     addAttributes() {
         return {
-        ...this.parent?.(), // Beholder standard ting som textAlign
-        collapsed: {
-            default: "false",
-            renderHTML: attributes => ({
-            'data-collapsed': attributes.collapsed,
-            }),
-            parseHTML: element => element.getAttribute('data-collapsed'),
-        },
-        visible: {
-            default: "true",
-            renderHTML: attributes => ({
-            'data-visible': attributes.visible,
-            }),
-            parseHTML: element => element.getAttribute('data-visible'),
-        },
+            ...this.parent?.(), // Beholder standard ting som textAlign
+            isCollapsed: {
+                default: "false",
+                renderHTML: attributes => ({
+                    'data-collapsed': attributes.isCollapsed,
+                }),
+                parseHTML: element => element.getAttribute('data-collapsed'),
+            },
+            id: {
+                default: null,
+                parseHTML: element => element.getAttribute("id") || crypto.randomUUID(),
+                renderHTML: attributes => ({ id: attributes.id }),
+            }
         }
     },
     addNodeView() {

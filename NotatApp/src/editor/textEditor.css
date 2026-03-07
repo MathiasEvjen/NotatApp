@@ -71,7 +71,7 @@
         margin-top: 0;
     }
 
-    margin-left: 4rem;
+    margin-left: 3rem;
 
     pre {
         background: var(--medium-grey);
@@ -243,10 +243,9 @@
         color: #dfdfdfec;
         border-radius: 0.25rem;
 
-        transform: translateX(-0.5rem)
+        transform: translateX(-0.3rem)
     }
 }
-
 
 .collapsible-node {
     transform: translateX(-0.5rem);
@@ -260,7 +259,8 @@
 }
 
 .collapsible-node.is-collapsed {
-    background-color: var(--medium-grey);
+    background-color: var(--transparent-grey);
+    border-bottom: 4px solid var(--background);
 }
 
 .collapsible-node h1 {
@@ -280,7 +280,7 @@
 .gutter-button {
     position: absolute;
     top: 15%;
-    left: -3.5rem; 
+    left: -2.5rem; 
     display: flex;
     align-items: center;
     justify-content: center;

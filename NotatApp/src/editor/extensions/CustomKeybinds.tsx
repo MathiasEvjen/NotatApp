@@ -22,7 +22,8 @@ export const CustomKeybinds = Extension.create({
 
         const getContext = () => {
             const { state, view, commands } = this.editor;
-            const {from, to } = state.selection;
+            const { selection } = state;
+            const { from, to } = state.selection;
             const { $from } = state.selection;
             const node: Node = $from.parent;
             const text: string = node.textContent;
@@ -35,6 +36,8 @@ export const CustomKeybinds = Extension.create({
                 isListItem: this.editor.isActive('listItem'),
                 isTopLevelParagraph: $from.parent.type.name === "paragraph" && $from.depth === 1,
                 isTableCell: $from.depth > 1 && $from.node($from.depth - 3).type.name === "table" && $from.depth === 4,
+                isCollapsedHeader: $from.parent.type.name === "heading" && $from.parent.attrs.isCollapsed === "true",
+                selection,
                 $from,
                 node,
                 state,
@@ -315,10 +318,8 @@ export const CustomKeybinds = Extension.create({
             },
             "Enter": () => {
                 const { 
-                    isCodeblock, $from, commands, from, to, node,
+                    isCodeblock, isCollapsedHeader, $from, commands, from, to, node, state
                 } = getContext();
-
-                console.log(node.attrs.visible)
 
                 if (isCodeblock) {
                     const node: Node = $from.parent;
@@ -368,6 +369,28 @@ export const CustomKeybinds = Extension.create({
 
                     commands.insertContent(`\n${insertTabs}`)
                     return true;
+                }
+
+                if (isCollapsedHeader) {
+                    const pos = $from.after();
+                    let endPos = pos;
+
+                    // Finn slutten på den kollapsede seksjonen
+                    state.doc.nodesBetween(pos, state.doc.content.size, (child, childPos) => {
+                        if (child.attrs.hiddenBy === node.attrs.id) {
+                            endPos = childPos + child.nodeSize;
+                            return true;
+                        }
+                        return false;
+                    });
+
+                    // Hopp over alle skjulte noder og sett inn en ny paragraf der
+                    this.editor.chain()
+                    .insertContentAt(endPos, { type: 'paragraph' })
+                    .focus(endPos + 1)
+                    .run();
+
+                    return true; // Stopper standard Enter-oppførsel
                 }
 
                 const text: string = node.textContent;

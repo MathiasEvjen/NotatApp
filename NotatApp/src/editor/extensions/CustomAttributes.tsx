@@ -6,16 +6,6 @@ export const CustomAttributes = Extension.create({
             {
                 types: "*",
                 attributes: {
-                    collapsed: {
-                        default: "false",
-                        renderHTML: (attributes) => {
-                            if (attributes.collapsed === "true") return {}
-                            return {
-                                "data-collapsed": attributes.collapsed,
-                            }
-                        },
-                        parseHTML: element => element.getAttribute("data-collapsed"),
-                    },
                     visible: {
                         default: "true",
                         renderHTML: (attributes) => {
@@ -24,7 +14,16 @@ export const CustomAttributes = Extension.create({
                             }
                         },
                         parseHTML: element => element.getAttribute("data-visible"),
-                    }
+                    },
+                    hiddenBy: {
+                        default: null,
+                        renderHTML: (attributes) => {
+                            return {
+                                "data-hidden-by": attributes.hiddenBy,
+                            }
+                        },
+                        parseHTML: element => element.getAttribute("data-hidden-by"),
+                    },
                 }
             }
         ]
