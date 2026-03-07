@@ -10,6 +10,7 @@
     overflow-x: hidden;
 
     scrollbar-width: none;
+    background-color: var(--clr-surface-tonal-a0);
 }
 
 .point-of-interest {
@@ -23,10 +24,10 @@
 
     padding: 1rem;
 
-    background-color: var(--transparent-grey);
+    background-color: var(--clr-surface-tonal-a20);
 }
 
 .point-of-interest:hover {
     cursor: pointer;
-    background-color: var(--medium-grey);
+    background-color: var(--clr-surface-tonal-a30);
 }

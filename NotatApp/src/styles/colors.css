@@ -1,11 +1,81 @@
 :root {
 
-    --white: #ffffff;
-    --dark-grey: #161616;
-    --medium-grey: #5c5c5c;
+    /* --white: #ffffff;
+    --offwhite: #EEEEEE;
+    --dark-grey: #222831;
+    --medium-grey: #393E46;
     --light-grey: #999999;
-    --transparent-grey: #99999949;
+    --blue: #00ADB5;
+    --transparent-grey: #99999949; */
+    /* --background: #1A1A1A;
+    --text: #F0F0F0;
+    --primary: var(--blue);
+} */
 
-    --background: var(--dark-grey);
+    /* --background: #1A1A1A;
+    --primary: #00ADB5;
+    --secondary: #93a3b1;
+    --tertiary: #d2d7dc;
+    --accent: #ca0f25;
+    --white: #f4f7f8;
+    
+
     --text: var(--white);
+
+     */
+
+     /** Base colors */
+    /** Base colors */
+    --clr-dark-a0: #000000;
+    --clr-light-a0: #ffffff;
+
+    /** Theme primary colors */
+    --clr-primary-a0: #6890b6;
+    --clr-primary-a10: #799cbe;
+    --clr-primary-a20: #8aa8c6;
+    --clr-primary-a30: #9bb4ce;
+    --clr-primary-a40: #acc0d6;
+    --clr-primary-a50: #bcccde;
+
+    /** Theme surface colors */
+    --clr-surface-a0: #1a1a1a;
+    --clr-surface-a10: #2f2f2f;
+    --clr-surface-a20: #454545;
+    --clr-surface-a30: #5d5d5d;
+    --clr-surface-a40: #767676;
+    --clr-surface-a50: #909090;
+
+    /** Theme tonal surface colors */
+    --clr-surface-tonal-a0: #222427;
+    --clr-surface-tonal-a10: #37383b;
+    --clr-surface-tonal-a20: #4c4e51;
+    --clr-surface-tonal-a30: #646567;
+    --clr-surface-tonal-a40: #7b7d7f;
+    --clr-surface-tonal-a50: #949597;
+
+    /** Success colors */
+    --clr-success-a0: #22946e;
+    --clr-success-a10: #47d5a6;
+    --clr-success-a20: #9ae8ce;
+
+    /** Warning colors */
+    --clr-warning-a0: #a87a2a;
+    --clr-warning-a10: #d7ac61;
+    --clr-warning-a20: #ecd7b2;
+
+    /** Danger colors */
+    --clr-danger-a0: #9c2121;
+    --clr-danger-a10: #d94a4a;
+    --clr-danger-a20: #eb9e9e;
+
+    /** Info colors */
+    --clr-info-a0: #21498a;
+    --clr-info-a10: #4077d1;
+    --clr-info-a20: #92b2e5;
+
+    /** Examples */
+    .bg-primary {
+    color: var(--clr-primary-a50);
+    background-color: var(--clr-surface-a0);
+    }
 }

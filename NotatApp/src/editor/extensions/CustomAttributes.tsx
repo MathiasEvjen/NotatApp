@@ -1,6 +1,8 @@
 import { Extension } from '@tiptap/core';
 
 export const CustomAttributes = Extension.create({
+    name: 'customAttributes',
+
     addGlobalAttributes() {
         return [
             {

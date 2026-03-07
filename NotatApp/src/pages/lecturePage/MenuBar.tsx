@@ -9,7 +9,6 @@ import { AiOutlineInsertRowAbove, AiOutlineInsertRowBelow, AiOutlineInsertRowLef
 import { TbFreezeColumn, TbFreezeRow } from "react-icons/tb";
 import { RiDeleteColumn, RiDeleteRow } from "react-icons/ri";
 import { LuTrash2 } from "react-icons/lu";
-import { MdChecklist } from "react-icons/md";
 import { LuSigma } from "react-icons/lu";
 import { GoTable } from "react-icons/go";
 
@@ -81,7 +80,7 @@ export const MenuBar = ({ editor }: { editor: Editor | null}) => {
                 </button>
                 <button
                     onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-                    className={editorState?.isHeading3 ? 'active' : ''}
+                    className={`primary-button ${editorState?.isHeading3 ? 'active' : ''}`}
                 >
                     H3
                 </button>

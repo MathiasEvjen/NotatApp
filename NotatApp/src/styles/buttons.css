@@ -8,14 +8,19 @@ button {
     padding: 5px 8px 5px 8px;
 
     color: var(--white);
-    background-color: var(--medium-grey);
+    background-color: var(--clr-surface-a20);
 }
 
+
 button:hover {
-    background-color: var(--light-grey);
+    background-color: var(--clr-surface-a30);
     cursor: pointer;
 }
 
+.primary-btn {
+    background-color: var(--clr-primary-a20);
+}
+
 button.active {
-    background-color: var(--light-grey);
+    background-color: var(--clr-surface-a40);
 }

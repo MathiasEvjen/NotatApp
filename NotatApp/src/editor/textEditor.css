@@ -59,7 +59,10 @@
     }
 
     blockquote {
-        border-left: 3px solid var(--light-grey);
+        border-left: 3px solid var(--clr-surface-a30);
+        /* border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
+        background-color: var(--clr-surface-a10); */
         margin: 1.5rem 0 0 3rem;
         padding-left: 1rem;
         width: 50%;
@@ -74,11 +77,11 @@
     margin-left: 3rem;
 
     pre {
-        background: var(--medium-grey);
+        background: var(--clr-surface-tonal-a20);
         border-radius: 0.5rem;
         color: white;
         font-family: 'JetBrainsMono', monospace;
-        margin: 1.5rem 0 0 1.5rem;
+        margin: 1.5rem 0 1.5rem 1.5rem;
         padding: 0.75rem 1rem;
         width: 60%;
 
@@ -100,7 +103,7 @@
 
         td,
         th {
-            border: 1px solid var(--light-grey);
+            border: 1px solid var(--clr-surface-tonal-a50);
             box-sizing: border-box;
             min-width: 1em;
             padding: 6px 8px;
@@ -113,13 +116,13 @@
         }
 
         th {
-            background-color: var(--medium-grey);
+            background-color: var(--clr-surface-tonal-a30);
             font-weight: bold;
             text-align: left;
         }
 
         .selectedCell:after {
-            background: var(--transparent-grey);
+            background: var(--clr-surface-tonal-a20);
             content: '';
             left: 0;
             right: 0;
@@ -224,7 +227,7 @@
         left: -0.25rem;
         right: -0.25rem;
         bottom: -0.25rem;
-        background-color: #70cff850;
+        background-color: var(--clr-);
         border-radius: 0.2rem;
     }
 }
@@ -259,8 +262,8 @@
 }
 
 .collapsible-node.is-collapsed {
-    background-color: var(--transparent-grey);
-    border-bottom: 4px solid var(--background);
+    /* background-color: var(--clr-surface-a10); */
+    border-bottom: 4px solid var(--clr-surface-a0);
 }
 
 .collapsible-node h1 {

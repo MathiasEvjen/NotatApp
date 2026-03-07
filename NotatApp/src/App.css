@@ -4,15 +4,14 @@
 
 body {
   font-family: "Poppins", sans-serif;
-  background-color: var(--background);
+  background-color: var(--clr-surface-a0);
+  color: var(--clr-light-a0);
 
   ::-webkit-scrollbar {
     display: none;
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-
-  color: white;
 }
 
 html {
@@ -20,6 +19,9 @@ html {
 }
 
 p {
-  color: white;
+  color: var(--text);
+  font-size: 1.2em;
 }
+
+
 
