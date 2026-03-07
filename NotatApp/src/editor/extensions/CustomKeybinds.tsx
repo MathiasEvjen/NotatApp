@@ -2,7 +2,6 @@ import { Editor, Extension } from "@tiptap/core";
 import { Node } from "@tiptap/pm/model";
 import { TableMap } from "@tiptap/pm/tables";
 import { TextSelection, Transaction } from "@tiptap/pm/state";
-import { useState } from "react";
 
 export const CustomKeybinds = Extension.create({
     name: 'customKeybinds',
@@ -534,7 +533,8 @@ export const CustomKeybinds = Extension.create({
             "Alt-ArrowUp": () => {
                 const { 
                     isCodeblock, isTopLevelParagraph, 
-                    $from, state, view, node, lines
+                    $from, state, view, node, lines,
+                    fromInCode, toInCode
                 } = getContext();
 
                 if (isTopLevelParagraph) {
@@ -570,8 +570,72 @@ export const CustomKeybinds = Extension.create({
                 }
 
                 if (isCodeblock) {
+                    let fromLine: number = 0;
+                    let toLine: number = 0;
+                    let tempText: string = "";
+                    let prevTemptText: string = "";
+                    let fromAtLineStart: boolean = false;
+
+                    for (let i = 0; i < lines.length; i++) {
+                        tempText += lines[i];
+                        if (fromInCode >= prevTemptText.length && fromInCode <= tempText.length) {
+                            fromLine = i;
+
+                            let tabCount: number = getTabCountCode(lines[i], tabSize);
+                            if (fromInCode-1-(tabCount * tabSize)  === prevTemptText.length) fromAtLineStart = true;
+                        }
+                        if (toInCode >= prevTemptText.length && toInCode <= tempText.length) {
+                            toLine = i;
+                            break;
+                        }
+                        
+                        prevTemptText = tempText;
+                    }
+
+                    if (fromLine === 0) return true;
 
                     const tr: Transaction = state.tr;
+
+                    tr.deleteRange($from.before(), $from.after());
+
+                    
+                    let newText: string = "";
+                    let lineAbove: string = "";
+                    for (let i = 0; i < lines.length; i++) {
+                        if (i === fromLine - 1) {
+                            lineAbove = lines[i];
+                        } else if (i >= fromLine && i < toLine) {
+                            newText += lines[i]
+                        } else if (i === toLine) {
+                            if (i === lines.length-1) {
+                                newText += lines[i] + "\n";
+                                newText += lineAbove.replace("\n", "");
+                            } else {
+                                newText += lines[i];
+                                newText += lineAbove;
+                            }
+                        } else {
+                            newText += lines[i];
+                        }
+                    }
+
+                    tr.insert(
+                        $from.before(),
+                        state.schema.nodes.codeBlock.create(
+                            null,
+                            state.schema.text(newText)
+                        )
+                    )
+
+                    tr.setSelection(
+                        TextSelection.create(
+                            tr.doc,
+                            fromInCode - lineAbove.length + 1,
+                            toInCode - lineAbove.length + 1
+                        )
+                    )
+
+                    view.dispatch(tr);
                 }
 
                 
@@ -579,42 +643,78 @@ export const CustomKeybinds = Extension.create({
             },
             "Alt-ArrowDown": () => {
                 const { 
-                    $from, state, view
+                    isTopLevelParagraph, isCodeblock, $from, 
+                    state, view, lines, fromInCode, toInCode
                 } = getContext();
 
-                if ($from.parent.type.name !== "paragraph") return false
+                if (isTopLevelParagraph)  {
+                    const totalNodes: number = linesInDock(this.editor);
+    
+                    const currPosBefore: number = $from.before();
+                    const currPosAfter: number = $from.after();
+                    const parent: Node = $from.node($from.depth - 1);
+                    const index: number = $from.index($from.depth - 1);
+    
+                    if (index + 1 === totalNodes) return true; // already at bottom
 
-                const totalNodes: number = linesInDock(this.editor);
+    
+                    const nextNode: Node = parent.child(index + 1);
+                    const nextPos: number = currPosBefore + nextNode.nodeSize;
+    
+                    const currNode: Node = $from.parent;
+                    const offset: number = $from.parentOffset;
+    
+                    const tr: Transaction = state.tr;
+    
+                    tr.insert(currPosAfter + nextNode.nodeSize, currNode.copy(currNode.content));
+                    
+                    tr.delete(currPosBefore, currPosBefore + currNode.nodeSize)
+    
+                    tr.setSelection(
+                        TextSelection.create(
+                            tr.doc,
+                            nextPos + offset + 1
+                        )
+                    );
+    
+                    view.dispatch(tr);
 
-                const currPosBefore: number = $from.before();
-                const currPosAfter: number = $from.after();
-                const parent: Node = $from.node($from.depth - 1);
-                const index: number = $from.index($from.depth - 1);
+                    return true;
+                }
 
-                if (index + 1 === totalNodes) return true; // already at bottom
+                if (isCodeblock) {
+                    let fromLine: number = 0;
+                    let toLine: number = 0;
+                    let tempText: string = "";
+                    let prevTemptText: string = "";
+                    let fromAtLineStart: boolean = false;
 
-                const nextNode: Node = parent.child(index + 1);
-                const nextPos: number = currPosBefore + nextNode.nodeSize;
+                    for (let i = 0; i < lines.length; i++) {
+                        tempText += lines[i];
+                        if (fromInCode >= prevTemptText.length && fromInCode <= tempText.length) {
+                            fromLine = i;
 
-                const currNode: Node = $from.parent;
-                const offset: number = $from.parentOffset;
+                            let tabCount: number = getTabCountCode(lines[i], tabSize);
+                            if (fromInCode-1-(tabCount * tabSize)  === prevTemptText.length) fromAtLineStart = true;
+                        }
+                        if (toInCode >= prevTemptText.length && toInCode <= tempText.length) {
+                            toLine = i;
+                            break;
+                        }
+                        
+                        prevTemptText = tempText;
+                    }
 
-                const tr: Transaction = state.tr;
+                    if (fromLine === 0) return true;
 
-                tr.insert(currPosAfter + nextNode.nodeSize, currNode.copy(currNode.content));
+                    const tr: Transaction = state.tr;
+
+                    tr.deleteRange($from.before(), $from.after());
+
+                    // TODO: Fullføre. Jeg er sliten
+                }
                 
-                tr.delete(currPosBefore, currPosBefore + currNode.nodeSize)
-
-                tr.setSelection(
-                    TextSelection.create(
-                        tr.doc,
-                        nextPos + offset + 1
-                    )
-                );
-
-                view.dispatch(tr);
-                
-                return true;
+                return false;
             },
             "Backspace": () => {
                 const { 
