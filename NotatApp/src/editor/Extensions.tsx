@@ -12,7 +12,8 @@ import Image from "@tiptap/extension-image";
 import Math from "@tiptap/extension-mathematics";
 import Typography from "@tiptap/extension-typography";
 import { UndoRedo } from '@tiptap/extensions';
-import { CustomKeybinds } from "./CustomKeybinds";
+import { CustomKeybinds } from "./extensions/CustomKeybinds";
+import { CustomAttributes } from "./extensions/CustomAttributes";
 import { ListKit } from '@tiptap/extension-list';
 import { TableKit } from '@tiptap/extension-table'
 
@@ -23,6 +24,7 @@ import ts from 'highlight.js/lib/languages/typescript'
 import html from 'highlight.js/lib/languages/xml'
 import java from 'highlight.js/lib/languages/java'
 import { all, createLowlight } from 'lowlight'
+import { CustomHeader } from "./extensions/CustomHeader";
 
 const lowlight = createLowlight(all)
 
@@ -56,5 +58,6 @@ export const extensions = [
             lowlight,
             defaultLanguage: "java",
         }),
-        // CustomParagraph
+        CustomAttributes,
+        CustomHeader
     ];

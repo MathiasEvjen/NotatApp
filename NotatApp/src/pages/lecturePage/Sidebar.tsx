@@ -30,8 +30,8 @@ const Sidebar: React.FC<SidebarProps> = ({ editor }) => {
     
             doc.forEach((node, offset, index) => {
                 const text: string = node.textContent;
-                if (text[0] === "!" && text.length > 1) {
-                    newPointsOfInterest.push({text: text.slice(1), pos: offset + text.length + 1});
+                if (node.type.name === "heading" && node.textContent.trim().length > 0) {
+                    newPointsOfInterest.push({text: text, pos: offset + text.length + 1});
                 }
             })
 

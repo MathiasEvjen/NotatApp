@@ -315,9 +315,10 @@ export const CustomKeybinds = Extension.create({
             },
             "Enter": () => {
                 const { 
-                    isCodeblock, $from, commands, from, to 
+                    isCodeblock, $from, commands, from, to, node,
                 } = getContext();
 
+                console.log(node.attrs.visible)
 
                 if (isCodeblock) {
                     const node: Node = $from.parent;
@@ -369,7 +370,6 @@ export const CustomKeybinds = Extension.create({
                     return true;
                 }
 
-                const node: Node = $from.parent;
                 const text: string = node.textContent;
 
                 const tabCount: number = getTabCount(text);
@@ -617,8 +617,6 @@ export const CustomKeybinds = Extension.create({
                     if (isFirstCell && isFirstCellEmpty) 
                             this.editor.chain().focus().deleteTable().run();
                 }
-
-                console.log(text[fromInCode-1], text[fromInCode])
 
                 if (
                     isCodeblock && this.storage.isInsideTab && 

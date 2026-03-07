@@ -6,7 +6,10 @@
     flex-direction: column;
     gap: 3px;
 
-    overflow: scroll;
+    overflow-y: scroll;
+    overflow-x: hidden;
+
+    scrollbar-width: none;
 }
 
 .point-of-interest {

@@ -71,6 +71,8 @@
         margin-top: 0;
     }
 
+    margin-left: 4rem;
+
     pre {
         background: var(--medium-grey);
         border-radius: 0.5rem;
@@ -241,29 +243,60 @@
         color: #dfdfdfec;
         border-radius: 0.25rem;
 
-        transform: translateX(-6px)
+        transform: translateX(-0.5rem)
     }
 }
 
-[data-letter="!"] {
+
+.collapsible-node {
+    transform: translateX(-0.5rem);
+    height: 3rem;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    margin: 0;
+    display: flex;
+    align-items: flex-start;
     position: relative;
 }
 
-[data-letter="!"]::before {
-    content: ""; /* Empty content so we can style it as a shape */
+.collapsible-node.is-collapsed {
+    background-color: var(--medium-grey);
+}
+
+.collapsible-node h1 {
+    font-size: 28px;
+    font-weight: 500;
+}
+
+.collapsible-node h2 {
+    font-weight: 500;
+}
+
+.collapsible-node h3 {
+    font-weight: 500;
+}
+
+/* Pilen (Gutter button) */
+.gutter-button {
     position: absolute;
-    
-    /* Position it to the left of the text */
-    left: -1.5rem; 
-    top: 50%;
-    transform: translateY(-50%);
-    
-    /* The "Line" styling */
-    width: 1rem;
-    height: 2px;
-    background-color: #ff4757; /* A nice red to match the "!" energy */
-    border-radius: 2px;
-    
-    /* Ensure it doesn't interfere with clicking/typing */
+    top: 15%;
+    left: -3.5rem; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.gutter-button svg {
+    font-size: 24px; 
+}
+
+/* Skjul noder som er kollapset */
+[data-visible="false"] {
+    display: none !important;
     pointer-events: none;
+    user-select: none;
 }

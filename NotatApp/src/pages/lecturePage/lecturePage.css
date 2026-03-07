@@ -76,6 +76,10 @@
     align-items: center;
 }
 
+.gutter .gutter-item:hover {
+    cursor: pointer;
+}
+
 .gutter-item svg {
     font-size: 25px;
     color: var(--text);

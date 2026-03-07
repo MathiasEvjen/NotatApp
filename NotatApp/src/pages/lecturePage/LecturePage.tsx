@@ -6,12 +6,13 @@ import { useEditor, type Editor } from "@tiptap/react";
 import { extensions } from "../../editor/Extensions";
 import { MenuBar } from "./MenuBar";
 import Sidebar from "./Sidebar";
-import { IoMdArrowDropdown, IoMdArrowDropright } from "react-icons/io";
 
 
 const LecturePage: React.FC = () => {
 
     const [sheet, setSheet] = useState<Sheet>({ title: '', content: '' });
+    const [poiNodesCollapsed, setPoiNodesCollapsed] = useState<Record<number, boolean>>({});
+
     
     const timeoutRef = useRef<number | null>(null);
 
@@ -83,75 +84,6 @@ const LecturePage: React.FC = () => {
         };
     }, []);
 
-    
-    const [nodeCoords, setNodeCoords] = useState<{top: number, bottom: number}[]>([]);
-
-    const findAndSetNodeCoords = () => {
-        const nodeCoords: {top: number, bottom: number}[] = [];
-        editor.state.doc.forEach((node, pos) => {
-            const coords = editor.view.coordsAtPos(pos);
-
-            nodeCoords.push({top: coords.top, bottom: coords.bottom})
-        })
-
-        setNodeCoords(nodeCoords);
-    };
-
-    const [nodePositions, setNodePositions] = useState<{pos: number, text: string, type: string}[]>([])
-
-    const getRelativeCoords = () => {
-        const { view } = editor;
-        
-        const editorElement = view.dom as HTMLElement;
-        const editorRect = editorElement.getBoundingClientRect();
-        
-        const coords: {pos: number, text: string, type: string}[] = [];
-
-        editor.state.doc.forEach((node, pos) => {
-            try {
-                const nodeCoords = view.coordsAtPos(pos);
-    
-                const relativeTop = nodeCoords.top - editorRect.top + editorElement.scrollTop;
-    
-                coords.push({
-                    pos: relativeTop,
-                    text: node.textContent,
-                    type: node.type.name,
-                });
-
-                console.log("hola")
-            } catch (e) {
-
-            }
-        });
-
-        return coords;
-    };
-
-    const updatePositions = () => {
-        if (!editor) return;
-        setNodePositions(getRelativeCoords());
-    };
-
-    useEffect(() => {
-        if (!editor) return;
-
-        // Update on content changes
-        editor.on('update', updatePositions);
-        
-        // Update on window resize (since editorRect might change)
-        window.addEventListener('resize', updatePositions);
-
-        // Initial calculation
-        updatePositions();
-
-        return () => {
-        editor.off('update', updatePositions);
-        window.removeEventListener('resize', updatePositions);
-        };
-    }, [editor]);
-
-
     return(
         <div className="sheet-wrapper">
             <div className="sheet-content">
@@ -163,22 +95,6 @@ const LecturePage: React.FC = () => {
                     <MenuBar editor={editor} />
                 </div>
                 <div className="sheet-text-editor">
-                    <div className="gutter">
-                        {nodePositions.map((node) => (
-                            (node.type === "paragraph" || node.type === "header") && node.text.startsWith("!") &&  (
-                                <div 
-                                    key={node.pos}
-                                    className="gutter-item"
-                                    style={{
-                                        top: `${node.pos}px`,
-                                    }} 
-                                    onClick={() => console.log(node.text)}
-                                >
-                                    <IoMdArrowDropdown />
-                                </div>
-                            )
-                        ))}
-                    </div>
                     <div className="editor">
                         <TextEditor editor={editor} />
                     </div>
