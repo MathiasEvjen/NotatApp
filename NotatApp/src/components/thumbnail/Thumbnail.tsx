@@ -5,7 +5,6 @@ import { IoDocumentOutline } from "react-icons/io5";
 import { SlOptions } from "react-icons/sl";
 import { FiBook } from "react-icons/fi";
 import type { SheetType } from "../../types/sheet";
-import { useState } from "react";
 
 interface ThumbnailProps {
     title: string;

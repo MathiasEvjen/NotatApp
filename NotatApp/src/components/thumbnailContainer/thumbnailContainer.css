@@ -1,0 +1,15 @@
+.thumbnail-container-wrapper {
+    height: 13rem;
+    width: 83rem;
+
+    background-color: var(--clr-surface-a10);
+
+    border-top: 4px solid var(--clr-primary-a40);
+    padding: 1.5rem 2rem 1.5rem 2rem;
+
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+
+    box-sizing: border-box;
+}
