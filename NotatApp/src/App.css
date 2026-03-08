@@ -3,6 +3,7 @@
 
 
 body {
+  margin: 0;
   font-family: "Poppins", sans-serif;
   background-color: var(--clr-surface-a0);
   color: var(--clr-light-a0);
@@ -12,6 +13,8 @@ body {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  overflow: hidden;
 }
 
 html {

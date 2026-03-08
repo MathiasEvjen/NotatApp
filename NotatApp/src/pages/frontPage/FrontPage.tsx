@@ -12,14 +12,22 @@ const FrontPage: React.FC = () => {
         {sheetId: 5, title: "Tittel 5", content: "Et eller annet", noteType: "Lecture", createdAt: new Date(), editedAt: new Date()},
         {sheetId: 6, title: "Tittel 6", content: "Et eller annet", noteType: "Lecture", createdAt: new Date(), editedAt: new Date()},
         {sheetId: 7, title: "Tittel 7", content: "Et eller annet", noteType: "Lecture", createdAt: new Date(), editedAt: new Date()},
+        {sheetId: 8, title: "Tittel 8", content: "Et eller annet", noteType: "Lecture", createdAt: new Date(), editedAt: new Date()},
+        {sheetId: 9, title: "Tittel 9", content: "Et eller annet", noteType: "Lecture", createdAt: new Date(), editedAt: new Date()},
+        {sheetId: 10, title: "Tittel 10", content: "Et eller annet", noteType: "Lecture", createdAt: new Date(), editedAt: new Date()},
     ];
 
     const heading: string = "Nylig brukt";
 
     return(
-        <div>
-            <LastEditedContainer sheets={sheets} heading={heading} />
-            <LastEditedContainer sheets={sheets} heading={heading} />
+        <div className="front-page-wrapper">
+            <div className="front-page-side-menu">
+
+            </div>
+            <div className="front-page-content-container">
+                <LastEditedContainer sheets={sheets} heading={heading} />
+                <LastEditedContainer sheets={sheets} heading={heading} />
+            </div>
         </div>
     )
 }
