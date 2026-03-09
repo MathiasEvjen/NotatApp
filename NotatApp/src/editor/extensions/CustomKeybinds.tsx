@@ -533,8 +533,8 @@ export const CustomKeybinds = Extension.create({
             "Alt-ArrowUp": () => {
                 const { 
                     isCodeblock, isTopLevelParagraph, 
-                    $from, state, view, node, lines,
-                    fromInCode, toInCode
+                    $from, state, view, lines,
+                    fromInCode, toInCode,
                 } = getContext();
 
                 if (isTopLevelParagraph) {
@@ -630,8 +630,8 @@ export const CustomKeybinds = Extension.create({
                     tr.setSelection(
                         TextSelection.create(
                             tr.doc,
-                            fromInCode - lineAbove.length + 1,
-                            toInCode - lineAbove.length + 1
+                            $from.before() + fromInCode - lineAbove.length + 1,
+                            $from.before() + toInCode - lineAbove.length + 1
                         )
                     )
 
@@ -705,13 +705,58 @@ export const CustomKeybinds = Extension.create({
                         prevTemptText = tempText;
                     }
 
-                    if (fromLine === 0) return true;
+                    if (toLine === lines.length-1) return true;
 
                     const tr: Transaction = state.tr;
 
                     tr.deleteRange($from.before(), $from.after());
 
-                    // TODO: Fullføre. Jeg er sliten
+                    let newText: string = "";
+                    let lineUnder: string = lines[toLine + 1];
+                    for (let i = 0; i < lines.length; i++) {
+                        if (i === toLine + 1) {
+                            continue;
+                        } else if (i === toLine && fromLine === toLine && toLine + 1 === lines.length - 1) {
+                            newText += lineUnder + "\n";
+                            newText += lines[i].replace("\n", "")
+                        } else if (i === fromLine) {
+                            if (toLine + 1 === lines.length - 1) {
+                                newText += lineUnder + "\n";
+                                newText += lines[i];
+                            } else {
+                                newText += lineUnder;
+                                newText += lines[i];
+                            }
+                        } else if (i === toLine && toLine + 1 === lines.length - 1) {
+                            newText += lines[i].replace("\n", "")
+                            console.log("plong")
+                        } else {
+                            newText += lines[i];
+                        }
+                    }
+
+                    tr.insert(
+                        $from.before(),
+                        state.schema.nodes.codeBlock.create(
+                            null,
+                            state.schema.text(newText)
+                        )
+                    )
+
+                    const newFromInCode: number = toLine + 1 === lines.length-1 ? fromInCode + lines[toLine + 1].length + 2 : fromInCode + lines[toLine + 1].length + 1;
+                    const newToInCode: number = toLine + 1 === lines.length-1 ? toInCode + lines[toLine + 1].length + 2 : toInCode + lines[toLine + 1].length + 1;
+
+                    tr.setSelection(
+                        TextSelection.create(
+                            tr.doc,
+                            $from.before() + newFromInCode,
+                            $from.before() + newToInCode
+                        )
+                    )
+
+                    view.dispatch(tr);
+
+                    return true;
                 }
                 
                 return false;
