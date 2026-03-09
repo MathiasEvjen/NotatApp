@@ -900,6 +900,38 @@ export const CustomKeybinds = Extension.create({
                 }
                 return false;
             },
+            '"': () => {
+                const { 
+                    isCodeblock, from, to
+                } = getContext();
+
+                this.storage.isInsideTab = true;
+
+                if (isCodeblock) {
+                   if (from === to) {
+                        return this.editor.chain().insertContent('""').setTextSelection(from + 1).run();
+                    } else {
+                        return this.editor.chain().insertContentAt(from, '"').insertContentAt(to+1, '"').setTextSelection({ from: from+1, to: to+1 }).run();
+                    }
+                }
+                return false;
+            },
+            "'": () => {
+                const { 
+                    isCodeblock, from, to
+                } = getContext();
+
+                this.storage.isInsideTab = true;
+
+                if (isCodeblock) {
+                   if (from === to) {
+                        return this.editor.chain().insertContent("''").setTextSelection(from + 1).run();
+                    } else {
+                        return this.editor.chain().insertContentAt(from, "'").insertContentAt(to+1, "'").setTextSelection({ from: from+1, to: to+1 }).run();
+                    }
+                }
+                return false;
+            },
             "ArrowUp": () => {
                 const { 
                     isCodeblock
@@ -943,7 +975,90 @@ export const CustomKeybinds = Extension.create({
                 }
 
                 return false;
-            }
+            },
+
+            // TODO: Rydde opp i denne funksjonen!!
+            "Mod-d": () => {
+                const { commands, node, from, $from } = getContext();
+
+                const text: string = node.textContent;
+
+                const splitText: string[] = text.split(/(?<=\s)/);
+
+                const fromInText: number = from - $from.before() - 1;
+
+                let selectedWord: number = 0;
+                let prevTempText: string = "";
+                let tempText: string = "";
+                for (let i = 0; i < splitText.length; i++) {
+                    tempText += splitText[i];
+                    if (fromInText >= prevTempText.length && fromInText <= tempText.length ) {
+                        selectedWord = i;
+                        break;
+                    }
+                    prevTempText = tempText;
+                }
+
+                let newFrom: number = $from.before() + prevTempText.length + 1;
+                let newTo: number = $from.before() + tempText.length;
+
+                let wordToHightlight: string = splitText[selectedWord];
+
+                if (wordToHightlight.includes(".")) {
+                    const splitWord: string[] = wordToHightlight.split(/(?<=\.)/);
+
+                    const fromInWord: number = fromInText - prevTempText.length;
+
+                    selectedWord = 0;
+                    let prevTempWord: string = "";
+                    let tempWord: string = "";
+                    for (let i = 0; i < splitWord.length; i++) {
+                        tempWord += splitWord[i];
+                        if (fromInWord >= prevTempWord.length && fromInWord <= tempWord.length) {
+                            selectedWord = i;
+                            break;
+                        }
+                        prevTempWord = tempWord;
+                    }
+
+                    newFrom += prevTempWord.length;
+                    newTo = newFrom + tempWord.length - 1;
+
+                    wordToHightlight = splitWord[selectedWord];  
+
+                    if (wordToHightlight.includes("(") || wordToHightlight.includes("[") || wordToHightlight.includes("{")) {
+
+                        let lengthWithoutBracket: number = 0;
+                        for (let i = 0; i < wordToHightlight.length; i++) {
+                            if (wordToHightlight[i] === "(") {
+                                lengthWithoutBracket = i;
+                                break;
+                            }
+                        }
+
+                        newTo = newFrom + lengthWithoutBracket
+
+                        commands.setTextSelection({ from: newFrom, to: newTo })
+                        
+                    } else {
+                        if (selectedWord === splitWord.length-1) {
+                            commands.setTextSelection({ from: newFrom, to: newTo + 1 })
+                        } else {
+                            commands.setTextSelection({ from: newFrom, to: newTo })
+                        }
+                    }
+
+                } else {
+                    if (selectedWord === splitText.length-1 && splitText[selectedWord][splitText[selectedWord].length-1] !== " ") {
+                        commands.setTextSelection({ from: newFrom, to: newTo + 1 })
+                    } else {
+                        commands.setTextSelection({ from: newFrom, to: newTo })
+                    }
+                }
+
+
+                return true;
+            },
         }
     }
 })
