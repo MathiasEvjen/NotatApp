@@ -16,6 +16,7 @@ import { CustomAttributes } from "./extensions/CustomAttributes";
 import { ListKit } from '@tiptap/extension-list';
 import { TableKit } from '@tiptap/extension-table'
 
+
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
 import css from 'highlight.js/lib/languages/css'
 import js from 'highlight.js/lib/languages/javascript'
@@ -23,7 +24,8 @@ import ts from 'highlight.js/lib/languages/typescript'
 import html from 'highlight.js/lib/languages/xml'
 import java from 'highlight.js/lib/languages/java'
 import { all, createLowlight } from 'lowlight'
-import { CustomHeader } from "./extensions/CustomHeader";
+import Heading from '@tiptap/extension-heading'
+import type { Node } from "@tiptap/pm/model";
 
 const lowlight = createLowlight(all)
 
@@ -55,7 +57,11 @@ export const extensions = [
             defaultLanguage: "java",
         }),
         CustomAttributes,
-        CustomHeader.configure({
-            levels: [1, 2, 3]
+        Heading.configure({
+            levels: [1, 2, 3],
+            HTMLAttributes: (node: Node) => ({
+                'data-toc-id': node.attrs.id || node.attrs.text?.replace(/\s+/g, '-').toLowerCase()
+            }),
         })
+        
     ];

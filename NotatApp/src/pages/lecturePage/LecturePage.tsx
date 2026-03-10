@@ -4,15 +4,21 @@ import type { Sheet } from "../../types/sheet";
 import "./lecturePage.css";
 import { useEditor, type Editor } from "@tiptap/react";
 import { extensions } from "../../editor/Extensions";
+import { getHierarchicalIndexes, TableOfContents, type TableOfContentData } from '@tiptap/extension-table-of-contents'
 import { MenuBar } from "./MenuBar";
 import Sidebar from "./Sidebar";
+import React from "react";
+
 
 
 const LecturePage: React.FC = () => {
 
-    const [sheet, setSheet] = useState<Sheet>({ title: '', content: '' });
+    const MemorizedSidebar = React.memo(Sidebar)
+
+    const [sheet, setSheet] = useState<Sheet>({ title: '', content: '', noteType: "Lecture", createdAt: new Date(), editedAt: new Date() });
     const [poiNodesCollapsed, setPoiNodesCollapsed] = useState<Record<number, boolean>>({});
 
+    const [anchors, setAnchors] = useState<TableOfContentData>([]);
     
     const timeoutRef = useRef<number | null>(null);
 
@@ -30,7 +36,8 @@ const LecturePage: React.FC = () => {
 
 
     const editor: Editor = useEditor({
-        extensions: extensions.map(ext => {
+        extensions: [ 
+            ...extensions.map(ext => {
             if (ext.name === 'math') {
             return ext.configure({
                 blockOptions: {
@@ -61,7 +68,16 @@ const LecturePage: React.FC = () => {
             })
         }
         return ext
-    }),
+        }),
+        TableOfContents.configure({
+            anchorTypes: ["heading"],
+            getIndex: getHierarchicalIndexes,
+            scrollParent: () => document.querySelector('.sheet-text-editor') as HTMLElement,
+            onUpdate(anchors) {
+                setAnchors(anchors);
+            },
+        })
+    ],
         content: `${sheet.content}`,
         onUpdate({ editor }) {
             if (!editor) return;
@@ -102,7 +118,7 @@ const LecturePage: React.FC = () => {
             </div>
 
             <div className="sheet-sidebar">
-                <Sidebar editor={editor} />
+                <MemorizedSidebar editor={editor} anchors={anchors} />
             </div>
         </div>
     )

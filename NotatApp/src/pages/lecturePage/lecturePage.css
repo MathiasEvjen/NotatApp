@@ -11,14 +11,13 @@
 }
 
 .sheet-content {
+    margin-top: 0.5rem;
     width: 100%;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-    
-    overflow-y: scroll;
 
-    scrollbar-width: none;
+    
 }
 
 .sheet-header {
@@ -52,6 +51,8 @@
     height: 100%;
     display: flex;
     flex-direction: row;
+    overflow-y: scroll;
+    scrollbar-width: none;
 }
 
 .sheet-text-editor .gutter {
@@ -93,8 +94,10 @@
 
 .sheet-sidebar {
     width: 25%;
-    height: 98vh;
+    max-width: 25%;
+    height: 100vh;
 
     border-left: 3px solid var(--clr-surface-a40);
+    box-sizing: border-box;
 }
 

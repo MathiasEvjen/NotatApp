@@ -1,56 +1,76 @@
-import { useEffect, useState } from "react";
 import "./sidebar.css";
 import type { Editor } from "@tiptap/react";
-import type { Node } from "@tiptap/pm/model";
+import type { TableOfContentData, TableOfContentDataItem } from "@tiptap/extension-table-of-contents";
+import { TextSelection } from "@tiptap/pm/state";
+import { useEffect } from "react";
 
-type PointOfInterest = {
-    text: string;
-    pos: number;
+interface ToCItemProps {
+    item: TableOfContentDataItem
+    onItemClick: (e: any, id: string) => void;
+}
+
+export const ToCItem: React.FC<ToCItemProps> = ({ item, onItemClick }) => {
+    return (
+        <div
+            className={
+                item.isActive
+                    ? "is-active"
+                    : item.isScrolledOver
+                    ? "is-scrolled-over"
+                    : ""
+                
+            }
+            style={{
+                '--level': item.level,
+            } as React.CSSProperties}
+            onClick={e => onItemClick(e, item.id)}
+        >
+            <a href={`#${item.id}`} >
+                {item.textContent}
+            </a>
+        </div>
+    )
 }
 
 interface SidebarProps {
     editor: Editor;
+    anchors: TableOfContentData;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ editor }) => {
+const Sidebar: React.FC<SidebarProps> = ({ editor, anchors }) => {
 
-    const [pointsOfInterest, setPointsOfInterest] = useState<PointOfInterest[]>([]);
+    const onItemClick = (e: any, id: string) => {
+        e.preventDefault();
 
-    const handlePointOfInterestClick = (pos: number) => {
-        editor.commands.focus(pos);
+        const element = editor.view.dom.querySelector(`[data-toc-id="${id}"]`) as HTMLElement;
+        if (!element) return;
+
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        
+        // Move cursor
+        const pos = editor.view.posAtDOM(element, 0);
+        const tr = editor.view.state.tr.setSelection(TextSelection.create(editor.view.state.doc, pos));
+        editor.view.dispatch(tr);
+        editor.view.focus();
+
+        // Update URL
+        history.replaceState(null, "", `#${id}`);
     };
 
     useEffect(() => {
-        // handlePointsOfInterest();
-
-        const pointsOfInteresHandler = () => {
-            const newPointsOfInterest: PointOfInterest[] = [];
-    
-            const doc: Node = editor.state.doc;
-    
-            doc.forEach((node, offset, index) => {
-                const text: string = node.textContent;
-                if (node.type.name === "heading" && node.textContent.trim().length > 0) {
-                    newPointsOfInterest.push({text: text, pos: offset + text.length + 1});
-                }
-            })
-
-            setPointsOfInterest(newPointsOfInterest);
-        }
-
-        editor.on('update', pointsOfInteresHandler)
-
-    }, [editor]);
+        const active = document.querySelector(".table-of-contents .is-active");
+        active?.scrollIntoView({ block: "nearest" });
+    }, [anchors]);
 
     return(
-        <div className="sidebar-container">
-            {pointsOfInterest.map(poi => (
-                <div 
-                    key={poi.pos}
-                    className="point-of-interest"
-                    onClick={() => handlePointOfInterestClick(poi.pos)}
-                    >{poi.text}</div>
-            ))}
+        <div className="sidebar">
+            <div className="sidebar-options">
+                <div className="table-of-contents">
+                    {anchors.map((anchor) => (
+                        <ToCItem onItemClick={onItemClick} key={anchor.id} item={anchor} />
+                    ))}
+                </div>
+            </div>
         </div>
     )
 }
