@@ -13,17 +13,23 @@
     height: 100%;
 
     background-color: var(--clr-surface-a10);
+    flex-shrink: 0;
     
 }
 
 .front-page-content-container {
-    margin: 2rem;
+    margin: 3rem 5rem 3rem 5rem;
     width: 100%;
+
+    padding: 2rem;
 
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
+
+    background-color: var(--clr-surface-a20);
+    border-radius: 25px;
 
     overflow-y: scroll;
 

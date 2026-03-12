@@ -1,4 +1,5 @@
 import type { Sheet } from "../../types/sheet";
+import Thumbnail from "../thumbnail/Thumbnail";
 import ThumbnailContainer from "../thumbnailContainer/ThumbnailContainer";
 import "./lastEditedContainer.css";
 
@@ -11,7 +12,13 @@ const LastEditedContainer: React.FC<LastEditedContainerProps> = ({ heading, shee
     return (
         <div className="last-edited-container">
             {heading}
-            <ThumbnailContainer sheets={sheets} />
+            {/* <ThumbnailContainer sheets={sheets} /> */}
+            {/* <Thumbnail title="Dette er en forelesning" date={new Date()} type="Lecture"/> */}
+            <div className="last-edited-content">
+                {sheets.map(sheet => (
+                    <Thumbnail title={sheet.title} date={sheet.createdAt} type={sheet.noteType} />
+                ))}
+            </div>
         </div>
     )
 }

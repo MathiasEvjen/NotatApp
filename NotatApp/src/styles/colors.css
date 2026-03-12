@@ -1,42 +1,16 @@
 :root {
-
-    /* --white: #ffffff;
-    --offwhite: #EEEEEE;
-    --dark-grey: #222831;
-    --medium-grey: #393E46;
-    --light-grey: #999999;
-    --blue: #00ADB5;
-    --transparent-grey: #99999949; */
-    /* --background: #1A1A1A;
-    --text: #F0F0F0;
-    --primary: var(--blue);
-} */
-
-    /* --background: #1A1A1A;
-    --primary: #00ADB5;
-    --secondary: #93a3b1;
-    --tertiary: #d2d7dc;
-    --accent: #ca0f25;
-    --white: #f4f7f8;
-    
-
-    --text: var(--white);
-
-     */
-
-     /** Base colors */
     /** Base colors */
     --clr-dark-a0: #000000;
     --clr-light-a0: #ffffff;
     --clr-light-a10:rgba(209, 209, 209, 0.795)f;
 
     /** Theme primary colors */
-    --clr-primary-a0: #6890b6;
-    --clr-primary-a10: #799cbe;
-    --clr-primary-a20: #8aa8c6;
-    --clr-primary-a30: #9bb4ce;
-    --clr-primary-a40: #acc0d6;
-    --clr-primary-a50: #bcccde;
+    --clr-primary-a0: #34bf9a;
+    --clr-primary-a10: #55c7a5;
+    --clr-primary-a20: #6fceb0;
+    --clr-primary-a30: #86d5bb;
+    --clr-primary-a40: #9cdcc6;
+    --clr-primary-a50: #b0e4d1;
 
     /** Theme surface colors */
     --clr-surface-a0: #1a1a1a;
@@ -47,12 +21,12 @@
     --clr-surface-a50: #909090;
 
     /** Theme tonal surface colors */
-    --clr-surface-tonal-a0: #222427;
-    --clr-surface-tonal-a10: #37383b;
-    --clr-surface-tonal-a20: #4c4e51;
-    --clr-surface-tonal-a30: #646567;
-    --clr-surface-tonal-a40: #7b7d7f;
-    --clr-surface-tonal-a50: #949597;
+    --clr-surface-tonal-a0: #202825;
+    --clr-surface-tonal-a10: #353c39;
+    --clr-surface-tonal-a20: #4b524f;
+    --clr-surface-tonal-a30: #626866;
+    --clr-surface-tonal-a40: #7a807d;
+    --clr-surface-tonal-a50: #939896;
 
     /** Success colors */
     --clr-success-a0: #22946e;
@@ -73,10 +47,4 @@
     --clr-info-a0: #21498a;
     --clr-info-a10: #4077d1;
     --clr-info-a20: #92b2e5;
-
-    /** Examples */
-    .bg-primary {
-        color: var(--clr-primary-a50);
-        background-color: var(--clr-surface-a0);
-    }
 }

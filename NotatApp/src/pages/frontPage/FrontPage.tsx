@@ -17,7 +17,7 @@ const FrontPage: React.FC = () => {
         {sheetId: 10, title: "Tittel 10", content: "Et eller annet", noteType: "Lecture", createdAt: new Date(), editedAt: new Date()},
     ];
 
-    const heading: string = "Nylig brukt";
+    const heading: string = "Recently edited";
 
     return(
         <div className="front-page-wrapper">
@@ -25,8 +25,7 @@ const FrontPage: React.FC = () => {
 
             </div>
             <div className="front-page-content-container">
-                <LastEditedContainer sheets={sheets} heading={heading} />
-                <LastEditedContainer sheets={sheets} heading={heading} />
+                <LastEditedContainer heading={heading} sheets={sheets}/>
             </div>
         </div>
     )

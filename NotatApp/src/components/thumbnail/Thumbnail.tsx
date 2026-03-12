@@ -1,10 +1,9 @@
 import "./thumbnail.css";
 import { format } from "date-fns";
-import { FaRegCheckSquare, FaRegEdit } from "react-icons/fa";
-import { IoDocumentOutline } from "react-icons/io5";
-import { SlOptions } from "react-icons/sl";
-import { FiBook } from "react-icons/fi";
 import type { SheetType } from "../../types/sheet";
+import Lecture from "../../assets/lecture.svg";
+import Log from "../../assets/log.svg";
+import Checklist from "../../assets/checklist.svg";
 
 interface ThumbnailProps {
     title: string;
@@ -21,27 +20,20 @@ const Thumbnail: React.FC<ThumbnailProps> = ({ title, date, type }) => {
         <div className="thumbnail-wrapper">
             <div className="thumbnail-type-icon">
                 {type === "Lecture" ? (
-                    <IoDocumentOutline />
+                    <img src={Lecture} />
                 ) : type === "List" ? (
-                    <FaRegCheckSquare />
+                    <img src={Checklist} />
                 ) : type === "Log" ? (
-                    <FiBook />
+                    <img src={Log} />
                 ) : ""}
             </div>
-            
-
-            <div className="thumbnail-container">
+            <div className="thumbnail-info">
                 <div className="thumbnail-title">
                     {title}
                 </div>
-                <div className="thumbnail-edit">
-                    <FaRegEdit />
+                <div className="thumbnail-date">
+                    {formattedDate}
                 </div>
-            </div>
-
-            <div className="thumbnail-bottom-bar">
-                {formattedDate}
-                <SlOptions />
             </div>
         </div>
     )

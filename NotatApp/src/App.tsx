@@ -21,8 +21,8 @@ function App() {
 
   return (
     <>
-      <LecturePage />
-      {/* <FrontPage /> */}
+      {/* <LecturePage /> */}
+      <FrontPage />
     </>
   )
 }
