@@ -1,7 +1,7 @@
 import "./thumbnail.css";
 import { format } from "date-fns";
 import type { SheetType } from "../../types/sheet";
-import Lecture from "../../assets/lecture.svg";
+import Document from "../../assets/document.svg";
 import Log from "../../assets/log.svg";
 import Checklist from "../../assets/checklist.svg";
 
@@ -20,7 +20,7 @@ const Thumbnail: React.FC<ThumbnailProps> = ({ title, date, type }) => {
         <div className="thumbnail-wrapper">
             <div className="thumbnail-type-icon">
                 {type === "Lecture" ? (
-                    <img src={Lecture} />
+                    <img src={Document} />
                 ) : type === "List" ? (
                     <img src={Checklist} />
                 ) : type === "Log" ? (

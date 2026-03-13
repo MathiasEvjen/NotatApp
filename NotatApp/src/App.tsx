@@ -3,7 +3,7 @@ import "./styles/colors.css";
 import "./styles/buttons.css";
 import LecturePage from './pages/lecturePage/LecturePage';
 import type { Sheet, SheetType } from './types/sheet';
-import DocumentContainer from './components/thumbnailContainer/ThumbnailContainer';
+import DocumentContainer from './components/thumbnail/ThumbnailContainer';
 import FrontPage from './pages/frontPage/FrontPage';
 
 

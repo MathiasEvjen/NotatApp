@@ -1,6 +1,6 @@
 import type { Sheet } from "../../types/sheet";
 import Thumbnail from "../thumbnail/Thumbnail";
-import ThumbnailContainer from "../thumbnailContainer/ThumbnailContainer";
+import ThumbnailContainer from "../thumbnail/ThumbnailContainer";
 import "./lastEditedContainer.css";
 
 interface LastEditedContainerProps {
@@ -11,14 +11,14 @@ interface LastEditedContainerProps {
 const LastEditedContainer: React.FC<LastEditedContainerProps> = ({ heading, sheets }) => {
     return (
         <div className="last-edited-container">
-            {heading}
-            {/* <ThumbnailContainer sheets={sheets} /> */}
+            <p>Nylig brukte</p>
+            <ThumbnailContainer sheets={sheets} />
             {/* <Thumbnail title="Dette er en forelesning" date={new Date()} type="Lecture"/> */}
-            <div className="last-edited-content">
+            {/* <div className="last-edited-content">
                 {sheets.map(sheet => (
                     <Thumbnail title={sheet.title} date={sheet.createdAt} type={sheet.noteType} />
                 ))}
-            </div>
+            </div> */}
         </div>
     )
 }

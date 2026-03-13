@@ -1,11 +1,14 @@
 import LastEditedContainer from "../../components/lastEditedContainer/LastEditedContainer";
+import SearchBar from "../../components/searchBar/SearchBar";
+import SideMenu from "../../components/sideMenu/SideMenu";
+import Todos from "../../components/todos/Todos";
 import type { Sheet } from "../../types/sheet";
 import "./frontPage.css";
 
 const FrontPage: React.FC = () => {
 
     const sheets: Sheet[] = [
-        {sheetId: 1, title: "Tittel 1", content: "Et eller annet", noteType: "Lecture", createdAt: new Date(), editedAt: new Date()},
+        {sheetId: 1, title: "Dett er en litt lenger tittel", content: "Et eller annet", noteType: "Lecture", createdAt: new Date(), editedAt: new Date()},
         {sheetId: 2, title: "Tittel 2", content: "Et eller annet", noteType: "Log", createdAt: new Date(), editedAt: new Date()},
         {sheetId: 3, title: "Tittel 3", content: "Et eller annet", noteType: "Lecture", createdAt: new Date(), editedAt: new Date()},
         {sheetId: 4, title: "Tittel 4", content: "Et eller annet", noteType: "List", createdAt: new Date(), editedAt: new Date()},
@@ -22,10 +25,29 @@ const FrontPage: React.FC = () => {
     return(
         <div className="front-page-wrapper">
             <div className="front-page-side-menu">
-
+                <SideMenu />
             </div>
             <div className="front-page-content-container">
                 <LastEditedContainer heading={heading} sheets={sheets}/>
+                <SearchBar />
+                <div className="front-page-content">
+                    <div className="front-page-surface-row">
+                        <div className="front-page-surface">
+                            <p>Forelesninger</p>
+                        </div>
+                    </div>
+                    <div className="front-page-surface-row">
+                        <div className="front-page-surface">
+                            <p>Loggføringer</p>
+                        </div>
+                        <div className="front-page-surface">
+                            <p>Huskelister</p>
+                        </div>
+                    </div>
+                    <div className="front-page-todos-container">
+                        <Todos />
+                    </div>
+                </div>
             </div>
         </div>
     )
