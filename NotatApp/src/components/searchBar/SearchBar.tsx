@@ -12,7 +12,7 @@ const SearchBar: React.FC = () => {
                 <input 
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Search for a document..." />
+                    placeholder="Søk etter et dokument..." />
                 <IoSearch />
             </div>
         </div>

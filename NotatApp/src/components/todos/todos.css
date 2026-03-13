@@ -102,6 +102,7 @@
     border-radius: 10px;
 
     box-sizing: border-box;
+    user-select: none;
 }
 
 .todo-entry p {
@@ -125,10 +126,10 @@
     color: var(--clr-primary-a20);
 }
 
-.todo-entry-checkbox:hover {
+.todo-entry:hover {
     cursor: pointer;
 }
 
-.todo-entry-checkbox:hover svg {
+.todo-entry:hover svg {
     color: var(--clr-primary-a0);
 }
