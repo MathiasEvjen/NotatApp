@@ -12,6 +12,7 @@ namespace Backend.Data
 
         public DbSet<Sheet> Sheets { get; set; }
         public DbSet<LectureCourse> LectureCourses { get; set; }
+        public DbSet<Todo> Todos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

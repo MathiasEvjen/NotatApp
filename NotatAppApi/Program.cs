@@ -29,6 +29,8 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddScoped<ISheetRepository, SheetRepository>();
+builder.Services.AddScoped<ILectureCourseRepository, LectureCourseRepository>();
+builder.Services.AddScoped<ITodoRepository, TodoRepository>();
 
 var loggerConfiguration = new LoggerConfiguration()
     .MinimumLevel.Information()
