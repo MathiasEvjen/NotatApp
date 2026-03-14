@@ -4,7 +4,7 @@ import type { Sheet } from "./types/sheet";
 import type { Todo } from "./types/todo";
 
 const api = axios.create({
-    baseURL: "http://localhost:5106",
+    baseURL: "http://100.79.81.34:5106/",
     headers: {
         "Content-Type": "application/json"
     }
