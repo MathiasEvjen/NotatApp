@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import "./todos.css";
 import { MdOutlineAddBox } from "react-icons/md";
-import { IoMdCheckboxOutline } from "react-icons/io";
-import { MdCheckBoxOutlineBlank } from "react-icons/md";
 import { LuTrash2 } from "react-icons/lu";
 import type { Todo } from "../../types/todo";
 import { createTodo, deleteTodo, fetchTodos, updateTodo } from "../../api";
@@ -121,7 +119,11 @@ const Todos: React.FC = () => {
                     {todos && todos
                     .filter(todo => todo.isCompleted)
                     .map(todo => (
-                        <TodoItem todo={todo} handleTodoCompleted={handleTodoCompleted} handleDeleteTodo={handleDeleteTodo} />
+                        <TodoItem 
+                            key={todo.todoId ? todo.todoId : todo.tempId}
+                            todo={todo} 
+                            handleTodoCompleted={handleTodoCompleted} 
+                            handleDeleteTodo={handleDeleteTodo} />
                     ))}
                     </>
                 ) : (
@@ -129,7 +131,11 @@ const Todos: React.FC = () => {
                     {todos && todos
                     .filter(todo => !todo.isCompleted)
                     .map(todo => (
-                        <TodoItem todo={todo} handleTodoCompleted={handleTodoCompleted} handleDeleteTodo={handleDeleteTodo} />
+                        <TodoItem 
+                            key={todo.todoId ? todo.todoId : todo.tempId}
+                            todo={todo} 
+                            handleTodoCompleted={handleTodoCompleted} 
+                            handleDeleteTodo={handleDeleteTodo} />
                     ))}
                     </>
                 )}

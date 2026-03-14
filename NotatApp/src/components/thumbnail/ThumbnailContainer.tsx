@@ -14,19 +14,19 @@ const ThumbnailContainer: React.FC<ThumbnailContainerProps> = ({ sheets }) => {
         const container = containerRef.current;
         if (!container) return;
 
-        const handleWheel = (event: WheelEvent) => {
-            if (container.contains(event.target as Node)) {
-                event.preventDefault();
+        // const handleWheel = (event: WheelEvent) => {
+        //     if (container.contains(event.target as Node)) {
+        //         event.preventDefault();
 
-                container.scrollLeft += event.deltaY;
-            }
-        };
+        //         container.scrollLeft += event.deltaY;
+        //     }
+        // };
 
-        container.addEventListener("wheel", handleWheel, { passive: false });
+        // container.addEventListener("wheel", handleWheel, { passive: false });
 
-        return () => {
-            container.removeEventListener("wheel", handleWheel);
-        };
+        // return () => {
+        //     container.removeEventListener("wheel", handleWheel);
+        // };
     }, []);
 
     return(

@@ -11,8 +11,7 @@ interface TodoItemProps {
 
 const TodoItem: React.FC<TodoItemProps> = ({ todo, handleTodoCompleted, handleDeleteTodo }) => {
     return(
-        <div 
-            key={todo.todoId ? todo.todoId : todo.tempId} 
+        <div  
             className="todo-entry" 
             onClick={() => handleTodoCompleted(todo)}
         >

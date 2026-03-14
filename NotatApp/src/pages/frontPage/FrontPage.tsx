@@ -1,6 +1,5 @@
 import LastEditedContainer from "../../components/lastEditedContainer/LastEditedContainer";
 import SearchBar from "../../components/searchBar/SearchBar";
-import SideMenu from "../../components/sideMenu/SideMenu";
 import Todos from "../../components/todos/Todos";
 import type { Sheet } from "../../types/sheet";
 import "./frontPage.css";
@@ -20,33 +19,26 @@ const FrontPage: React.FC = () => {
         {sheetId: 10, title: "Tittel 10", content: "Et eller annet", noteType: "Lecture", createdAt: new Date(), editedAt: new Date()},
     ];
 
-    const heading: string = "Recently edited";
-
     return(
-        <div className="front-page-wrapper">
-            <div className="front-page-side-menu">
-                <SideMenu />
-            </div>
-            <div className="front-page-content-container">
-                <LastEditedContainer sheets={sheets}/>
-                <SearchBar />
-                <div className="front-page-content">
-                    <div className="front-page-surface-row">
-                        <div className="front-page-surface">
-                            <p>Forelesninger</p>
-                        </div>
+        <div className="front-page-content-container">
+            <LastEditedContainer sheets={sheets}/>
+            <SearchBar />
+            <div className="front-page-content">
+                <div className="front-page-surface-row">
+                    <div className="front-page-surface">
+                        <p>Forelesninger</p>
                     </div>
-                    <div className="front-page-surface-row">
-                        <div className="front-page-surface">
-                            <p>Loggføringer</p>
-                        </div>
-                        <div className="front-page-surface">
-                            <p>Huskelister</p>
-                        </div>
+                </div>
+                <div className="front-page-surface-row">
+                    <div className="front-page-surface">
+                        <p>Loggføringer</p>
                     </div>
-                    <div className="front-page-todos-container">
-                        <Todos />
+                    <div className="front-page-surface">
+                        <p>Huskelister</p>
                     </div>
+                </div>
+                <div className="front-page-todos-container">
+                    <Todos />
                 </div>
             </div>
         </div>
