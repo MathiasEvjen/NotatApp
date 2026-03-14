@@ -168,10 +168,13 @@
 
 .todo-entry {
     width: 33rem;
-    height: 2.5rem;
+    min-height: 2.5rem;
 
     padding-left: 0.5rem;
     padding-right: 0.5rem;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+
     margin-right: 0.5rem;
 
     display: flex;
@@ -196,6 +199,7 @@
 
 .todo-content {
     width: 100%;
+    height: auto;
 
     display: flex;
     flex-direction: row;
@@ -221,6 +225,7 @@
 
 .todo-content:hover {
     cursor: pointer;
+    color: var(--clr-primary-a40)
 }
 
 .todo-content:hover svg {

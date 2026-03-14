@@ -115,7 +115,7 @@ const Todos: React.FC = () => {
                             value={newTodo} 
                             onChange={(e) => setNewTodo(e.target.value)} 
                             onKeyDown={(e) => handleKeyDown(e)}
-                            maxLength={48}
+                            // maxLength={48}
                             placeholder="Opprett nytt gjøremål..."/>
                         <MdOutlineAddBox onClick={() => createAndSetTodo}/>
                     </div>
