@@ -10,26 +10,6 @@
     box-sizing: border-box;
 }
 
-.thumbnail-container-left {
-    height: 100%;
-    width: 5rem;
-
-    border-top: 4px solid transparent;
-    border-image: linear-gradient(to right, var(--clr-surface-a0), var(--clr-primary-a40)) 1;
-    background-image: linear-gradient(to right, var(--clr-surface-a0), var(--clr-surface-a10));
-    box-sizing: border-box;
-}
-
-.thumbnail-container-right {
-    height: 100%;
-    width: 5rem;
-
-    border-top: 4px solid transparent;
-    border-image: linear-gradient(to left, var(--clr-surface-a0), var(--clr-primary-a40)) 1;
-    background-image: linear-gradient(to left, var(--clr-surface-a0), var(--clr-surface-a10));
-    box-sizing: border-box;
-}
-
 .thumbnail-container-content {
     height: 100%;
     width: 100%;

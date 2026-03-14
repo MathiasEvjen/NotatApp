@@ -36,6 +36,12 @@ const Todos: React.FC = () => {
         )
     };
 
+    const handleKeyDown = (event: any) => {
+        if (event.key === "Enter") {
+            createAndSetTodo();
+        }
+    };
+
     const createAndSetTodo = async () => {
         const todo: Todo = {
             content: newTodo,
@@ -108,8 +114,10 @@ const Todos: React.FC = () => {
                             className="todos-input" 
                             value={newTodo} 
                             onChange={(e) => setNewTodo(e.target.value)} 
-                            maxLength={48}/>
-                        <MdOutlineAddBox onClick={createAndSetTodo}/>
+                            onKeyDown={(e) => handleKeyDown(e)}
+                            maxLength={48}
+                            placeholder="Opprett nytt gjøremål..."/>
+                        <MdOutlineAddBox onClick={() => createAndSetTodo}/>
                     </div>
                 </div>
             </div>
