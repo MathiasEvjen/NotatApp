@@ -1,6 +1,7 @@
 import axios from "axios";
 import type { LectureCourse } from "./types/lectureCourse";
 import type { Sheet } from "./types/sheet";
+import type { Todo } from "./types/todo";
 
 const api = axios.create({
     baseURL: "http://localhost:5106",
@@ -64,5 +65,34 @@ export const updateSheet = async (id: number, sheet: Sheet): Promise<Sheet> => {
 
 export const deleteSheet = async (id: number) => {
     const response = await api.delete(`/api/Sheet/delete/${id}`);
+    return response.data;
+};
+
+//  -----------------------
+//  Sheet methods
+//  -----------------------
+
+export const fetchTodos = async (): Promise<Todo[]> => {
+    const response = await api.get(`/api/Todo/getAll`);
+    return response.data;
+};
+
+export const fetchTodoById = async (id: number): Promise<Todo> => {
+    const response = await api.get(`/api/Todo/getById/${id}`);
+    return response.data;
+};
+
+export const createTodo = async (todo: Todo): Promise<Todo> => {
+    const response = await api.post(`/api/Todo/create/`, todo);
+    return response.data;
+};
+
+export const updateTodo = async (id: number, todo: Todo): Promise<Todo> => {
+    const response = await api.put(`/api/Todo/update/${id}`, todo);
+    return response.data;
+};
+
+export const deleteTodo = async (id: number) => {
+    const response = await api.delete(`/api/Todo/delete/${id}`);
     return response.data;
 };
