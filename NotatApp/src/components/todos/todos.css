@@ -34,8 +34,80 @@
     justify-content: space-between;
 }
 
+.todos-header-left {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+}
+
+.todos-header-switch {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+
+    user-select: none;
+}
+
+.todos-header-switch-entry {
+    font-size: 18px;
+    color: var(--clr-surface-a60);
+
+    border-radius: 10px;
+    padding: 0.3rem;
+}
+
+.todos-header-switch-entry.active {
+    color: var(--clr-light-a0);
+    background-color: var(--clr-surface-a20);
+}
+
+.todos-header-switch-entry:hover {
+    background-color: var(--clr-surface-a20);
+    cursor: pointer;
+}
+
+.todos-header-right {
+    height: 100%;
+
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+
+.todo-empty-todos {
+    height: 100%;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.3rem;
+
+    padding: 0 10px 0 10px;
+
+    font-size: 16px;
+
+    background-color: var(--clr-surface-a20);
+    border-radius: 10px;
+
+    user-select: none;
+}
+
+.todo-empty-todos svg {
+    font-size: 20px;
+}
+
+.todo-empty-todos:hover {
+    cursor: pointer;
+    background-color: var(--clr-surface-a30);
+}
+
+.todo-empty-todos:hover svg {
+    color: var(--clr-danger-a10);
+}
+
 .todos-create {
-    width: 22rem;
+    width: 24rem;
 
     padding-left: 1rem;
     padding-right: 1rem;
@@ -55,7 +127,7 @@
 
 .todos-create svg:hover {
     cursor: pointer;
-    color: var(--clr-surface-a40);
+    color: var(--clr-surface-a50);
 }
 
 .todos-input {
@@ -89,17 +161,17 @@
 }
 
 .todo-entry {
-    width: 28rem;
+    width: 32rem;
     height: 2.5rem;
 
     padding-left: 0.5rem;
-    margin-right: 1rem;
+    padding-right: 0.5rem;
+    margin-right: 0.5rem;
 
     display: flex;
     flex-direction: row;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
-    gap: 0.5rem;
 
     background-color: var(--clr-surface-tonal-a10);
     border-radius: 10px;
@@ -116,6 +188,18 @@
     color: var(--clr-surface-a50);
 }
 
+.todo-content {
+    width: 100%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.5rem;
+
+    z-index: 1;
+}
+
 .todo-entry-checkbox {
     height: 100%;
     display: flex;
@@ -129,10 +213,19 @@
     color: var(--clr-primary-a20);
 }
 
-.todo-entry:hover {
+.todo-content:hover {
     cursor: pointer;
 }
 
-.todo-entry:hover svg {
+.todo-content:hover svg {
     color: var(--clr-primary-a0);
+}
+
+.todo-delete {
+    z-index: 999;
+}
+
+.todo-delete:hover {
+    cursor: pointer;
+    color: var(--clr-danger-a10);
 }

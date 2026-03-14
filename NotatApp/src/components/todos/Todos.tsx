@@ -3,8 +3,10 @@ import "./todos.css";
 import { MdOutlineAddBox } from "react-icons/md";
 import { IoMdCheckboxOutline } from "react-icons/io";
 import { MdCheckBoxOutlineBlank } from "react-icons/md";
+import { LuTrash2 } from "react-icons/lu";
 import type { Todo } from "../../types/todo";
-import { createTodo, fetchTodos, updateTodo } from "../../api";
+import { createTodo, deleteTodo, fetchTodos, updateTodo } from "../../api";
+import TodoItem from "./TodoItem";
 
 
 const Todos: React.FC = () => {
@@ -12,6 +14,7 @@ const Todos: React.FC = () => {
     const [newTodo, setNewTodo] = useState<string>("");
 
     const [todos, setTodos] = useState<Todo[]>([]);
+    const [showFinishedTodos, setShowFinishedTodos] = useState<boolean>(false);
 
     const handleTodoCompleted = async (todoToUpdate: Todo) => {
         todoToUpdate = {...todoToUpdate, isCompleted: !todoToUpdate.isCompleted};
@@ -50,6 +53,21 @@ const Todos: React.FC = () => {
         setTodos([...todos, createdTodo]);
     };
 
+    const handleDeleteTodo = async (todoToDelete: Todo) => {
+        setTodos(todos.filter(todo => todo.todoId !== todoToDelete.todoId));
+
+        await deleteTodo(todoToDelete.todoId!);
+    };
+
+    const handleEmptyCompletedTodos = async () => {
+        const completedTodos: Todo[] = todos.filter(todo => todo.isCompleted);
+        setTodos(todos.filter(todo => !todo.isCompleted));
+
+        completedTodos.forEach(async (todo) => {
+            await deleteTodo(todo.todoId!);
+        });
+    };
+
     const fetchAndSetTodos = async () => {
         const fetchedTodos = await fetchTodos();
 
@@ -63,31 +81,59 @@ const Todos: React.FC = () => {
     return(
         <div className="todos">
             <div className="todos-header">
-                <p>Gjøremål</p>
-                <div className="todos-create">
-                    <input className="todos-input" value={newTodo} onChange={(e) => setNewTodo(e.target.value)} />
-                    <MdOutlineAddBox onClick={createAndSetTodo}/>
+                <div className="todos-header-left">
+                    <p>Gjøremål</p>
+                    <div className="todos-header-switch">
+                        <div 
+                            className={`todos-header-switch-entry ${!showFinishedTodos ? "active" : ""}`}
+                            onClick={() => setShowFinishedTodos(false)}
+                        >
+                            <p>Pågående</p>
+                        </div>
+                        <div 
+                            className={`todos-header-switch-entry ${showFinishedTodos ? "active" : ""}`}
+                            onClick={() => setShowFinishedTodos(true)}
+                        >
+                            <p>Fullførte</p>
+                        </div>
+                    </div>
+                </div>
+                <div className="todos-header-right">
+                    {showFinishedTodos ? (
+                        <div className="todo-empty-todos" onClick={handleEmptyCompletedTodos}>
+                            <LuTrash2 />
+                            <p>Tøm</p>
+                        </div>
+                    ) : ""}
+                    <div className="todos-create">
+                        <input 
+                            className="todos-input" 
+                            value={newTodo} 
+                            onChange={(e) => setNewTodo(e.target.value)} 
+                            maxLength={48}/>
+                        <MdOutlineAddBox onClick={createAndSetTodo}/>
+                    </div>
                 </div>
             </div>
             <div className="todos-entries">
-                {todos && todos.map(todo => (
-                    <div 
-                        key={todo.todoId ? todo.todoId : todo.tempId} 
-                        className="todo-entry" 
-                        onClick={() => handleTodoCompleted(todo)}
-                    >
-                        <div className="todo-entry-checkbox">
-                            {todo.isCompleted 
-                            ? (<IoMdCheckboxOutline />) 
-                            : (<MdCheckBoxOutlineBlank />)}
-                        </div>
-                        <p>
-                            {todo.isCompleted 
-                            ? (<s>{todo.content}</s>)
-                            : (<>{todo.content}</>)}
-                        </p>
-                    </div>
-                ))}
+                {showFinishedTodos ? (
+                    <>
+                    {todos && todos
+                    .filter(todo => todo.isCompleted)
+                    .map(todo => (
+                        <TodoItem todo={todo} handleTodoCompleted={handleTodoCompleted} handleDeleteTodo={handleDeleteTodo} />
+                    ))}
+                    </>
+                ) : (
+                    <>
+                    {todos && todos
+                    .filter(todo => !todo.isCompleted)
+                    .map(todo => (
+                        <TodoItem todo={todo} handleTodoCompleted={handleTodoCompleted} handleDeleteTodo={handleDeleteTodo} />
+                    ))}
+                    </>
+                )}
+                
             </div>
         </div>
     )
