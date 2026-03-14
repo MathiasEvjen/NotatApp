@@ -28,7 +28,7 @@ const FrontPage: React.FC = () => {
                 <SideMenu />
             </div>
             <div className="front-page-content-container">
-                <LastEditedContainer heading={heading} sheets={sheets}/>
+                <LastEditedContainer sheets={sheets}/>
                 <SearchBar />
                 <div className="front-page-content">
                     <div className="front-page-surface-row">

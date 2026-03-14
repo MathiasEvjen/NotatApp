@@ -14,7 +14,7 @@ body {
     scrollbar-width: none;
   }
 
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 html {

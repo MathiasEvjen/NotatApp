@@ -72,15 +72,17 @@
 }
 
 .todos-entries {
-    width: 100%;
+    width: auto;
     min-height: 13rem;
     max-height: 13rem;
 
     display: flex;
     flex-direction: column;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    align-content: flex-start;
     gap: 1rem;
 
-    flex-wrap: wrap;
 
     overflow-x: auto;
     scrollbar-width: none;
@@ -91,6 +93,7 @@
     height: 2.5rem;
 
     padding-left: 0.5rem;
+    margin-right: 1rem;
 
     display: flex;
     flex-direction: row;
