@@ -30,6 +30,8 @@ builder.Services.AddCors(options =>
 			  .AllowAnyMethod());
 });
 
+builder.WebHost.UseUrls("http://0.0.0.0:5106");
+
 builder.Services.AddScoped<ISheetRepository, SheetRepository>();
 builder.Services.AddScoped<ILectureCourseRepository, LectureCourseRepository>();
 builder.Services.AddScoped<ITodoRepository, TodoRepository>();
