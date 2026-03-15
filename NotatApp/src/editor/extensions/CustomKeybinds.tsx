@@ -1004,6 +1004,12 @@ export const CustomKeybinds = Extension.create({
 
                 let wordToHightlight: string = splitText[selectedWord];
 
+                if ((wordToHightlight[0] === "'" && wordToHightlight[wordToHightlight.length-1] === "'")
+                    || (wordToHightlight[0] === '"' && wordToHightlight[wordToHightlight.length-1] === '"')) {
+                    newFrom += 1;
+                    newTo -= 1;
+                }
+
                 if (wordToHightlight.includes(".")) {
                     const splitWord: string[] = wordToHightlight.split(/(?<=\.)/);
 

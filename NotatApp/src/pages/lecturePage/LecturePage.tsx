@@ -1,127 +1,94 @@
-import { useEffect, useRef, useState } from "react";
-import TextEditor from "../../editor/TextEditor";
-import type { Sheet } from "../../types/sheet";
+import { useState } from "react";
 import "./lecturePage.css";
-import { useEditor, type Editor } from "@tiptap/react";
-import { extensions } from "../../editor/Extensions";
-import { getHierarchicalIndexes, TableOfContents, type TableOfContentData } from '@tiptap/extension-table-of-contents'
-import { MenuBar } from "./MenuBar";
-import Sidebar from "./Sidebar";
-import React from "react";
-
-
+import type { LectureCourse } from "../../types/lectureCourse";
+import LectureCourseThumbnail from "../../components/thumbnail/LectureCourseThumbnail";
+import { createLectureCourse } from "../../api";
 
 const LecturePage: React.FC = () => {
 
-    const MemorizedSidebar = React.memo(Sidebar)
+    const [lectureCourses, setLectureCourses] = useState<LectureCourse[]>([
+        {lectureCourseId: 1, title: "IN1000", isNew: false, sheets: [], editMode: false},
+        {lectureCourseId: 2, title: "Programmering og systemarkitektur", isNew: false, sheets: [], editMode: false},
+        {lectureCourseId: 3, title: "Dette er en tittel", isNew: false, sheets: [], editMode: false},
+        {lectureCourseId: 4, title: "Algoritmer og datastrukturer", isNew: false, sheets: [], editMode: false},
+        // {lectureCourseId: 5, title: "", isNew: true, sheets: [], editMode: true},
+    ]);
 
-    const [sheet, setSheet] = useState<Sheet>({ title: '', content: '', noteType: "Lecture", createdAt: new Date(), editedAt: new Date() });
-    const [poiNodesCollapsed, setPoiNodesCollapsed] = useState<Record<number, boolean>>({});
+    const [lectureCourseOpened, setLectureCourseOpened] = useState<boolean>(false);
 
-    const [anchors, setAnchors] = useState<TableOfContentData>([]);
-    
-    const timeoutRef = useRef<number | null>(null);
-
-    const handleUpdateTitle = (newTitle: string) => {
-        setSheet(prev => ({
-            ...prev, title: newTitle
-        }));
+    const newLectureCourse = () => {
+        setLectureCourses([...lectureCourses, {
+            tempId: crypto.randomUUID(),
+            title: "",
+            sheets: [],
+            isNew: true,
+            editMode: true,
+        }]);
     };
 
-    const handleUpdatecontent = (htmlText: string) => {
-        setSheet(prev => ({
-            ...prev, content: htmlText
-        }));
+    const saveLectureCourse = (lcToSave: LectureCourse, newTitle: string) => {
+        const updatedLc: LectureCourse = {...lcToSave, title: newTitle, editMode: false};
+        setLectureCourses(prevLCs => 
+            prevLCs.map(lc => 
+                lc.tempId === updatedLc.tempId 
+                ? updatedLc
+                : lc
+            )
+        );
+
+        if (lcToSave.isNew) {
+            createAndSetLectureCourse(updatedLc);
+        }
+
+        // TODO: Her skal oppdatering av navn komme
     };
 
+    const createAndSetLectureCourse = async (newLc: LectureCourse) => {
+        const createdLc: LectureCourse = await createLectureCourse(newLc);
 
-    const editor: Editor = useEditor({
-        extensions: [ 
-            ...extensions.map(ext => {
-            if (ext.name === 'math') {
-            return ext.configure({
-                blockOptions: {
-                    onClick: (node, pos) => {
-                        const latex = prompt('Edit math:', node.attrs.latex)
-                        if (latex) {
-                            editor
-                            .chain()
-                            .setNodeSelection(pos)
-                            .updateBlockMath({ latex })
-                            .focus()
-                            .run()
-                        }
-                    },
-                },
-                inlineOptions: {
-                    onClick: (node) => {
-                        const latex = prompt('Edit math:', node.attrs.latex)
-                        if (latex) {
-                        editor
-                            .chain()
-                            .updateInlineMath({ latex })
-                            .focus()
-                            .run()
-                        }
-                    },
-                },
-            })
-        }
-        return ext
-        }),
-        TableOfContents.configure({
-            anchorTypes: ["heading"],
-            getIndex: getHierarchicalIndexes,
-            scrollParent: () => document.querySelector('.sheet-text-editor') as HTMLElement,
-            onUpdate(anchors) {
-                setAnchors(anchors);
-            },
-        })
-    ],
-        content: `${sheet.content}`,
-        onUpdate({ editor }) {
-            if (!editor) return;
+        setLectureCourses(prevLCs => 
+            prevLCs.map(lc => 
+                lc.isNew 
+                ? {...createdLc, editMode: false}
+                : lc
+            )
+        );
 
-            if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current);
-            }
-
-            timeoutRef.current = window.setTimeout(() => {
-                handleUpdatecontent(editor.getHTML());
-            }, 300);
-        }
-    });
-
-    useEffect(() => {
-        return () => {
-            if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current);
-            }
-        };
-    }, []);
+        // TODO: Skal også åpne denne mappa så man kan lage filer med en gang
+    };
 
     return(
-        <div className="sheet-wrapper">
-            <div className="sheet-content">
-                <div className="sheet-header">
-                    <input 
-                        value={sheet?.title}
-                        onChange={(e) => handleUpdateTitle(e.target.value)}
-                        placeholder="Title..." />
-                    <MenuBar editor={editor} />
+        <div className="lecture-page-wrapper">
+            <div className="lecture-page-content-wrapper">
+                <div className="lecture-page-content-header">
+                    <p>Emner</p>
+                    <button className="btn-success" onClick={newLectureCourse}>Nytt emne</button>
                 </div>
-                <div className="sheet-text-editor">
-                    <div className="editor">
-                        <TextEditor editor={editor} />
-                    </div>
-                </div>
-            </div>
 
-            <div className="sheet-sidebar">
-                <MemorizedSidebar editor={editor} anchors={anchors} />
+                <div className="lecture-page-divider-line" />
+
+                <div className="lecture-page-content">
+                    {lectureCourses.map(lc => 
+                        <LectureCourseThumbnail 
+                            key={lc.lectureCourseId ? lc.lectureCourseId : lc.tempId}
+                            lectureCourse={lc} 
+                            editMode={lc.editMode}
+                            saveLectureCourse={saveLectureCourse} />
+                    )}
+                </div>
             </div>
+            
+            {lectureCourseOpened ? (
+                <div className="lecture-page-content-wrapper">
+                    <div className="lecture-page-content-header">
+                        <p>Forelesningsnotater</p>
+                        <button className="btn-success">Nytt notat</button>
+                    </div>
+                    <div className="lecture-page-divider-line" />
+                </div>
+            ) : ""}
         </div>
     )
-}
+};
 
 export default LecturePage;

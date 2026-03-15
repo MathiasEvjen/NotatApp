@@ -1,10 +1,12 @@
 import './App.css'
 import "./styles/colors.css";
 import "./styles/buttons.css";
-import LecturePage from './pages/lecturePage/LecturePage';
+import LectureEditor from './pages/lecturePage/LectureEditor';
 import FrontPage from './pages/frontPage/FrontPage';
 import SideMenu from './components/sideMenu/SideMenu';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import LecturePage from './pages/lecturePage/LecturePage';
+
 
 
 function App() {
@@ -18,7 +20,8 @@ function App() {
                 <Routes>
                     <Route path='/' element={<FrontPage />} />
                     <Route path='/home' element={<FrontPage />} />
-                    <Route path='/lecture/document' element={<LecturePage />} />
+                    <Route path='/lecture' element={<LecturePage />} />
+                    <Route path='/lecture/document' element={<LectureEditor />} />
                 </Routes>
             </div>
         </Router>

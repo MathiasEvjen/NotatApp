@@ -11,7 +11,7 @@ interface ThumbnailProps {
     type: SheetType;
 }
 
-const Thumbnail: React.FC<ThumbnailProps> = ({ title, date, type }) => {
+const SheetThumbnail: React.FC<ThumbnailProps> = ({ title, date, type }) => {
 
     const formattedDate: string = format(date, "E. do MMM y")
 
@@ -39,4 +39,4 @@ const Thumbnail: React.FC<ThumbnailProps> = ({ title, date, type }) => {
     )
 }
 
-export default Thumbnail;
+export default SheetThumbnail;

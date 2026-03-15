@@ -55,4 +55,7 @@
     --clr-info-a0: #21498a;
     --clr-info-a10: #4077d1;
     --clr-info-a20: #92b2e5;
+
+
+    --text: var(--clr-light-a0);
 }
