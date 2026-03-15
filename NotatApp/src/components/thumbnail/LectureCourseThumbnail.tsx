@@ -6,12 +6,21 @@ import type { LectureCourse } from "../../types/lectureCourse";
 interface LectureCourseThumbnailProps {
     lectureCourse: LectureCourse;
     editMode: boolean;
+    isOpen: boolean;
     saveLectureCourse: (lectureCourse: LectureCourse, newTitle: string) => void;
+    cancelEditMode: (lectureCourse: LectureCourse) => void;
+    openAndCloseLecturecourse: (lectureCourse: LectureCourse) => void;
 }
 
-const LectureCourseThumbnail: React.FC<LectureCourseThumbnailProps> = ({ lectureCourse, editMode, saveLectureCourse }) => {
+const LectureCourseThumbnail: React.FC<LectureCourseThumbnailProps> = ({ 
+    lectureCourse, 
+    editMode, 
+    isOpen,
+    saveLectureCourse,
+    cancelEditMode,
+    openAndCloseLecturecourse,
+}) => {
     const textareaRef = useRef<HTMLTextAreaElement>(null);    
-
 
     const dynamicFontSize: number = lectureCourse.title.length <= 18 ? 18 : lectureCourse.title.length <= 15 ? 14 : 12;
 
@@ -20,6 +29,9 @@ const LectureCourseThumbnail: React.FC<LectureCourseThumbnailProps> = ({ lecture
     const handleKeyDown = (event: any) => {
         if (event.key === "Enter") {
             saveLectureCourse(lectureCourse, newTitle);
+        }
+        if (event.key === "Escape") {
+            cancelEditMode(lectureCourse);
         }
     };
 
@@ -30,7 +42,7 @@ const LectureCourseThumbnail: React.FC<LectureCourseThumbnailProps> = ({ lecture
     }, [editMode]);
 
     return(
-        <div className="thumbnail-wrapper">
+        <div className={`thumbnail-wrapper ${isOpen ? "opened" : ""}`} onClick={() => openAndCloseLecturecourse(lectureCourse)}>
             <div className="thumbnail-type-icon">
                 <FaRegFolder />
             </div>

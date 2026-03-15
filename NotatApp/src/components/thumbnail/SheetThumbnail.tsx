@@ -1,35 +1,34 @@
 import "./thumbnail.css";
 import { format } from "date-fns";
-import type { SheetType } from "../../types/sheet";
+import type { Sheet } from "../../types/sheet";
 import Document from "../../assets/document.svg";
 import Log from "../../assets/log.svg";
 import Checklist from "../../assets/checklist.svg";
 
 interface ThumbnailProps {
-    title: string;
-    date: Date;
-    type: SheetType;
+    sheet: Sheet;
 }
 
-const SheetThumbnail: React.FC<ThumbnailProps> = ({ title, date, type }) => {
+const SheetThumbnail: React.FC<ThumbnailProps> = ({ sheet }) => {
 
-    const formattedDate: string = format(date, "E. do MMM y")
+    const formattedDate: string = format(sheet.createdAt, "E. do MMM y")
 
+    // TODO: Håndtere editMode
     
     return(
         <div className="thumbnail-wrapper">
             <div className="thumbnail-type-icon">
-                {type === "Lecture" ? (
+                {sheet.noteType === "Lecture" ? (
                     <img src={Document} />
-                ) : type === "List" ? (
+                ) : sheet.noteType === "List" ? (
                     <img src={Checklist} />
-                ) : type === "Log" ? (
+                ) : sheet.noteType === "Log" ? (
                     <img src={Log} />
                 ) : ""}
             </div>
             <div className="thumbnail-info">
                 <div className="thumbnail-title">
-                    {title}
+                    {sheet.title}
                 </div>
                 <div className="thumbnail-date">
                     {formattedDate}
