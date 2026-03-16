@@ -7,16 +7,16 @@ import "./frontPage.css";
 const FrontPage: React.FC = () => {
 
     const sheets: Sheet[] = [
-        {sheetId: 1, title: "Dett er en litt lenger tittel", content: "Et eller annet", noteType: "Lecture", createdAt: new Date(), editedAt: new Date()},
-        {sheetId: 2, title: "Tittel 2", content: "Et eller annet", noteType: "Log", createdAt: new Date(), editedAt: new Date()},
-        {sheetId: 3, title: "Tittel 3", content: "Et eller annet", noteType: "Lecture", createdAt: new Date(), editedAt: new Date()},
-        {sheetId: 4, title: "Tittel 4", content: "Et eller annet", noteType: "List", createdAt: new Date(), editedAt: new Date()},
-        {sheetId: 5, title: "Tittel 5", content: "Et eller annet", noteType: "Lecture", createdAt: new Date(), editedAt: new Date()},
-        {sheetId: 6, title: "Tittel 6", content: "Et eller annet", noteType: "Lecture", createdAt: new Date(), editedAt: new Date()},
-        {sheetId: 7, title: "Tittel 7", content: "Et eller annet", noteType: "Lecture", createdAt: new Date(), editedAt: new Date()},
-        {sheetId: 8, title: "Tittel 8", content: "Et eller annet", noteType: "Lecture", createdAt: new Date(), editedAt: new Date()},
-        {sheetId: 9, title: "Tittel 9", content: "Et eller annet", noteType: "Lecture", createdAt: new Date(), editedAt: new Date()},
-        {sheetId: 10, title: "Tittel 10", content: "Et eller annet", noteType: "Lecture", createdAt: new Date(), editedAt: new Date()},
+        {sheetId: 1, title: "Dett er en litt lenger tittel", content: "Et eller annet", noteType: "Lecture", createdAt: new Date(), editedAt: new Date(), editMode: false},
+        {sheetId: 2, title: "Tittel 2", content: "Et eller annet", noteType: "Log", createdAt: new Date(), editedAt: new Date(), editMode: false},
+        {sheetId: 3, title: "Tittel 3", content: "Et eller annet", noteType: "Lecture", createdAt: new Date(), editedAt: new Date(), editMode: false},
+        {sheetId: 4, title: "Tittel 4", content: "Et eller annet", noteType: "List", createdAt: new Date(), editedAt: new Date(), editMode: false},
+        {sheetId: 5, title: "Tittel 5", content: "Et eller annet", noteType: "Lecture", createdAt: new Date(), editedAt: new Date(), editMode: false},
+        {sheetId: 6, title: "Tittel 6", content: "Et eller annet", noteType: "Lecture", createdAt: new Date(), editedAt: new Date(), editMode: false},
+        {sheetId: 7, title: "Tittel 7", content: "Et eller annet", noteType: "Lecture", createdAt: new Date(), editedAt: new Date(), editMode: false},
+        {sheetId: 8, title: "Tittel 8", content: "Et eller annet", noteType: "Lecture", createdAt: new Date(), editedAt: new Date(), editMode: false},
+        {sheetId: 9, title: "Tittel 9", content: "Et eller annet", noteType: "Lecture", createdAt: new Date(), editedAt: new Date(), editMode: false},
+        {sheetId: 10, title: "Tittel 10", content: "Et eller annet", noteType: "Lecture", createdAt: new Date(), editedAt: new Date(), editMode: false},
     ];
 
     return(

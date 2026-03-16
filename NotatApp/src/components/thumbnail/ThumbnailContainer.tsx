@@ -19,7 +19,7 @@ const ThumbnailContainer: React.FC<ThumbnailContainerProps> = ({ sheets }) => {
         <div className="thumbnail-container-wrapper">
             <div ref={containerRef} className="thumbnail-container-content">
                 {sheets.map(sheet => (
-                    <SheetThumbnail key={sheet.sheetId} title={sheet.title} date={sheet.createdAt} type={sheet.noteType} />
+                    <SheetThumbnail key={sheet.sheetId} sheet={sheet} />
                 ))}
             </div>
         </div>

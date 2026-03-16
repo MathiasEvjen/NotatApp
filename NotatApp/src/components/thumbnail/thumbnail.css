@@ -19,10 +19,6 @@
     user-select: none;
 }
 
-.thumbnail-wrapper.opened {
-    background-color: var(--clr-surface-tonal-a30);
-}
-
 .thumbnail-wrapper:hover {
     cursor: pointer;
     background-color: var(--clr-surface-tonal-a30);

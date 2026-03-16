@@ -6,7 +6,6 @@ import type { LectureCourse } from "../../types/lectureCourse";
 interface LectureCourseThumbnailProps {
     lectureCourse: LectureCourse;
     editMode: boolean;
-    isOpen: boolean;
     saveLectureCourse: (lectureCourse: LectureCourse, newTitle: string) => void;
     cancelEditMode: (lectureCourse: LectureCourse) => void;
     openAndCloseLecturecourse: (lectureCourse: LectureCourse) => void;
@@ -15,7 +14,6 @@ interface LectureCourseThumbnailProps {
 const LectureCourseThumbnail: React.FC<LectureCourseThumbnailProps> = ({ 
     lectureCourse, 
     editMode, 
-    isOpen,
     saveLectureCourse,
     cancelEditMode,
     openAndCloseLecturecourse,
@@ -42,7 +40,7 @@ const LectureCourseThumbnail: React.FC<LectureCourseThumbnailProps> = ({
     }, [editMode]);
 
     return(
-        <div className={`thumbnail-wrapper ${isOpen ? "opened" : ""}`} onClick={() => openAndCloseLecturecourse(lectureCourse)}>
+        <div className={`thumbnail-wrapper`} onClick={() => openAndCloseLecturecourse(lectureCourse)}>
             <div className="thumbnail-type-icon">
                 <FaRegFolder />
             </div>

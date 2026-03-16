@@ -5,6 +5,8 @@ import LectureCourseThumbnail from "../../components/thumbnail/LectureCourseThum
 import { createLectureCourse } from "../../api";
 import SheetThumbnail from "../../components/thumbnail/SheetThumbnail";
 import type { Sheet } from "../../types/sheet";
+import { FaRegFolder } from "react-icons/fa";
+import { IoChevronBack } from "react-icons/io5";
 
 const LecturePage: React.FC = () => {
 
@@ -74,18 +76,18 @@ const LecturePage: React.FC = () => {
         // TODO: Skal også åpne denne mappa så man kan lage filer med en gang
     };
     
-    const openAndCloseLecturecourse = (lc: LectureCourse) => {
-        if (lc.lectureCourseId === openedLectureCourse?.lectureCourseId) {
-            setOpenedLectureCourse(null);
-            setIsLectureCourseOpened(false);
-
-            // TODO: Skal oppdatere og lagre dersom antallet sheets endrer seg
-        } else {
-            setOpenedLectureCourse(lc);
-            setIsLectureCourseOpened(true);
-            setOpenedLectureCourseSheets(lc.sheets);
-        }
+    const openLecturecourse = (lc: LectureCourse) => {
+        setOpenedLectureCourse(lc);
+        setIsLectureCourseOpened(true);
+        setOpenedLectureCourseSheets(lc.sheets);
     };
+
+    const closeLectureCourse = () => {
+        setOpenedLectureCourse(null);
+        setIsLectureCourseOpened(false);
+
+        // TODO: Skal oppdatere og lagre dersom antallet sheets endrer seg
+    }
 
 
     // ------------------------
@@ -109,34 +111,35 @@ const LecturePage: React.FC = () => {
     };
 
     return(
-        <div className={`lecture-page-wrapper ${isLectureCourseOpened ? "lecture-open" : ""}`}>
-            <div className="lecture-page-content-wrapper">
-                <div className="lecture-page-content-header">
-                    <p>Emner</p>
-                    <button className="btn-success" onClick={newLectureCourse}>Nytt emne</button>
-                </div>
+        <div className={`lecture-page-wrapper`}>
+            {!isLectureCourseOpened && (
+                <div className="lecture-page-content-wrapper">
+                    <div className="lecture-page-content-header">
+                        <p>Emner</p>
+                        <button className="btn-success" onClick={newLectureCourse}>Nytt emne</button>
+                    </div>
 
-                <div className="lecture-page-divider-line" />
+                    <div className="lecture-page-divider-line" />
 
-                <div className="lecture-page-content">
-                    {lectureCourses.map(lc => 
-                        <LectureCourseThumbnail 
-                            key={lc.lectureCourseId ? lc.lectureCourseId : lc.tempId}
-                            lectureCourse={lc} 
-                            editMode={lc.editMode}
-                            isOpen={lc.lectureCourseId === openedLectureCourse?.lectureCourseId}
-                            saveLectureCourse={saveLectureCourse}
-                            cancelEditMode={cancelEditMode}
-                            openAndCloseLecturecourse={openAndCloseLecturecourse} />
-                    )}
+                    <div className="lecture-page-content">
+                        {lectureCourses.map(lc => 
+                            <LectureCourseThumbnail 
+                                key={lc.lectureCourseId ? lc.lectureCourseId : lc.tempId}
+                                lectureCourse={lc} 
+                                editMode={lc.editMode}
+                                saveLectureCourse={saveLectureCourse}
+                                cancelEditMode={cancelEditMode}
+                                openAndCloseLecturecourse={openLecturecourse} />
+                        )}
+                    </div>
                 </div>
-            </div>
+            )}
             
-            <div className={`lecture-page-content-wrapper lecture-panel ${isLectureCourseOpened ? "visible" : ""}`}>
-                {(isLectureCourseOpened && openedLectureCourse && openedLectureCourseSheets) && (
+            {(isLectureCourseOpened && openedLectureCourse && openedLectureCourseSheets) && (
+                <div className={`lecture-page-content-wrapper`}>
                     <>
                     <div className="lecture-page-content-header">
-                        <p>Notater - {openedLectureCourse.title}</p>
+                        <p><button onClick={closeLectureCourse} ><IoChevronBack /></button><FaRegFolder /> {openedLectureCourse.title}</p>
                         <button className="btn-success" onClick={newSheet}>Nytt notat</button>
                     </div>
 
@@ -148,8 +151,8 @@ const LecturePage: React.FC = () => {
                         )}
                     </div>
                     </>
-                ) }
-            </div>
+                </div>
+            ) }
         </div>
     )
 };
