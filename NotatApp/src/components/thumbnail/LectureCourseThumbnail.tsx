@@ -11,6 +11,7 @@ interface LectureCourseThumbnailProps {
     saveLectureCourse: (lectureCourse: LectureCourse, newTitle: string) => void;
     cancelEditMode: (lectureCourse: LectureCourse) => void;
     openAndCloseLectureCourse: (lectureCourse: LectureCourse) => void;
+    removeLectureCourse: (lectureCourse: LectureCourse) => void;
 }
 
 const LectureCourseThumbnail: React.FC<LectureCourseThumbnailProps> = ({ 
@@ -18,6 +19,7 @@ const LectureCourseThumbnail: React.FC<LectureCourseThumbnailProps> = ({
     saveLectureCourse,
     cancelEditMode,
     openAndCloseLectureCourse,
+    removeLectureCourse,
 }) => {
     const wrapperRef = useRef<HTMLDivElement>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);    
@@ -64,12 +66,14 @@ const LectureCourseThumbnail: React.FC<LectureCourseThumbnailProps> = ({
             }
         };
 
-        document.addEventListener("mousedown", handleClickOutside);
+        if (lectureCourse.editMode) {
+            document.addEventListener("mousedown", handleClickOutside);
+        }
 
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, []);
+    }, [lectureCourse.editMode]);
 
     return(
         <div ref={wrapperRef} className={`thumbnail-wrapper`} onClick={() => lectureCourse.editMode ? "" : openAndCloseLectureCourse(lectureCourse)}>
@@ -114,12 +118,18 @@ const LectureCourseThumbnail: React.FC<LectureCourseThumbnailProps> = ({
                         onClick={(e) => {
                             e.stopPropagation();
                             handleEditTitle();
-                        }
-                    }>
+                        }}
+                    >
                         <FaRegEdit />
                         <p>Edit</p>
                     </div>
-                    <div className="thumbnail-options-entry delete">
+                    <div 
+                        className="thumbnail-options-entry delete"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            removeLectureCourse(lectureCourse);
+                        }}
+                    >
                         <LuTrash2 />
                         <p>Delete</p>
                     </div>

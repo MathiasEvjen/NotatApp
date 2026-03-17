@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "./lecturePage.css";
 import type { LectureCourse } from "../../types/lectureCourse";
 import LectureCourseThumbnail from "../../components/thumbnail/LectureCourseThumbnail";
-import { createLectureCourse, fetchAllLectureCourses, updateLectureCourse } from "../../api";
+import { createLectureCourse, deleteLectureCourse, fetchAllLectureCourses, updateLectureCourse } from "../../api";
 import SheetThumbnail from "../../components/thumbnail/SheetThumbnail";
 import type { Sheet } from "../../types/sheet";
 import { FaRegFolder } from "react-icons/fa";
@@ -56,21 +56,31 @@ const LecturePage: React.FC = () => {
 
     const saveLectureCourse = (lcToSave: LectureCourse, newTitle: string) => {
         const updatedLc: LectureCourse = {...lcToSave, title: newTitle, editMode: false};
-        setLectureCourses(prevLCs => 
-            prevLCs.map(lc => 
-                lc.tempId === updatedLc.tempId 
-                ? updatedLc
-                : lc
-            )
-        );
-
+        
         if (lcToSave.isNew) {
+            setLectureCourses(prevLCs => 
+                prevLCs.map(lc => 
+                    lc.tempId === updatedLc.tempId 
+                    ? updatedLc
+                    : lc
+                )
+            );
             createAndSetLectureCourse(updatedLc);
         } else {
+            setLectureCourses(prevLCs => 
+                prevLCs.map(lc => 
+                    lc.lectureCourseId === updatedLc.lectureCourseId 
+                    ? updatedLc
+                    : lc
+                )
+            );
             updateLectureCourseTitle(updatedLc);
         }
+    };
 
-        // TODO: Her skal oppdatering av navn komme
+    const removeLectureCourse = async (lcToDelete: LectureCourse) => {
+        setLectureCourses(lectureCourses.filter(lc => lc.lectureCourseId !== lcToDelete.lectureCourseId));
+        await deleteLectureCourse(lcToDelete.lectureCourseId!);
     };
 
     const createAndSetLectureCourse = async (newLc: LectureCourse) => {
@@ -166,7 +176,8 @@ const LecturePage: React.FC = () => {
                                 lectureCourse={lc} 
                                 saveLectureCourse={saveLectureCourse}
                                 cancelEditMode={cancelEditModeLectureCourse}
-                                openAndCloseLectureCourse={openLectureCourse} />
+                                openAndCloseLectureCourse={openLectureCourse}
+                                removeLectureCourse={removeLectureCourse} />
                         )}
                     </div>
                 </div>
