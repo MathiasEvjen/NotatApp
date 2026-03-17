@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./lecturePage.css";
 import type { LectureCourse } from "../../types/lectureCourse";
 import LectureCourseThumbnail from "../../components/thumbnail/LectureCourseThumbnail";
-import { createLectureCourse } from "../../api";
+import { createLectureCourse, fetchAllLectureCourses, updateLectureCourse } from "../../api";
 import SheetThumbnail from "../../components/thumbnail/SheetThumbnail";
 import type { Sheet } from "../../types/sheet";
 import { FaRegFolder } from "react-icons/fa";
@@ -10,13 +10,7 @@ import { IoChevronBack } from "react-icons/io5";
 
 const LecturePage: React.FC = () => {
 
-    const [lectureCourses, setLectureCourses] = useState<LectureCourse[]>([
-        {lectureCourseId: 1, title: "IN1000", isNew: false, sheets: [], editMode: false},
-        {lectureCourseId: 2, title: "Programmering og systemarkitektur", isNew: false, sheets: [], editMode: false},
-        {lectureCourseId: 3, title: "Dette er en tittel", isNew: false, sheets: [], editMode: false},
-        {lectureCourseId: 4, title: "Algoritmer og datastrukturer", isNew: false, sheets: [], editMode: false},
-        // {lectureCourseId: 5, title: "", isNew: true, sheets: [], editMode: true},
-    ]);
+    const [lectureCourses, setLectureCourses] = useState<LectureCourse[]>([]);
 
     const [isLectureCourseOpened, setIsLectureCourseOpened] = useState<boolean>(false);
     const [openedLectureCourse, setOpenedLectureCourse] = useState<LectureCourse | null>(null);
@@ -25,6 +19,11 @@ const LecturePage: React.FC = () => {
     // ------------------------
     // LectureCourse functions
     // ------------------------
+
+    const fetchAndSetLectureCourses = async () => {
+        const courses: LectureCourse[] = await fetchAllLectureCourses();
+        setLectureCourses(courses);
+    };
 
     const newLectureCourse = () => {
         setLectureCourses([...lectureCourses, {
@@ -36,13 +35,23 @@ const LecturePage: React.FC = () => {
         }]);
     };
 
-    const cancelEditMode = (editLc: LectureCourse) => {
-        setLectureCourses(
-            lectureCourses.filter(
-                lc => lc.tempId !== editLc.tempId 
-                || lc.lectureCourseId !== editLc.lectureCourseId
-            )
-        );
+    const cancelEditModeLectureCourse = (editLc: LectureCourse) => {
+        if (editLc.isNew) {
+            setLectureCourses(
+                lectureCourses.filter(
+                    lc => lc.tempId !== editLc.tempId 
+                    || lc.lectureCourseId !== editLc.lectureCourseId
+                )
+            );
+        } else {
+            setLectureCourses(
+                lectureCourses.map(lc => 
+                    lc.lectureCourseId === editLc.lectureCourseId
+                    ? {...editLc, editMode: false}
+                    : lc
+                )
+            );
+        }
     };
 
     const saveLectureCourse = (lcToSave: LectureCourse, newTitle: string) => {
@@ -57,6 +66,8 @@ const LecturePage: React.FC = () => {
 
         if (lcToSave.isNew) {
             createAndSetLectureCourse(updatedLc);
+        } else {
+            updateLectureCourseTitle(updatedLc);
         }
 
         // TODO: Her skal oppdatering av navn komme
@@ -75,8 +86,12 @@ const LecturePage: React.FC = () => {
 
         // TODO: Skal også åpne denne mappa så man kan lage filer med en gang
     };
+
+    const updateLectureCourseTitle = async (lc: LectureCourse) => {
+        await updateLectureCourse(lc.lectureCourseId!, lc)
+    }
     
-    const openLecturecourse = (lc: LectureCourse) => {
+    const openLectureCourse = (lc: LectureCourse) => {
         setOpenedLectureCourse(lc);
         setIsLectureCourseOpened(true);
         setOpenedLectureCourseSheets(lc.sheets);
@@ -88,6 +103,10 @@ const LecturePage: React.FC = () => {
 
         // TODO: Skal oppdatere og lagre dersom antallet sheets endrer seg
     }
+
+    useEffect(() => {
+        fetchAndSetLectureCourses();
+    }, [])
 
 
     // ------------------------
@@ -110,6 +129,25 @@ const LecturePage: React.FC = () => {
             }]);
     };
 
+    const cancelEditModeSheet = (editSheet: Sheet) => {
+        if (!openedLectureCourseSheets) return;
+
+        setOpenedLectureCourseSheets(
+            openedLectureCourseSheets.filter(
+                lc => lc.tempId !== editSheet.tempId 
+                || lc.lectureCourseId !== editSheet.lectureCourseId
+            )
+        );
+    };
+
+    const saveSheet = (sheetToSave: Sheet, newTitle: string) => {
+        const updatedSheet: Sheet = {...sheetToSave, title: newTitle, editMode: false};
+        
+
+        // TODO: Her skal oppdatering av navn komme
+    };
+
+
     return(
         <div className={`lecture-page-wrapper`}>
             {!isLectureCourseOpened && (
@@ -126,10 +164,9 @@ const LecturePage: React.FC = () => {
                             <LectureCourseThumbnail 
                                 key={lc.lectureCourseId ? lc.lectureCourseId : lc.tempId}
                                 lectureCourse={lc} 
-                                editMode={lc.editMode}
                                 saveLectureCourse={saveLectureCourse}
-                                cancelEditMode={cancelEditMode}
-                                openAndCloseLecturecourse={openLecturecourse} />
+                                cancelEditMode={cancelEditModeLectureCourse}
+                                openAndCloseLectureCourse={openLectureCourse} />
                         )}
                     </div>
                 </div>
@@ -147,7 +184,11 @@ const LecturePage: React.FC = () => {
 
                     <div className="lecture-page-content">
                         {openedLectureCourseSheets.map(sheet => 
-                            <SheetThumbnail key={sheet.lectureCourseId ? sheet.lectureCourseId : sheet.tempId} sheet={sheet} />
+                            <SheetThumbnail 
+                                key={sheet.lectureCourseId ? sheet.lectureCourseId : sheet.tempId} 
+                                sheet={sheet}
+                                saveSheet={saveSheet}
+                                cancelEditMode={cancelEditModeSheet} />
                         )}
                     </div>
                     </>
