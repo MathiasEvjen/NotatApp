@@ -10,12 +10,14 @@ interface ThumbnailProps {
     sheet: Sheet;
     saveSheet: (sheet: Sheet, newTitle: string) => void;
     cancelEditMode: (sheet: Sheet) => void;
+    handleOpenSheet: (sheet: Sheet) => void;
 }
 
 const SheetThumbnail: React.FC<ThumbnailProps> = ({ 
     sheet,
     saveSheet,
-    cancelEditMode
+    cancelEditMode,
+    handleOpenSheet
 }) => {
     const textareaRef = useRef<HTMLTextAreaElement>(null);    
 
@@ -39,7 +41,7 @@ const SheetThumbnail: React.FC<ThumbnailProps> = ({
     }, [sheet.editMode]);
     
     return(
-        <div className="thumbnail-wrapper">
+        <div className="thumbnail-wrapper" onClick={() => sheet.editMode ? "" : handleOpenSheet(sheet)}>
             <div className="thumbnail-type-icon">
                 {sheet.noteType === "Lecture" ? (
                     <img src={Document} />

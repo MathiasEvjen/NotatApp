@@ -7,8 +7,17 @@ import SheetThumbnail from "../../components/thumbnail/SheetThumbnail";
 import type { Sheet } from "../../types/sheet";
 import { FaRegFolder } from "react-icons/fa";
 import { IoChevronBack } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 
 const LecturePage: React.FC = () => {
+
+    const navigate = useNavigate();
+    
+
+    const handleOpenSheet = (sheet: Sheet) => {
+        navigate(`/lecture/document?course=${sheet.lectureCourseId}&sheet=${sheet.sheetId}`);
+    };
+
 
     const [lectureCourses, setLectureCourses] = useState<LectureCourse[]>([]);
 
@@ -199,7 +208,8 @@ const LecturePage: React.FC = () => {
                                 key={sheet.lectureCourseId ? sheet.lectureCourseId : sheet.tempId} 
                                 sheet={sheet}
                                 saveSheet={saveSheet}
-                                cancelEditMode={cancelEditModeSheet} />
+                                cancelEditMode={cancelEditModeSheet}
+                                handleOpenSheet={handleOpenSheet} />
                         )}
                     </div>
                     </>

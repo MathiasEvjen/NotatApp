@@ -41,10 +41,15 @@ p {
 
 .app-side-menu {
     min-width: 20rem;
-    width: 15%;
+    width: 12%;
     height: 100%;
 
     background-color: var(--clr-surface-a10);
     flex-shrink: 0;
     
+}
+
+.app-side-menu.small {
+    min-width: 4rem;
+    width: 4rem;
 }

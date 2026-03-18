@@ -93,8 +93,8 @@
 }
 
 .sheet-sidebar {
-    width: 25%;
-    max-width: 25%;
+    width: 20%;
+    max-width: 20%;
     height: 100vh;
 
     border-left: 3px solid var(--clr-surface-a40);

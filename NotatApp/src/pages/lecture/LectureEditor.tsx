@@ -1,7 +1,7 @@
+import "./lectureEditor.css";
 import { useEffect, useRef, useState } from "react";
 import TextEditor from "../../editor/TextEditor";
 import type { Sheet } from "../../types/sheet";
-import "./lectureEditor.css";
 import { useEditor, type Editor } from "@tiptap/react";
 import { extensions } from "../../editor/Extensions";
 import { getHierarchicalIndexes, TableOfContents, type TableOfContentData } from '@tiptap/extension-table-of-contents'
@@ -9,29 +9,20 @@ import { MenuBar } from "./MenuBar";
 import Sidebar from "./Sidebar";
 import React from "react";
 
+interface LectureEditorProps {
+    sheet?: Sheet;
 
+    handleUpdateTitle: (newTitle: string) => void;
+    handleUpdatecontent: (htmlText: string) => void;
+}
 
-const LectureEditor: React.FC = () => {
+const LectureEditor: React.FC<LectureEditorProps> = ({ sheet, handleUpdateTitle, handleUpdatecontent }) => {
 
     const MemorizedSidebar = React.memo(Sidebar)
 
-    const [sheet, setSheet] = useState<Sheet>({ title: '', content: '', noteType: "Lecture", createdAt: new Date(), editedAt: new Date() });
-
     const [anchors, setAnchors] = useState<TableOfContentData>([]);
     
-    const timeoutRef = useRef<number | null>(null);
-
-    const handleUpdateTitle = (newTitle: string) => {
-        setSheet(prev => ({
-            ...prev, title: newTitle
-        }));
-    };
-
-    const handleUpdatecontent = (htmlText: string) => {
-        setSheet(prev => ({
-            ...prev, content: htmlText
-        }));
-    };
+    const timeoutRef = useRef<number | null>(null);    
 
 
     const editor: Editor = useEditor({
@@ -77,7 +68,7 @@ const LectureEditor: React.FC = () => {
             },
         })
     ],
-        content: `${sheet.content}`,
+        content: `${sheet!.content}`,
         onUpdate({ editor }) {
             if (!editor) return;
 
