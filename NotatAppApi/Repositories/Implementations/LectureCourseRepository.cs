@@ -14,7 +14,7 @@ namespace NotatAppApi.Repositories.Implementations
         {
             try
             {
-                return await _context.LectureCourses.ToListAsync();
+                return await _context.LectureCourses.Include(lc => lc.Sheets).ToListAsync();
             }
             catch (Exception e)
             {
