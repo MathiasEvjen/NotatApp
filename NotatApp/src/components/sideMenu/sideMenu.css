@@ -74,11 +74,11 @@
     justify-content: start;
     align-items: center;
     
-    padding-left: 7px;
-    
     gap: 10px;
 
     padding: 0.5rem 0;
+
+    box-sizing: border-box;
 }
 
 .side-menu-entry p:hover {

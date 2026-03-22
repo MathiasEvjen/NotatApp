@@ -9,12 +9,18 @@ import { FaRegFolder } from "react-icons/fa";
 import { IoChevronBack } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 
-const LecturePage: React.FC = () => {
+interface LecurePageProps {
+    smallMenu: boolean;
+    handleSetSmallMenu: () => void;
+}
+
+const LecturePage: React.FC<LecurePageProps> = ({ smallMenu, handleSetSmallMenu }) => {
 
     const navigate = useNavigate();
     
 
     const handleOpenSheet = (sheet: Sheet) => {
+        if (!smallMenu) handleSetSmallMenu();
         navigate(`/lecture/document?course=${sheet.lectureCourseId}&sheet=${sheet.sheetId}`);
     };
 

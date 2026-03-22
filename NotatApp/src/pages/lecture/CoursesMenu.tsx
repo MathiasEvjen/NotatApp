@@ -1,6 +1,8 @@
+import "./coursesMenu.css";
 import type { LectureCourse } from "../../types/lectureCourse";
 import type { Sheet } from "../../types/sheet";
-import "./coursesMenu.css";
+import { IoMdArrowDropright } from "react-icons/io";
+import { IoMdArrowDropdown } from "react-icons/io";
 
 interface CoursesMenuProps {
     selectedCourseId: number | null;
@@ -12,6 +14,9 @@ interface CoursesMenuProps {
 
 const CoursesMenu: React.FC<CoursesMenuProps> = ({ selectedCourseId, selectedSheetId, lectureCourses, sheets }) => {
 
+    const isCourseSelected = (courseId: number) => {
+        return courseId === selectedCourseId;
+    };
 
     return (
         <div className="courses-menu-wrapper">
@@ -20,18 +25,9 @@ const CoursesMenu: React.FC<CoursesMenuProps> = ({ selectedCourseId, selectedShe
                     <p>Emner</p>
                 </div>
                 {lectureCourses?.map(course => 
-                    <div className={`course-menu-course ${course.lectureCourseId === selectedCourseId ? "selected" : ""}`}>
+                    <div className={`course-menu-course`}>
+                        {isCourseSelected(course.lectureCourseId!) ? <IoMdArrowDropdown /> : <IoMdArrowDropright />}
                         {course.title}
-                    </div>
-                )}
-            </div>
-            <div className="courses-menu-sheets-container">
-                <div className="courses-menu-sheet-header">
-                    <p>Notater</p>
-                </div>
-                {sheets?.map(sheet => 
-                    <div className={`course-menu-sheet ${sheet.sheetId === selectedSheetId ? "selected" : ""}`}>
-                        {sheet.title}
                     </div>
                 )}
             </div>

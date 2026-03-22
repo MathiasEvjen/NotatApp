@@ -7,9 +7,10 @@ import { NavLink, useLocation } from "react-router-dom";
 
 interface SideMenuProps {
     smallMenu: boolean;
+    handleSetSmallMenu: () => void;
 }
 
-const SideMenu: React.FC<SideMenuProps> = ({ smallMenu }) => {
+const SideMenu: React.FC<SideMenuProps> = ({ smallMenu, handleSetSmallMenu }) => {
 
     const { pathname } = useLocation();
 
@@ -19,6 +20,10 @@ const SideMenu: React.FC<SideMenuProps> = ({ smallMenu }) => {
 
     const paddingLeftEntries: string = smallMenu ? "1rem" : "2rem";
     const paddingLeftLogo: string = smallMenu ? "0.3rem" : "1.5rem";
+
+    const handleExpandMenu = () => {
+        if (smallMenu) handleSetSmallMenu();
+    }
 
     return(
         <div className="side-menu-container">
@@ -30,6 +35,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ smallMenu }) => {
                     style={{
                         paddingLeft: paddingLeftLogo
                     }}
+                    onClick={handleExpandMenu}
                 >
                     <img src={Logo} />
                     {smallMenu ? "" : (<p>Notater</p>)}
@@ -44,6 +50,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ smallMenu }) => {
                         style={{
                             paddingLeft: paddingLeftEntries
                         }}
+                        onClick={handleExpandMenu}
                     >
                         <img src={Lecture} />
                         {smallMenu ? "" : (<p>Forelesninger</p>)}
@@ -56,6 +63,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ smallMenu }) => {
                         style={{
                             paddingLeft: paddingLeftEntries
                         }}
+                        onClick={handleExpandMenu}
                     >
                         <img src={Logbooks} />
                         {smallMenu ? "" : (<p>Loggføringer</p>)}
@@ -68,6 +76,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ smallMenu }) => {
                         style={{
                             paddingLeft: paddingLeftEntries
                         }}
+                        onClick={handleExpandMenu}
                     >
                         <img src={Checklists} />
                         {smallMenu ? "" : (<p>Huskelister</p>)}

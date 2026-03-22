@@ -12,18 +12,22 @@ import MainLecture from './pages/lecture/MainLecture';
 
 function App() {
 
-    const [smallMenu, setSmallMenu] = useState<boolean>(true);
+    const [smallMenu, setSmallMenu] = useState<boolean>(false);
+
+    const handleSetSmallMenu = () => {
+        setSmallMenu(!smallMenu);
+    };
 
     return (
         <Router>
             <div className="app-wrapper">
                 <div className={`app-side-menu ${smallMenu ? "small" : ""}`}>
-                    <SideMenu smallMenu={smallMenu} />
+                    <SideMenu smallMenu={smallMenu} handleSetSmallMenu={handleSetSmallMenu} />
                 </div>
                 <Routes>
                     <Route path='/' element={<FrontPage />} />
                     <Route path='/home' element={<FrontPage />} />
-                    <Route path='/lecture' element={<LecturePage />} />
+                    <Route path='/lecture' element={<LecturePage smallMenu={smallMenu} handleSetSmallMenu={handleSetSmallMenu} />} />
                     <Route path='/lecture/document' element={<MainLecture />} />
                 </Routes>
             </div>
