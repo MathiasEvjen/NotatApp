@@ -3,7 +3,7 @@ import "./mainLecture.css";
 import { useEffect, useState } from "react";
 import type { LectureCourse } from "../../types/lectureCourse";
 import type { Sheet } from "../../types/sheet";
-import { fetchAllLectureCourses } from "../../api";
+import { fetchAllLectureCourses, updateSheet } from "../../api";
 import CoursesMenu from "./CoursesMenu";
 import LectureEditor from "./LectureEditor";
 
@@ -30,10 +30,13 @@ const MainLecture: React.FC = () => {
         }));
     };
 
-    const handleUpdatecontent = (htmlText: string) => {
-        setSelectedSheet(prev => ({
-            ...prev!, content: htmlText
-        }));
+    const handleUpdatecontent = async (htmlText: string) => {
+        if (!selectedSheet) return;
+        const sheetToUpdate = {...selectedSheet, content: htmlText, editedAt: new Date()};
+
+        setSelectedSheet(sheetToUpdate);
+
+        await updateSheet(sheetToUpdate.sheetId!, sheetToUpdate)
     };
 
     useEffect(() => {
@@ -60,7 +63,6 @@ const MainLecture: React.FC = () => {
         fetchAndSetLectureCourses();
     }, [])
 
-
     return(
         <div className="main-lecture-wrapper">
             {/* <CoursesMenu 
@@ -72,7 +74,7 @@ const MainLecture: React.FC = () => {
                 <LectureEditor 
                     sheet={selectedSheet}
                     handleUpdateTitle={handleUpdateTitle} 
-                    handleUpdatecontent={handleUpdatecontent}/>
+                    handleUpdateContent={handleUpdatecontent}/>
             )}
         </div>
     );

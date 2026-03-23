@@ -69,7 +69,7 @@ export const deleteSheet = async (id: number) => {
 };
 
 //  -----------------------
-//  Sheet methods
+//  Todo methods
 //  -----------------------
 
 export const fetchTodos = async (): Promise<Todo[]> => {

@@ -28,8 +28,12 @@
     overflow: auto;
     text-decoration: none;
     width: 100%;
+
+    box-sizing: border-box;
     
     > div {
+        width: 100%;
+
         --indent: calc(1.5rem * (var(--level) - 1));
 
         position: relative;
@@ -38,6 +42,8 @@
         padding: 0.7rem;
         padding-left: var(--indent);
         box-sizing: border-box;
+
+        overflow-x: hidden;
         
         /* border-left: 2px solid var(--clr-surface-a20); */
         
