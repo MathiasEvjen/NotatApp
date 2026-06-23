@@ -48,6 +48,11 @@ builder.Logging.AddSerilog(logger);
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate(); // This automatically applies pending migrations on startup
+}
 
 app.UseSwagger();
 app.UseSwaggerUI();
