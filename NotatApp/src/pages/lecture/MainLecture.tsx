@@ -65,11 +65,11 @@ const MainLecture: React.FC = () => {
 
     return(
         <div className="main-lecture-wrapper">
-            {/* <CoursesMenu 
+            <CoursesMenu 
                 selectedCourseId={courseId} 
                 selectedSheetId={sheetId}
                 lectureCourses={lectureCourses}
-                sheets={sheets} /> */}
+                sheets={sheets} />
             {selectedSheet && (
                 <LectureEditor 
                     sheet={selectedSheet}

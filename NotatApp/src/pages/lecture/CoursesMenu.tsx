@@ -25,9 +25,18 @@ const CoursesMenu: React.FC<CoursesMenuProps> = ({ selectedCourseId, selectedShe
                     <p>Emner</p>
                 </div>
                 {lectureCourses?.map(course => 
-                    <div className={`course-menu-course`}>
-                        {isCourseSelected(course.lectureCourseId!) ? <IoMdArrowDropdown /> : <IoMdArrowDropright />}
-                        {course.title}
+                    <div>
+                        <div key={course.lectureCourseId} className={`course-menu-course`}>
+                            {isCourseSelected(course.lectureCourseId!) ? <IoMdArrowDropdown /> : <IoMdArrowDropright />}
+                            {course.title}
+                        </div>
+                        {isCourseSelected(course.lectureCourseId!) &&
+                            course.sheets.map(sheet =>
+                                <div key={sheet.sheetId} className={`course-menu-sheet `}>
+                                    {sheet.title}
+                                </div>
+                            )
+                        }
                     </div>
                 )}
             </div>

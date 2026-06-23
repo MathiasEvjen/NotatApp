@@ -12,7 +12,7 @@ import MainLecture from './pages/lecture/MainLecture';
 
 function App() {
 
-    const [smallMenu, setSmallMenu] = useState<boolean>(false);
+    const [smallMenu, setSmallMenu] = useState<boolean>(true);
 
     const handleSetSmallMenu = () => {
         setSmallMenu(!smallMenu);
