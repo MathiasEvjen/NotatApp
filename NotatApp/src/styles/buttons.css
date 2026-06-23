@@ -24,3 +24,12 @@ button:hover {
 button.active {
     background-color: var(--clr-surface-a40);
 }
+
+.btn-success {
+    background-color: var(--clr-success-a0);
+}
+
+.btn-success:hover {
+    filter: brightness(0.9);
+    background-color: var(--clr-success-a0);
+}

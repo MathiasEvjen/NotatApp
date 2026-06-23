@@ -5,6 +5,9 @@ export interface Sheet {
     noteType: SheetType;
     createdAt: Date;
     editedAt: Date;
+    isNew?: boolean;
+    editMode: boolean;
+    tempId?: string;
 
     lectureCourseId?: number;
 }

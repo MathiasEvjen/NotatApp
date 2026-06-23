@@ -1,9 +1,7 @@
-
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import type { Sheet } from "../../types/sheet";
-import Thumbnail from "./Thumbnail";
+import SheetThumbnail from "./SheetThumbnail";
 import "./thumbnailContainer.css";
-import { IoMdArrowDropleft, IoMdArrowDropright } from "react-icons/io";
 
 interface ThumbnailContainerProps {
     sheets: Sheet[];
@@ -12,54 +10,18 @@ interface ThumbnailContainerProps {
 const ThumbnailContainer: React.FC<ThumbnailContainerProps> = ({ sheets }) => {
     const containerRef = useRef<HTMLDivElement>(null);
 
-    const handleScroll = (event: any) => {
-        event.preventDefault();
-
+    useEffect(() => {
         const container = containerRef.current;
-        if (container) {
-            container.scrollTo({
-                left: container.scrollLeft + event.deltaY * 1
-            })
-        }
-    };
-
-    const handleScrollLeft = () => {
-        const container = containerRef.current;
-        if (container) {
-            container.scrollTo({
-                left: container.scrollLeft - 152,
-                behavior: "smooth"
-            })
-        }
-    };
-
-    const handleScrollRight = () => {
-        const container = containerRef.current;
-        if (container) {
-            container.scrollTo({
-                left: container.scrollLeft + 152,
-                behavior: "smooth"
-            })
-        }
-    };
+        if (!container) return;
+    }, []);
 
     return(
         <div className="thumbnail-container-wrapper">
-            {/* <div className="thumbnail-container-left">
-                <div className="thumbnail-container-arrow-left" onClick={handleScrollLeft}>
-                    <IoMdArrowDropleft />
-                </div>
-            </div> */}
-            <div ref={containerRef} className="thumbnail-container-content" onWheel={(e) => handleScroll(e)}>
+            <div ref={containerRef} className="thumbnail-container-content">
                 {sheets.map(sheet => (
-                    <Thumbnail key={sheet.sheetId} title={sheet.title} date={sheet.createdAt} type={sheet.noteType} />
+                    <SheetThumbnail key={sheet.sheetId} sheet={sheet} />
                 ))}
             </div>
-            {/* <div className="thumbnail-container-right">
-                <div className="thumbnail-container-arrow-right" onClick={handleScrollRight}>
-                    <IoMdArrowDropright />
-                </div>
-            </div> */}
         </div>
     )
 }

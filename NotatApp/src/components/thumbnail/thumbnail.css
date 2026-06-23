@@ -15,9 +15,14 @@
     flex-direction: column;
 
     flex-shrink: 0;
+
+    user-select: none;
+
+    position: relative;
+    z-index: 1;
 }
 
-.thumbnail-wrapper:hover {
+.thumbnail-wrapper:hover:not(:has(.thumbnail-options-button:hover),:has(.thumbnail-options-entry:hover)) {
     cursor: pointer;
     background-color: var(--clr-surface-tonal-a30);
 }
@@ -32,6 +37,11 @@
 
 .thumbnail-type-icon img {
     width: 40%;
+}
+
+.thumbnail-type-icon svg {
+    font-size: 55px;
+    color: var(--clr-primary-a20);
 }
 
 .thumbnail-info {
@@ -54,9 +64,105 @@
     align-items: center;
 }
 
+.thumbnail-title-lecture-course {
+    height: 45%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .thumbnail-date {
     height: 30%;
 
     color: var(--clr-surface-a50);
     font-size: 10px;
+}
+
+.thumbnail-title-edit {
+    width: 100%;
+    height: 45%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.thumbnail-title-edit textarea {
+    width: 95%;
+    height: 90%;
+    
+    background-color: var(--clr-surface-tonal-a0);    
+    border: none;
+    border-radius: 8px;
+
+    color: var(--text);
+
+    font-size: 14px;
+
+    text-align: center;
+
+    padding: 2px;
+
+    outline: none;
+    resize: none;
+    scrollbar-width: none;
+}
+
+.thumbnail-options-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    z-index: 999;
+}
+
+.thumbnail-options-button button {
+    background-color: transparent;
+    padding: 0.2rem;
+}
+
+.thumbnail-options-button button:hover {
+    background-color: var(--clr-surface-tonal-a10);
+}
+
+.thumbnail-options {
+    position: absolute;
+    top: 1.9rem;
+    left: 0;
+    width: 100%;
+
+    background-color: var(--clr-surface-tonal-a10);
+    border-radius: 10px;
+
+    overflow: hidden;
+}
+
+.thumbnail-options-entry {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 5px 10px;
+
+    font-size: 14px;
+}
+
+.thumbnail-options-entry svg {
+    font-size: 18px;
+}
+
+.thumbnail-options-entry:not(:last-of-type) {
+    border-bottom: 1px solid var(--clr-surface-tonal-a20);
+}
+
+.thumbnail-options-entry:hover {
+    cursor: pointer;
+    background-color: var(--clr-surface-tonal-a0);
+}
+
+.thumbnail-options-entry.delete:hover {
+    color: var(--clr-danger-a10);
 }

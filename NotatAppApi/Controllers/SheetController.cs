@@ -38,6 +38,21 @@ namespace NotatAppApi.Controllers
             return Ok(sheet);
         }
 
+        [HttpGet("getLastEdited")]
+        public async Task<IActionResult> GetLastEdited()
+        {
+            var sheets = await _sheetRepository.GetAll();
+            if (sheets == null)
+            {
+                _logger.LogError("[SheetController - GetAll] Sheet list not found");
+                return NotFound("Sheets not found");
+            }
+
+            sheets = [.. sheets.OrderByDescending(sheet => sheet.EditedAt).Take(15)];
+
+            return Ok(sheets);
+        }
+
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] Sheet sheet)
         {

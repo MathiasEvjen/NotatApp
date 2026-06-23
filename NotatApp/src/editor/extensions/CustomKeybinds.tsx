@@ -13,6 +13,12 @@ export const CustomKeybinds = Extension.create({
         }
     },
 
+    addOptions() {
+        return {
+            onSave: null as ((content: string) => void) | null,
+        };
+    },
+
     addKeyboardShortcuts() {
         const tabSize: number = 4;
         let tab: string = "";
@@ -53,6 +59,14 @@ export const CustomKeybinds = Extension.create({
         };
 
         return {
+            "Mod-s": () => {
+                const html = this.editor.getHTML();
+
+                this.options.onSave?.(html);
+
+                return true;
+            },
+
             "Tab": () => {
                 const { 
                     isCodeblock, isListItem, isTopLevelParagraph, node,
@@ -1003,6 +1017,12 @@ export const CustomKeybinds = Extension.create({
                 let newTo: number = $from.before() + tempText.length;
 
                 let wordToHightlight: string = splitText[selectedWord];
+
+                if ((wordToHightlight[0] === "'" && wordToHightlight[wordToHightlight.length-1] === "'")
+                    || (wordToHightlight[0] === '"' && wordToHightlight[wordToHightlight.length-1] === '"')) {
+                    newFrom += 1;
+                    newTo -= 1;
+                }
 
                 if (wordToHightlight.includes(".")) {
                     const splitWord: string[] = wordToHightlight.split(/(?<=\.)/);

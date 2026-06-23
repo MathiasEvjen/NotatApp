@@ -4,7 +4,7 @@ import type { Sheet } from "./types/sheet";
 import type { Todo } from "./types/todo";
 
 const api = axios.create({
-    baseURL: "http://localhost:5106",
+    baseURL: "http://100.92.39.103:5106/",
     headers: {
         "Content-Type": "application/json"
     }
@@ -69,7 +69,7 @@ export const deleteSheet = async (id: number) => {
 };
 
 //  -----------------------
-//  Sheet methods
+//  Todo methods
 //  -----------------------
 
 export const fetchTodos = async (): Promise<Todo[]> => {

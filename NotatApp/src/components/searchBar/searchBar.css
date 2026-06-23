@@ -1,11 +1,13 @@
 .search-bar-container {
     width: 100%;
-    height: 5rem;
+    height: 3.7rem;
 
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
+
+    flex-shrink: 0;
 }
 
 .search-bar {
@@ -39,16 +41,16 @@
     background-color: var(--clr-surface-a0);
     border: none;
 
-    color: var(--clr-surface-a50);
+    color: var(--clr-surface-a70);
 }
 
 .search-bar svg {
-    color: var(--clr-surface-a50);
+    color: var(--clr-surface-a60);
     font-size: 30px;
     
 }
 
 .search-bar svg:hover {
     cursor: pointer;
-    color: var(--clr-surface-a40);
+    color: var(--clr-surface-a50);
 }
