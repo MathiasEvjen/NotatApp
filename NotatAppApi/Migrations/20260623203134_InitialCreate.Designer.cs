@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace NotatAppApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260623201759_InitialCreateAgain")]
-    partial class InitialCreateAgain
+    [Migration("20260623203134_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
