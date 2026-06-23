@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "./lecturePage.css";
 import type { LectureCourse } from "../../types/lectureCourse";
 import LectureCourseThumbnail from "../../components/thumbnail/LectureCourseThumbnail";
-import { createLectureCourse, deleteLectureCourse, fetchAllLectureCourses, updateLectureCourse } from "../../api";
+import { createLectureCourse, createSheet, deleteLectureCourse, fetchAllLectureCourses, updateLectureCourse } from "../../api";
 import SheetThumbnail from "../../components/thumbnail/SheetThumbnail";
 import type { Sheet } from "../../types/sheet";
 import { FaRegFolder } from "react-icons/fa";
@@ -169,7 +169,36 @@ const LecturePage: React.FC<LecurePageProps> = ({ smallMenu, handleSetSmallMenu 
         const updatedSheet: Sheet = {...sheetToSave, title: newTitle, editMode: false};
         
 
-        // TODO: Her skal oppdatering av navn komme
+        if (sheetToSave.isNew) {
+            setOpenedLectureCourseSheets(prevSheets => 
+                prevSheets!.map(lc => 
+                    lc.tempId === updatedSheet.tempId 
+                    ? updatedSheet
+                    : lc
+                )
+            );
+            createAndSetsheet(updatedSheet);
+
+            // TODO: Skal åpne nylig opprettede notater
+        } else {
+            // TODO: Legge til funksjonalitet til å oppdatere navn her om ønskelig
+        }
+    };
+
+    const createAndSetsheet = async (newSheet: Sheet) => {
+        const createdSheet: Sheet = await createSheet(newSheet);
+
+        !openedLectureCourseSheets || openedLectureCourseSheets.length === 0 
+        ? setOpenedLectureCourseSheets([createdSheet]) 
+        : (
+            setOpenedLectureCourseSheets(prevSheets => 
+                prevSheets!.map(sheet => 
+                    sheet.isNew
+                    ? {...createdSheet, editMode: false}
+                    : sheet
+                )
+            )
+        )
     };
 
 
