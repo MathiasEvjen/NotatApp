@@ -53,8 +53,21 @@
     align-items: center;
     gap: 5px;
 
+    font-size: large;
+    font-weight: 600;
+
     box-sizing: border-box;
     border-bottom: 2px solid var(--clr-surface-tonal-a30);
+
+    user-select: none;
+}
+
+.course-menu-course.active {
+    background-color: var(--clr-surface-tonal-a30);
+}
+
+.course-menu-course.active:hover {
+    background-color: var(--clr-surface-tonal-a40);
 }
 
 .course-menu-course svg {
@@ -80,4 +93,20 @@
 
     box-sizing: border-box;
     border-bottom: 2px solid var(--clr-surface-tonal-a30);
+
+    user-select: none;
+}
+
+.course-menu-sheet.active {
+    background-color: var(--clr-primary-a0);
+}
+
+.course-menu-sheet:hover {
+    cursor: pointer;
+    background-color: var(--clr-surface-tonal-a20);
+}
+
+.course-menu-sheet.active:hover {
+    cursor: pointer;
+    background-color: var(--clr-primary-a20);
 }

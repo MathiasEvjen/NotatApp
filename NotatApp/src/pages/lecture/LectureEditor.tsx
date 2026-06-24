@@ -23,7 +23,8 @@ const LectureEditor: React.FC<LectureEditorProps> = ({ sheet, handleUpdateTitle,
 
     const [anchors, setAnchors] = useState<TableOfContentData>([]);
     
-    const timeoutRef = useRef<number | null>(null);    
+    const titleTimeoutRef = useRef<number | null>(null);
+    const contentTimeoutRef = useRef<number | null>(null);    
 
 
     const editor: Editor = useEditor({
@@ -83,20 +84,20 @@ const LectureEditor: React.FC<LectureEditorProps> = ({ sheet, handleUpdateTitle,
         onUpdate({ editor }) {
             if (!editor) return;
 
-            if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current);
+            if (contentTimeoutRef.current) {
+                clearTimeout(contentTimeoutRef.current);
             }
 
-            timeoutRef.current = window.setTimeout(() => {
+            contentTimeoutRef.current = window.setTimeout(() => {
                 handleUpdateContent(editor.getHTML());
-            }, 5000);
+            }, 2000);
         }
     });
 
     useEffect(() => {
         return () => {
-            if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current);
+            if (contentTimeoutRef.current) {
+                clearTimeout(contentTimeoutRef.current);
             }
         };
     }, []);

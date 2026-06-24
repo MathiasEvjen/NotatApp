@@ -19,9 +19,7 @@ const MainLecture: React.FC = () => {
     const [lectureCourses, setLectureCourses] = useState<LectureCourse[]>();
     const [sheets, setSheets] = useState<Sheet[]>();
 
-    const [selectedCourse, setSelectedCourse] = useState<LectureCourse>();
     const [selectedSheet, setSelectedSheet] = useState<Sheet>();
-
 
     const handleUpdateTitle = (newTitle: string) => {
         
@@ -30,6 +28,47 @@ const MainLecture: React.FC = () => {
         }));
     };
 
+    useEffect(() => {
+        if (!selectedSheet?.sheetId) return;
+
+        const editDate = new Date();
+
+        const delayDebounceFn = setTimeout(async () => {
+            const sheetToUpdate = {
+                ...selectedSheet,
+                editedAt: editDate
+            };
+
+            await updateSheet(selectedSheet.sheetId!, sheetToUpdate);
+
+            setSelectedSheet(prev => {
+                if (!prev) return;
+                return { ...prev, editedAt: editDate };
+            });
+
+            setLectureCourses(prevCourses => {
+                if (!prevCourses) return prevCourses;
+                
+                return prevCourses.map(course => {
+                    if (course.lectureCourseId === courseId) {
+                        return {
+                            ...course,
+                            sheets: course.sheets.map(sheet => 
+                                sheet.sheetId === selectedSheet.sheetId
+                                    ? { ...sheet, title: selectedSheet.title, editedAt: editDate }
+                                    : sheet
+                            )
+                        };
+                    }
+                    return course;
+                });
+            });
+
+        }, 2000);
+
+        return () => clearTimeout(delayDebounceFn);
+    }, [selectedSheet?.title]);
+
     const handleUpdatecontent = async (htmlText: string) => {
         if (!selectedSheet) return;
         const sheetToUpdate = {...selectedSheet, content: htmlText, editedAt: new Date()};
@@ -37,6 +76,18 @@ const MainLecture: React.FC = () => {
         setSelectedSheet(sheetToUpdate);
 
         await updateSheet(sheetToUpdate.sheetId!, sheetToUpdate)
+    };
+
+    const handleOpenCourse = (id: number) => {
+        setLectureCourses(prevCourses => {
+            if (!prevCourses) return prevCourses;
+
+            return prevCourses.map(course => 
+                course.lectureCourseId === id 
+                ? {...course, isOpen: !course.isOpen}
+                : course
+            );
+        });
     };
 
     useEffect(() => {
@@ -56,12 +107,26 @@ const MainLecture: React.FC = () => {
         const fetchedLectureCourses = await fetchAllLectureCourses();
         console.log(fetchedLectureCourses);
 
-        setLectureCourses(fetchedLectureCourses);
+        const updatedCourses = fetchedLectureCourses.map(course => 
+            course.lectureCourseId === courseId 
+            ? { ...course, isOpen: true }
+            : course
+        );
+
+        setLectureCourses(updatedCourses);
     };
 
     useEffect(() => {
         fetchAndSetLectureCourses();
-    }, [])
+    }, [courseId]);
+
+    useEffect(() => {
+        const newSelectedSheet = lectureCourses?.find(course => 
+                                            course.lectureCourseId === courseId)?.sheets.find(sheet => 
+                                                        sheet.sheetId === sheetId
+                                                    )
+        setSelectedSheet(newSelectedSheet);
+    }, [sheetId]);
 
     return(
         <div className="main-lecture-wrapper">
@@ -69,7 +134,8 @@ const MainLecture: React.FC = () => {
                 selectedCourseId={courseId} 
                 selectedSheetId={sheetId}
                 lectureCourses={lectureCourses}
-                sheets={sheets} />
+                sheets={sheets} 
+                handleOpenCourse={handleOpenCourse}/>
             {selectedSheet && (
                 <LectureEditor 
                     sheet={selectedSheet}

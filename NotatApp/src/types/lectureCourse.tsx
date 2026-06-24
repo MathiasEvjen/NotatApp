@@ -7,4 +7,5 @@ export interface LectureCourse {
     isNew?: boolean;
     editMode: boolean;
     tempId?: string;
+    isOpen?: boolean;
 }

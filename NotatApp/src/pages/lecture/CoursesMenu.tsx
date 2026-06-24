@@ -3,6 +3,7 @@ import type { LectureCourse } from "../../types/lectureCourse";
 import type { Sheet } from "../../types/sheet";
 import { IoMdArrowDropright } from "react-icons/io";
 import { IoMdArrowDropdown } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 
 interface CoursesMenuProps {
     selectedCourseId: number | null;
@@ -10,12 +11,19 @@ interface CoursesMenuProps {
 
     lectureCourses: LectureCourse[] | undefined;
     sheets: Sheet[] | undefined;
+
+    handleOpenCourse: (id: number) => void;
 }
 
-const CoursesMenu: React.FC<CoursesMenuProps> = ({ selectedCourseId, selectedSheetId, lectureCourses, sheets }) => {
+const CoursesMenu: React.FC<CoursesMenuProps> = ({ selectedCourseId, selectedSheetId, lectureCourses, sheets, handleOpenCourse }) => {
+    const navigate = useNavigate();
 
     const isCourseSelected = (courseId: number) => {
         return courseId === selectedCourseId;
+    };
+
+    const handleChangeSheet = (sheet: Sheet) => {
+        navigate(`/lecture/document?course=${sheet.lectureCourseId}&sheet=${sheet.sheetId}`);
     };
 
     return (
@@ -26,13 +34,21 @@ const CoursesMenu: React.FC<CoursesMenuProps> = ({ selectedCourseId, selectedShe
                 </div>
                 {lectureCourses?.map(course => 
                     <div>
-                        <div key={course.lectureCourseId} className={`course-menu-course`}>
-                            {isCourseSelected(course.lectureCourseId!) ? <IoMdArrowDropdown /> : <IoMdArrowDropright />}
+                        <div 
+                            key={course.lectureCourseId} 
+                            className={`course-menu-course ${isCourseSelected(course.lectureCourseId!) ? "active" : ""}`} 
+                            onClick={() => handleOpenCourse(course.lectureCourseId!)}
+                        >
+                            {course.isOpen ? <IoMdArrowDropdown /> : <IoMdArrowDropright />}
                             {course.title}
                         </div>
-                        {isCourseSelected(course.lectureCourseId!) &&
+                        {course.isOpen &&
                             course.sheets.map(sheet =>
-                                <div key={sheet.sheetId} className={`course-menu-sheet `}>
+                                <div 
+                                    key={sheet.sheetId} 
+                                    className={`course-menu-sheet ${sheet.sheetId === selectedSheetId ? "active" : ""}`}
+                                    onClick={() => handleChangeSheet(sheet)}
+                                >
                                     {sheet.title}
                                 </div>
                             )
