@@ -59,6 +59,8 @@
     box-sizing: border-box;
     border-bottom: 2px solid var(--clr-surface-tonal-a30);
 
+    background-color: var(--clr-surface-tonal-a20);
+
     user-select: none;
 }
 

@@ -234,7 +234,7 @@ const LecturePage: React.FC<LecurePageProps> = ({ smallMenu, handleSetSmallMenu 
                     <div className="lecture-page-divider-line" />
 
                     <div className="lecture-page-content">
-                        {lectureCourses.map(lc => 
+                        {lectureCourses.sort((a, b) => a.title.localeCompare(b.title)).map(lc => 
                             <LectureCourseThumbnail 
                                 key={lc.lectureCourseId ? lc.lectureCourseId : lc.tempId}
                                 lectureCourse={lc} 
@@ -258,7 +258,7 @@ const LecturePage: React.FC<LecurePageProps> = ({ smallMenu, handleSetSmallMenu 
                     <div className="lecture-page-divider-line" />
 
                     <div className="lecture-page-content">
-                        {openedLectureCourseSheets.map(sheet => 
+                        {openedLectureCourseSheets.sort((a, b) => {return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()}).map(sheet => 
                             <SheetThumbnail 
                                 key={sheet.sheetId ? sheet.sheetId : sheet.tempId} 
                                 sheet={sheet}

@@ -32,7 +32,7 @@ const CoursesMenu: React.FC<CoursesMenuProps> = ({ selectedCourseId, selectedShe
                 <div className="courses-menu-courses-header">
                     <p>Emner</p>
                 </div>
-                {lectureCourses?.map(course => 
+                {lectureCourses?.sort((a,b) => a.title.localeCompare(b.title)).map(course => 
                     <div>
                         <div 
                             key={course.lectureCourseId} 
