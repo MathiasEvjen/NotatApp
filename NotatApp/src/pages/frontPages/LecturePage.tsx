@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import "./lecturePage.css";
 import type { LectureCourse } from "../../types/lectureCourse";
 import LectureCourseThumbnail from "../../components/thumbnail/LectureCourseThumbnail";
-import { createLectureCourse, createSheet, deleteLectureCourse, fetchAllLectureCourses, updateLectureCourse } from "../../api";
+import { createLectureCourse, createSheet, deleteLectureCourse, deleteSheet, fetchAllLectureCourses, updateLectureCourse, updateSheet } from "../../api";
 import SheetThumbnail from "../../components/thumbnail/SheetThumbnail";
 import type { Sheet } from "../../types/sheet";
-import { FaRegFolder } from "react-icons/fa";
+import { FaPlus, FaRegFolder } from "react-icons/fa";
 import { IoChevronBack } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 
@@ -120,6 +120,7 @@ const LecturePage: React.FC<LecurePageProps> = ({ smallMenu, handleSetSmallMenu 
         setOpenedLectureCourse(lc);
         setIsLectureCourseOpened(true);
         setOpenedLectureCourseSheets(lc.sheets);
+        console.log(lc.sheets);
     };
 
     const closeLectureCourse = () => {
@@ -159,8 +160,8 @@ const LecturePage: React.FC<LecurePageProps> = ({ smallMenu, handleSetSmallMenu 
 
         setOpenedLectureCourseSheets(
             openedLectureCourseSheets.filter(
-                lc => lc.tempId !== editSheet.tempId 
-                || lc.lectureCourseId !== editSheet.lectureCourseId
+                sheet => sheet.tempId !== editSheet.tempId 
+                || sheet.lectureCourseId !== editSheet.lectureCourseId
             )
         );
     };
@@ -171,17 +172,23 @@ const LecturePage: React.FC<LecurePageProps> = ({ smallMenu, handleSetSmallMenu 
 
         if (sheetToSave.isNew) {
             setOpenedLectureCourseSheets(prevSheets => 
-                prevSheets!.map(lc => 
-                    lc.tempId === updatedSheet.tempId 
+                prevSheets!.map(sheet => 
+                    sheet.tempId === updatedSheet.tempId 
                     ? updatedSheet
-                    : lc
+                    : sheet
                 )
             );
             createAndSetsheet(updatedSheet);
 
-            // TODO: Skal åpne nylig opprettede notater
         } else {
-            // TODO: Legge til funksjonalitet til å oppdatere navn her om ønskelig
+            setOpenedLectureCourseSheets(prevSheets => 
+                prevSheets!.map(sheet => 
+                    sheet.sheetId === updatedSheet.sheetId
+                    ? updatedSheet
+                    : sheet
+                )
+            )
+            updateSheetTitle(updatedSheet);
         }
     };
 
@@ -199,6 +206,19 @@ const LecturePage: React.FC<LecurePageProps> = ({ smallMenu, handleSetSmallMenu 
                 )
             )
         )
+
+        handleOpenSheet(createdSheet);  // Åpner etter opprettelse i databasen
+    };
+
+    const updateSheetTitle = async (updatedSheet: Sheet) => {
+        await updateSheet(updatedSheet.sheetId!, updatedSheet);
+    }
+
+    const removeSheet = async (sheetToDelete: Sheet) => {
+        setOpenedLectureCourseSheets(openedLectureCourseSheets!.filter(sheet => sheet.sheetId !== sheetToDelete.sheetId));
+        await deleteSheet(sheetToDelete.sheetId!);
+
+        fetchAndSetLectureCourses() // Oppdaterer emnet så det vet at notatet er slettet
     };
 
 
@@ -208,7 +228,7 @@ const LecturePage: React.FC<LecurePageProps> = ({ smallMenu, handleSetSmallMenu 
                 <div className="lecture-page-content-wrapper">
                     <div className="lecture-page-content-header">
                         <p>Emner</p>
-                        <button className="btn-success" onClick={newLectureCourse}>Nytt emne</button>
+                        <button className="btn-success" onClick={newLectureCourse}><FaPlus size="0.8em" /></button>
                     </div>
 
                     <div className="lecture-page-divider-line" />
@@ -232,7 +252,7 @@ const LecturePage: React.FC<LecurePageProps> = ({ smallMenu, handleSetSmallMenu 
                     <>
                     <div className="lecture-page-content-header">
                         <p><button onClick={closeLectureCourse} ><IoChevronBack /></button><FaRegFolder /> {openedLectureCourse.title}</p>
-                        <button className="btn-success" onClick={newSheet}>Nytt notat</button>
+                        <button className="btn-success" onClick={newSheet}><FaPlus size="0.8em" /></button>
                     </div>
 
                     <div className="lecture-page-divider-line" />
@@ -240,11 +260,12 @@ const LecturePage: React.FC<LecurePageProps> = ({ smallMenu, handleSetSmallMenu 
                     <div className="lecture-page-content">
                         {openedLectureCourseSheets.map(sheet => 
                             <SheetThumbnail 
-                                key={sheet.lectureCourseId ? sheet.lectureCourseId : sheet.tempId} 
+                                key={sheet.sheetId ? sheet.sheetId : sheet.tempId} 
                                 sheet={sheet}
                                 saveSheet={saveSheet}
                                 cancelEditMode={cancelEditModeSheet}
-                                handleOpenSheet={handleOpenSheet} />
+                                handleOpenSheet={handleOpenSheet}
+                                removeSheet={removeSheet} />
                         )}
                     </div>
                     </>
