@@ -1,6 +1,6 @@
 import { useSearchParams } from "react-router-dom";
 import "./mainLecture.css";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { LectureCourse } from "../../types/lectureCourse";
 import type { Sheet } from "../../types/sheet";
 import { fetchAllLectureCourses, updateSheet } from "../../api";
@@ -21,8 +21,12 @@ const MainLecture: React.FC = () => {
 
     const [selectedSheet, setSelectedSheet] = useState<Sheet>();
 
+    const isTypingTitle = useRef<boolean>(false);
+
+
     const handleUpdateTitle = (newTitle: string) => {
-        
+        isTypingTitle.current = true;
+
         setSelectedSheet(prev => ({
             ...prev!, title: newTitle
         }));
@@ -30,6 +34,8 @@ const MainLecture: React.FC = () => {
 
     useEffect(() => {
         if (!selectedSheet?.sheetId) return;
+
+        if (!isTypingTitle.current) return;
 
         const editDate = new Date();
 
@@ -40,6 +46,8 @@ const MainLecture: React.FC = () => {
             };
 
             await updateSheet(selectedSheet.sheetId!, sheetToUpdate);
+
+            isTypingTitle.current = false;
 
             setSelectedSheet(prev => {
                 if (!prev) return;
@@ -126,6 +134,8 @@ const MainLecture: React.FC = () => {
                                                         sheet.sheetId === sheetId
                                                     );
         setSelectedSheet(newSelectedSheet);
+
+        isTypingTitle.current = false;
     }, [sheetId]);
 
     return(

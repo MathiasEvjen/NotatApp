@@ -4,6 +4,7 @@ import type { Sheet } from "../../types/sheet";
 import { IoMdArrowDropright } from "react-icons/io";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
+import { FaPlus } from "react-icons/fa";
 
 interface CoursesMenuProps {
     selectedCourseId: number | null;
@@ -31,6 +32,7 @@ const CoursesMenu: React.FC<CoursesMenuProps> = ({ selectedCourseId, selectedShe
             <div className="courses-menu-courses-container">
                 <div className="courses-menu-courses-header">
                     <p>Emner</p>
+                    <button className="btn-success"><FaPlus /></button>
                 </div>
                 {lectureCourses?.sort((a,b) => a.title.localeCompare(b.title)).map(course => 
                     <div>
@@ -44,14 +46,22 @@ const CoursesMenu: React.FC<CoursesMenuProps> = ({ selectedCourseId, selectedShe
                         </div>
                         {course.isOpen &&
                             course.sheets.sort((a, b) => {return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()}).map(sheet =>
-                                <div 
-                                    key={sheet.sheetId} 
-                                    className={`course-menu-sheet ${sheet.sheetId === selectedSheetId ? "active" : ""}`}
-                                    onClick={() => handleChangeSheet(sheet)}
-                                >
-                                    {sheet.title}
-                                </div>
-                            )
+                                <>
+                                    <div 
+                                        key={sheet.sheetId} 
+                                        className={`course-menu-sheet ${sheet.sheetId === selectedSheetId ? "active" : ""}`}
+                                        onClick={() => handleChangeSheet(sheet)}
+                                    >
+                                        {sheet.title}
+                                    </div>
+                                    
+                                </>
+                        )}
+                        {course.isOpen && 
+                            <div className="course-menu-new-sheet">
+                                <FaPlus />
+                                <p>Nytt notat</p>
+                            </div>
                         }
                     </div>
                 )}

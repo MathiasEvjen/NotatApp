@@ -31,14 +31,19 @@
     font-size: 25px;
 
     display: flex;
-    justify-content: start;
+    justify-content: space-between;
     align-items: center;
 
     background-color: var(--clr-surface-a20);
     border-bottom: 2px solid var(--clr-surface-tonal-a0);
     padding-left: 0.5rem;
+    padding-right: 1rem;
 
     box-sizing: border-box;
+}
+
+.courses-menu-courses-header button {
+    width: 4.5rem;
 }
 
 .course-menu-course {
@@ -111,4 +116,29 @@
 .course-menu-sheet.active:hover {
     cursor: pointer;
     background-color: var(--clr-primary-a20);
+}
+
+.course-menu-new-sheet {
+    width: 100%;
+    padding: 0.5rem 0;
+
+    padding-left: 2rem;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    gap: 1rem;
+
+    font-size: 12px;
+
+    box-sizing: border-box;
+    border-bottom: 2px solid var(--clr-surface-tonal-a30);
+
+    background-color: var(--clr-surface-tonal-a0);
+}
+
+.course-menu-new-sheet:hover {
+    cursor: pointer;
+    background-color: var(--clr-surface-tonal-a5);
 }
