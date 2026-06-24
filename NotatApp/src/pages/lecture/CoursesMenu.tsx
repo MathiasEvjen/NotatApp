@@ -43,7 +43,7 @@ const CoursesMenu: React.FC<CoursesMenuProps> = ({ selectedCourseId, selectedShe
                             {course.title}
                         </div>
                         {course.isOpen &&
-                            course.sheets.map(sheet =>
+                            course.sheets.sort((a, b) => {return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()}).map(sheet =>
                                 <div 
                                     key={sheet.sheetId} 
                                     className={`course-menu-sheet ${sheet.sheetId === selectedSheetId ? "active" : ""}`}

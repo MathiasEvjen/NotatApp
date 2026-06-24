@@ -124,7 +124,7 @@ const MainLecture: React.FC = () => {
         const newSelectedSheet = lectureCourses?.find(course => 
                                             course.lectureCourseId === courseId)?.sheets.find(sheet => 
                                                         sheet.sheetId === sheetId
-                                                    )
+                                                    );
         setSelectedSheet(newSelectedSheet);
     }, [sheetId]);
 
@@ -134,7 +134,7 @@ const MainLecture: React.FC = () => {
                 selectedCourseId={courseId} 
                 selectedSheetId={sheetId}
                 lectureCourses={lectureCourses}
-                sheets={sheets} 
+                sheets={sheets}
                 handleOpenCourse={handleOpenCourse}/>
             {selectedSheet && (
                 <LectureEditor 

@@ -23,7 +23,6 @@ const LectureEditor: React.FC<LectureEditorProps> = ({ sheet, handleUpdateTitle,
 
     const [anchors, setAnchors] = useState<TableOfContentData>([]);
     
-    const titleTimeoutRef = useRef<number | null>(null);
     const contentTimeoutRef = useRef<number | null>(null);    
 
 
@@ -101,6 +100,14 @@ const LectureEditor: React.FC<LectureEditorProps> = ({ sheet, handleUpdateTitle,
             }
         };
     }, []);
+
+    useEffect(() => {
+        if (!editor || !sheet) return;
+
+        if (editor.getHTML() !== sheet.content) {
+            editor.commands.setContent(sheet.content || "");
+        }
+    }, [sheet?.sheetId, editor]);
 
     return(
         <>
