@@ -88,14 +88,17 @@
 
 .course-menu-sheet {
     width: 100%;
+    min-height: 50px;
     
     padding: 0.75rem 0;
     
     padding-left: 2rem;
+    padding-right: 0.5rem;
 
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: space-between;
     gap: 5px;
 
     box-sizing: border-box;
@@ -116,6 +119,10 @@
 .course-menu-sheet.active:hover {
     cursor: pointer;
     background-color: var(--clr-primary-a20);
+}
+
+.course-menu-sheet button {
+    width: 1.8rem;
 }
 
 .course-menu-new-sheet {

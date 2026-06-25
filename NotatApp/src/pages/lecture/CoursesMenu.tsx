@@ -4,19 +4,32 @@ import type { Sheet } from "../../types/sheet";
 import { IoMdArrowDropright } from "react-icons/io";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaTrash } from "react-icons/fa";
+import { RxCross1 } from "react-icons/rx";
 
 interface CoursesMenuProps {
     selectedCourseId: number | null;
     selectedSheetId: number | null;
 
     lectureCourses: LectureCourse[] | undefined;
-    sheets: Sheet[] | undefined;
 
     handleOpenCourse: (id: number) => void;
+    addSheetToLectureCourse: (lectureCourseId: number) => void;
+    handleActivateConfirmDelete: (sheetId: number, lectureCourseId: number) => void;
+    handleDeleteSheet: (sheetId: number) => void;
+    handleCancelDeleteSheet: (sheetId: number, lectureCourseId: number) => void;
 }
 
-const CoursesMenu: React.FC<CoursesMenuProps> = ({ selectedCourseId, selectedSheetId, lectureCourses, sheets, handleOpenCourse }) => {
+const CoursesMenu: React.FC<CoursesMenuProps> = ({ 
+    selectedCourseId, 
+    selectedSheetId, 
+    lectureCourses, 
+    handleOpenCourse, 
+    addSheetToLectureCourse, 
+    handleActivateConfirmDelete,
+    handleDeleteSheet,
+    handleCancelDeleteSheet
+}) => {
     const navigate = useNavigate();
 
     const isCourseSelected = (courseId: number) => {
@@ -46,19 +59,70 @@ const CoursesMenu: React.FC<CoursesMenuProps> = ({ selectedCourseId, selectedShe
                         </div>
                         {course.isOpen &&
                             course.sheets.sort((a, b) => {return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()}).map(sheet =>
-                                <>
-                                    <div 
-                                        key={sheet.sheetId} 
-                                        className={`course-menu-sheet ${sheet.sheetId === selectedSheetId ? "active" : ""}`}
-                                        onClick={() => handleChangeSheet(sheet)}
-                                    >
-                                        {sheet.title}
-                                    </div>
-                                    
-                                </>
+                                <div 
+                                    key={sheet.sheetId} 
+                                    className={`course-menu-sheet ${sheet.sheetId === selectedSheetId ? "active" : ""}`}
+                                    onClick={
+                                        (e) => {
+                                            e.stopPropagation();
+                                            handleChangeSheet(sheet);
+                                        }
+                                    }
+                                >
+                                    {sheet.editMode ? (
+                                        <>
+                                            {sheet.title}
+                                            <button 
+                                                className="btn-trash" 
+                                                onClick={
+                                                    (e) => {
+                                                        e.stopPropagation();
+                                                        handleDeleteSheet(sheet.sheetId!);
+                                                    }
+                                                }
+                                            >
+                                                <FaTrash />
+                                            </button>
+                                            <button 
+                                                className="btn-trash" 
+                                                onClick={
+                                                    (e) => {
+                                                        e.stopPropagation();
+                                                        handleCancelDeleteSheet(sheet.sheetId!, sheet.lectureCourseId!);
+                                                    }
+                                                }
+                                            >
+                                                <RxCross1 />
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <>
+                                            {sheet.title}
+                                            <button 
+                                                className="btn-trash" 
+                                                onClick={
+                                                    (e) => {
+                                                        e.stopPropagation();
+                                                        handleActivateConfirmDelete(sheet.sheetId!, sheet.lectureCourseId!);
+                                                    }
+                                                }
+                                            >
+                                                <FaTrash />
+                                            </button>
+                                        </>
+                                    )}
+                                </div>
                         )}
                         {course.isOpen && 
-                            <div className="course-menu-new-sheet">
+                            <div 
+                                className="course-menu-new-sheet" 
+                                onClick={
+                                    (e) => {
+                                        e.stopPropagation();
+                                        addSheetToLectureCourse(course.lectureCourseId!);
+                                    }
+                                }
+                            >
                                 <FaPlus />
                                 <p>Nytt notat</p>
                             </div>

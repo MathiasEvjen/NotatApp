@@ -1,13 +1,14 @@
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import "./mainLecture.css";
 import { useEffect, useRef, useState } from "react";
 import type { LectureCourse } from "../../types/lectureCourse";
 import type { Sheet } from "../../types/sheet";
-import { fetchAllLectureCourses, updateSheet } from "../../api";
+import { createSheet, fetchAllLectureCourses, updateSheet } from "../../api";
 import CoursesMenu from "./CoursesMenu";
 import LectureEditor from "./LectureEditor";
 
 const MainLecture: React.FC = () => {
+    const navigate = useNavigate();
     const [searchParams] = useSearchParams();
 
     const courseIdString = searchParams.get("course");
@@ -17,12 +18,43 @@ const MainLecture: React.FC = () => {
     const sheetId: number | null = sheetIdString ? Number(sheetIdString) : null;
 
     const [lectureCourses, setLectureCourses] = useState<LectureCourse[]>();
-    const [sheets, setSheets] = useState<Sheet[]>();
 
     const [selectedSheet, setSelectedSheet] = useState<Sheet>();
 
     const isTypingTitle = useRef<boolean>(false);
 
+
+    const addSheetToLectureCourse = async (lectureCourseId: number,) => {
+        const newSheet: Sheet = {
+            tempId: crypto.randomUUID(),
+            title: "",
+            content: "",
+            noteType: "Lecture",
+            createdAt: new Date(),
+            editedAt: new Date(),
+            isNew: true,
+            editMode: false,
+            lectureCourseId: lectureCourseId
+        };
+
+        const createdSheet: Sheet = await createSheet(newSheet);
+
+        setLectureCourses(prevCourses => {
+            if (!prevCourses) return prevCourses;
+
+            return prevCourses.map(course => {
+                if (course.lectureCourseId === lectureCourseId) {
+                    return {
+                        ...course,
+                        sheets: [...course.sheets, createdSheet]
+                    };
+                }
+                return course;
+            })
+        });
+
+        navigate(`/lecture/document?course=${lectureCourseId}&sheet=${createdSheet.sheetId}`);   // Navigerer til nytt notat
+    };
 
     const handleUpdateTitle = (newTitle: string) => {
         isTypingTitle.current = true;
@@ -98,6 +130,48 @@ const MainLecture: React.FC = () => {
         });
     };
 
+    const handleActivateConfirmDelete = (sheetId: number, lectureCourseId: number) => {
+        setLectureCourses(prevCourses => {
+            if (!prevCourses) return prevCourses;
+
+            return prevCourses.map(course => {
+                if (course.lectureCourseId === lectureCourseId) {
+                    return { ...course, 
+                        sheets: course.sheets.map(sheet => 
+                            sheet.sheetId === sheetId
+                            ? { ...sheet, editMode: true}
+                            : sheet
+                        )
+                    }
+                }
+                return course;
+            })
+        })
+    };
+
+    const handleCancelDeleteSheet = (sheetId: number, lectureCourseId: number) => {
+        setLectureCourses(prevCourses => {
+            if (!prevCourses) return prevCourses;
+
+            return prevCourses.map(course => {
+                if (course.lectureCourseId === lectureCourseId) {
+                    return { ...course, 
+                        sheets: course.sheets.map(sheet => 
+                            sheet.sheetId === sheetId
+                            ? { ...sheet, editMode: false}
+                            : sheet
+                        )
+                    }
+                }
+                return course;
+            })
+        })
+    };
+
+    const handleDeleteSheet = (sheetId: number) => {
+        // TODO: Legge til sletting av notat
+    };
+
     useEffect(() => {
         const selectedCourse = lectureCourses?.find(lc => 
                 lc.lectureCourseId === courseId);
@@ -107,8 +181,6 @@ const MainLecture: React.FC = () => {
                     sheet.sheetId === sheetId);
 
         setSelectedSheet(newSelectedSheet);
-
-        setSheets(selectedCourse?.sheets);
     }, [lectureCourses])
 
     const fetchAndSetLectureCourses = async () => {
@@ -144,8 +216,11 @@ const MainLecture: React.FC = () => {
                 selectedCourseId={courseId} 
                 selectedSheetId={sheetId}
                 lectureCourses={lectureCourses}
-                sheets={sheets}
-                handleOpenCourse={handleOpenCourse}/>
+                handleOpenCourse={handleOpenCourse}
+                addSheetToLectureCourse={addSheetToLectureCourse}
+                handleActivateConfirmDelete={handleActivateConfirmDelete}
+                handleCancelDeleteSheet={handleCancelDeleteSheet}
+                handleDeleteSheet={handleDeleteSheet} />
             {selectedSheet && (
                 <LectureEditor 
                     sheet={selectedSheet}

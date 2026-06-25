@@ -33,3 +33,7 @@ button.active {
     filter: brightness(0.9);
     background-color: var(--clr-success-a0);
 }
+
+.btn-trash:hover {
+    color: var(--clr-danger-a20);
+}
