@@ -588,15 +588,15 @@ export const CustomKeybinds = Extension.create({
                     let toLine: number = 0;
                     let tempText: string = "";
                     let prevTemptText: string = "";
-                    let fromAtLineStart: boolean = false;
+                    // let fromAtLineStart: boolean = false;
 
                     for (let i = 0; i < lines.length; i++) {
                         tempText += lines[i];
                         if (fromInCode >= prevTemptText.length && fromInCode <= tempText.length) {
                             fromLine = i;
 
-                            let tabCount: number = getTabCountCode(lines[i], tabSize);
-                            if (fromInCode-1-(tabCount * tabSize)  === prevTemptText.length) fromAtLineStart = true;
+                            // let tabCount: number = getTabCountCode(lines[i], tabSize);
+                            // if (fromInCode-1-(tabCount * tabSize)  === prevTemptText.length) fromAtLineStart = true;
                         }
                         if (toInCode >= prevTemptText.length && toInCode <= tempText.length) {
                             toLine = i;
@@ -701,15 +701,15 @@ export const CustomKeybinds = Extension.create({
                     let toLine: number = 0;
                     let tempText: string = "";
                     let prevTemptText: string = "";
-                    let fromAtLineStart: boolean = false;
+                    // let fromAtLineStart: boolean = false;
 
                     for (let i = 0; i < lines.length; i++) {
                         tempText += lines[i];
                         if (fromInCode >= prevTemptText.length && fromInCode <= tempText.length) {
                             fromLine = i;
 
-                            let tabCount: number = getTabCountCode(lines[i], tabSize);
-                            if (fromInCode-1-(tabCount * tabSize)  === prevTemptText.length) fromAtLineStart = true;
+                            // let tabCount: number = getTabCountCode(lines[i], tabSize);
+                            // if (fromInCode-1-(tabCount * tabSize)  === prevTemptText.length) fromAtLineStart = true;
                         }
                         if (toInCode >= prevTemptText.length && toInCode <= tempText.length) {
                             toLine = i;

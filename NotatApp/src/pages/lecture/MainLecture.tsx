@@ -168,7 +168,7 @@ const MainLecture: React.FC = () => {
         })
     };
 
-    const handleDeleteSheet = (sheetId: number) => {
+    const handleDeleteSheet = () => {
         // TODO: Legge til sletting av notat
     };
 
