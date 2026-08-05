@@ -31,14 +31,19 @@
     font-size: 25px;
 
     display: flex;
-    justify-content: start;
+    justify-content: space-between;
     align-items: center;
 
     background-color: var(--clr-surface-a20);
     border-bottom: 2px solid var(--clr-surface-tonal-a0);
     padding-left: 0.5rem;
+    padding-right: 1rem;
 
     box-sizing: border-box;
+}
+
+.courses-menu-courses-header button {
+    width: 4.5rem;
 }
 
 .course-menu-course {
@@ -53,8 +58,23 @@
     align-items: center;
     gap: 5px;
 
+    font-size: large;
+    font-weight: 600;
+
     box-sizing: border-box;
     border-bottom: 2px solid var(--clr-surface-tonal-a30);
+
+    background-color: var(--clr-surface-tonal-a20);
+
+    user-select: none;
+}
+
+.course-menu-course.active {
+    background-color: var(--clr-surface-tonal-a30);
+}
+
+.course-menu-course.active:hover {
+    background-color: var(--clr-surface-tonal-a40);
 }
 
 .course-menu-course svg {
@@ -68,16 +88,64 @@
 
 .course-menu-sheet {
     width: 100%;
+    min-height: 50px;
     
     padding: 0.75rem 0;
     
+    padding-left: 2rem;
+    padding-right: 0.5rem;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 5px;
+
+    box-sizing: border-box;
+    border-bottom: 2px solid var(--clr-surface-tonal-a30);
+
+    user-select: none;
+}
+
+.course-menu-sheet.active {
+    background-color: var(--clr-primary-a0);
+}
+
+.course-menu-sheet:hover {
+    cursor: pointer;
+    background-color: var(--clr-surface-tonal-a20);
+}
+
+.course-menu-sheet.active:hover {
+    cursor: pointer;
+    background-color: var(--clr-primary-a20);
+}
+
+.course-menu-sheet button {
+    width: 1.8rem;
+}
+
+.course-menu-new-sheet {
+    width: 100%;
+    padding: 0.5rem 0;
+
     padding-left: 2rem;
 
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 5px;
+
+    gap: 1rem;
+
+    font-size: 12px;
 
     box-sizing: border-box;
     border-bottom: 2px solid var(--clr-surface-tonal-a30);
+
+    background-color: var(--clr-surface-tonal-a0);
+}
+
+.course-menu-new-sheet:hover {
+    cursor: pointer;
+    background-color: var(--clr-surface-tonal-a5);
 }

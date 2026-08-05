@@ -2,7 +2,7 @@ import "./sideMenu.css";
 import Logo from "../../assets/logo.svg";
 import Logbooks from "../../assets/logbooks.svg";
 import Checklists from "../../assets/checklists.svg";
-import Lecture from "../../assets/presentation.svg";
+import Lecture from "../../assets/cap.svg";
 import { NavLink, useLocation } from "react-router-dom";
 
 interface SideMenuProps {

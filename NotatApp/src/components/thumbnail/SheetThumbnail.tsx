@@ -5,25 +5,42 @@ import Document from "../../assets/document.svg";
 import Log from "../../assets/log.svg";
 import Checklist from "../../assets/checklist.svg";
 import { useEffect, useRef, useState } from "react";
+import { SlOptionsVertical } from "react-icons/sl";
+import { FaRegEdit } from "react-icons/fa";
+import { LuTrash2 } from "react-icons/lu";
 
 interface ThumbnailProps {
     sheet: Sheet;
     saveSheet: (sheet: Sheet, newTitle: string) => void;
     cancelEditMode: (sheet: Sheet) => void;
     handleOpenSheet: (sheet: Sheet) => void;
+    removeSheet: (sheet: Sheet) => void;
 }
 
 const SheetThumbnail: React.FC<ThumbnailProps> = ({ 
     sheet,
     saveSheet,
     cancelEditMode,
-    handleOpenSheet
+    handleOpenSheet,
+    removeSheet
 }) => {
     const textareaRef = useRef<HTMLTextAreaElement>(null);    
 
     const formattedDate: string = format(sheet.createdAt, "E. do MMM y")
 
     const [newTitle, setNewTitle] = useState<string>("");
+
+    const [showOptions, setShowOptions] = useState<boolean>(false);
+
+    const handleShowOptions = () => {
+        setShowOptions(!showOptions);
+    };
+
+    const handleEditTitle = () => {
+        setShowOptions(false);
+        setNewTitle(sheet.title);   // For å fylle ut textarea når man skal redigere navnet
+        sheet.editMode = true;
+    };
 
     const handleKeyDown = (event: any) => {
         if (event.key === "Enter") {
@@ -69,6 +86,42 @@ const SheetThumbnail: React.FC<ThumbnailProps> = ({
                     {formattedDate}
                 </div>
             </div>
+            <div className="thumbnail-options-button">
+                            <button onClick={
+                                (e) => {
+                                    e.stopPropagation();
+                                    handleShowOptions()
+                                }}
+                            >
+                                <SlOptionsVertical />
+                            </button>
+                        </div>
+
+            {showOptions && (
+                <div className="thumbnail-options">
+                    <div 
+                        className="thumbnail-options-entry" 
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleEditTitle();
+                        }}
+                    >
+                        <FaRegEdit />
+                        <p>Edit</p>
+                    </div>
+                    <div 
+                        className="thumbnail-options-entry delete"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            removeSheet(sheet);
+                            handleShowOptions();
+                        }}
+                    >
+                        <LuTrash2 />
+                        <p>Delete</p>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
