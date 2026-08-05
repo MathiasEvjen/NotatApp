@@ -15,11 +15,25 @@ const ThumbnailContainer: React.FC<ThumbnailContainerProps> = ({ sheets }) => {
         if (!container) return;
     }, []);
 
+    const saveSheet = () => {}
+
+    const cancelEditMode = () => {}
+
+    const handleOpenSheet = () => {}
+
+    const removeSheet = () => {}
+
     return(
         <div className="thumbnail-container-wrapper">
             <div ref={containerRef} className="thumbnail-container-content">
                 {sheets.map(sheet => (
-                    <SheetThumbnail key={sheet.sheetId} sheet={sheet} />
+                    <SheetThumbnail 
+                        key={sheet.sheetId} 
+                        sheet={sheet} 
+                        saveSheet={saveSheet} 
+                        cancelEditMode={cancelEditMode}
+                        handleOpenSheet={handleOpenSheet}
+                        removeSheet={removeSheet} />
                 ))}
             </div>
         </div>

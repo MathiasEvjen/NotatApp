@@ -27,10 +27,10 @@ const CollapsibleHeader: React.FC<NodeViewProps> = ({ node, editor, getPos }) =>
         });
 
         // 2. Finn ut hvilken index denne noden har i dokumentet
-        let currentIndex = -1;
-        state.doc.forEach((n, p, i) => {
-            if (p === pos) currentIndex = i;
-        });
+        // let _currentIndex = -1;
+        // state.doc.forEach((_n, p, i) => {
+        //     if (p === pos) _currentIndex = i;
+        // });
 
         // 3. Loop gjennom alle noder etter denne for å skjule dem
         let stopCollapsing = false;
