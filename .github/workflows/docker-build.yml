@@ -23,7 +23,8 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and Push
+      # API
+      - name: Build and Push API
         uses: docker/build-push-action@v5
         with:
           context: ./NotatAppApi
@@ -31,5 +32,16 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/notatappapi:latest
           # Caching helps speed up subsequent builds
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=api
+          cache-to: type=gha,mode=max,scope=api
+
+      # FRONTEND
+      - name: Build and Push Web
+        uses: docker/build-push-action@v5
+        with:
+          context: ./NotatApp
+          file: ./NotatApp/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/notatapp:latest
+          cache-from: type=gha,scope=web
+          cache-to: type=gha,mode=max,scope=web

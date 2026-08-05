@@ -48,6 +48,24 @@ builder.Logging.AddSerilog(logger);
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<AppDbContext>();
+        
+        // This bypasses history tables and instantly creates the "Todos" 
+        // and other tables if they don't exist in the target database.
+        context.Database.EnsureCreated(); 
+        
+        Console.WriteLine("Database tables verified/created successfully.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"An error occurred: {ex.Message}");
+    }
+}
 
 app.UseSwagger();
 app.UseSwaggerUI();
