@@ -5,12 +5,23 @@ const CollapsibleHeader: React.FC<NodeViewProps> = ({ node, editor, getPos }) =>
     const level = node.attrs.level || 1;
     const Tag = `h${level}` as any
 
+    function generateUUID() {
+        if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+            return crypto.randomUUID();
+        }
+        
+        // Fallback for Unsecure Contexts (HTTP over local IP)
+        return '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, c =>
+            (+c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> +c / 4).toString(16)
+        );
+    }
+
     const toggle = () => {
         const { state, view } = editor;
         const pos = getPos();
         if (typeof pos !== "number") return;
 
-        const headerId = node.attrs.id || crypto.randomUUID();
+        const headerId = node.attrs.id || generateUUID();
         const isCollapsed = node.attrs.isCollapsed === "true";
         const nextCollapsedValue = isCollapsed ? "false" : "true";
         
