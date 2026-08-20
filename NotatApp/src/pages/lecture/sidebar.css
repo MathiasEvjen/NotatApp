@@ -118,4 +118,8 @@
     > div.is-scrolled-over a {
         color: var(--clr-surface-a50);
     }
+
+    > div:hover {
+        transform: translateX(5%);
+    }
 }
