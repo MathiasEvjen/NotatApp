@@ -8,6 +8,7 @@ import Italic from "@tiptap/extension-italic";
 import Underline from "@tiptap/extension-underline";
 import Strike from "@tiptap/extension-strike";
 import Image from "@tiptap/extension-image";
+import ResizeImage from 'tiptap-extension-resize-image'
 import Math from "@tiptap/extension-mathematics";
 import Typography from "@tiptap/extension-typography";
 import { UndoRedo } from '@tiptap/extensions';
@@ -15,6 +16,7 @@ import { CustomKeybinds } from "./extensions/CustomKeybinds";
 import { CustomAttributes } from "./extensions/CustomAttributes";
 import { ListKit } from '@tiptap/extension-list';
 import { TableKit } from '@tiptap/extension-table'
+import { FileHandler } from '@tiptap/extension-file-handler'
 
 
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
@@ -26,6 +28,8 @@ import java from 'highlight.js/lib/languages/java'
 import { all, createLowlight } from 'lowlight'
 import Heading from '@tiptap/extension-heading'
 import type { Node } from "@tiptap/pm/model";
+import { uploadAndInsertImages } from "../api";
+import type { Editor } from "@tiptap/react";
 
 const lowlight = createLowlight(all)
 
@@ -43,9 +47,7 @@ export const extensions = [
         UndoRedo, 
         ListKit,
         Blockquote,
-        Image.configure({
-            inline: true,
-        }),
+        
         Typography,
         Math,
         TableKit.configure({
@@ -62,6 +64,22 @@ export const extensions = [
             HTMLAttributes: (node: Node) => ({
                 'data-toc-id': node.attrs.id || node.attrs.text?.replace(/\s+/g, '-').toLowerCase()
             }),
+        }),
+        Image.configure({
+            inline: false,
+            allowBase64: false
+        }),
+        FileHandler.configure({
+            allowedMimeTypes: ['image/png', 'image/jpeg', 'image/webp', 'image/gif'],
+            onDrop: (currentEditor: Editor, files: File[], pos: number) => {
+                uploadAndInsertImages(files, (url: string) => {
+                    currentEditor
+                        .chain()
+                        .focus()
+                        .insertContentAt(pos, { type: 'image', attrs: { src: url } })
+                        .run();
+                });
+            }
         })
         
     ];

@@ -96,3 +96,27 @@ export const deleteTodo = async (id: number) => {
     const response = await api.delete(`/api/Todo/delete/${id}`);
     return response.data;
 };
+
+//  -----------------------
+//  Image methods
+//  -----------------------
+
+export const uploadAndInsertImages = async (files: File[], onSuccess: (url: string) => void): Promise<void> => {
+    for (const file of files) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            // Using your existing 'api' instance automatically appends the backend base URL
+            const response = await api.post<{ url: string }>('/api/Image/upload', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            onSuccess(response.data.url);
+        } catch (error) {
+            console.error('Image upload failed:', error);
+        }
+    }
+};
