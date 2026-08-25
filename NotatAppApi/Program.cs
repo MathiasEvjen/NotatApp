@@ -1,5 +1,6 @@
 using Backend.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using NotatAppApi.Repositories.Implementations;
 using NotatAppApi.Repositories.Interfaces;
 using Serilog;
@@ -78,9 +79,18 @@ if (!Directory.Exists(wwwrootPath))
     Directory.CreateDirectory(wwwrootPath);
 }
 
-app.UseStaticFiles();
 
 app.UseCors("CorsPolicy");
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(wwwrootPath),
+    RequestPath = "",
+    OnPrepareResponse = ctx =>
+    {
+        ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
+    }
+});
 
 app.MapControllers();
 
