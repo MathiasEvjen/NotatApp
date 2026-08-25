@@ -8,7 +8,6 @@ import Italic from "@tiptap/extension-italic";
 import Underline from "@tiptap/extension-underline";
 import Strike from "@tiptap/extension-strike";
 import Image from "@tiptap/extension-image";
-import ResizeImage from 'tiptap-extension-resize-image'
 import Math from "@tiptap/extension-mathematics";
 import Typography from "@tiptap/extension-typography";
 import { UndoRedo } from '@tiptap/extensions';
