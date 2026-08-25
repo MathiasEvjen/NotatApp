@@ -31,10 +31,11 @@ export const CustomKeybinds = Extension.create({
             const { selection } = state;
             const { from, to } = state.selection;
             const { $from } = state.selection;
+            const depth = $from.depth;
             const node: Node = $from.parent;
             const text: string = node.textContent;
             const lines: string[] = text.split(/(?<=\n)/);
-            const fromInCode: number = from - $from.before() - 1;
+            const fromInCode: number = $from.depth > 0 ? from - $from.before($from.depth) - 1 : 0;
             const toInCode: number = to - $from.before() - 1;
 
             return {
@@ -54,7 +55,8 @@ export const CustomKeybinds = Extension.create({
                 text,
                 lines,
                 fromInCode,
-                toInCode
+                toInCode,
+                depth
             };
         };
 
@@ -777,38 +779,51 @@ export const CustomKeybinds = Extension.create({
             },
             "Backspace": () => {
                 const { 
-                    isCodeblock, isTableCell, $from, text, fromInCode, commands, from
+                    isCodeblock, isTableCell, $from, text, fromInCode, commands, from, depth
                 } = getContext();
 
-                if (isTableCell) {
-                    const tableNode: Node = $from.node($from.depth - 3);
-                    
-                    const map: TableMap = TableMap.get(tableNode);
+                if (isTableCell && depth >= 3) {
+                    try {
+                        const tableNode: Node = $from.node(depth - 3);
+                        
+                        if (tableNode) {
+                            const map: TableMap = TableMap.get(tableNode);
 
-                    const cellPos: number = $from.before($from.depth) - $from.start($from.depth - 3);
-                    const cellIndex: number = map.map.indexOf(cellPos-1);
+                            const cellPos: number = $from.before(depth) - $from.start(depth - 3);
+                            const cellIndex: number = map.map.indexOf(cellPos - 1);
 
-                    const row: number = Math.floor(cellIndex / map.width);
-                    const col: number = cellIndex % map.width;
+                            if (cellIndex !== -1) {
+                                const row: number = Math.floor(cellIndex / map.width);
+                                const col: number = cellIndex % map.width;
 
-                    const isFirstRow: boolean = row === 0;
-                    const isFirstCol: boolean = col === 0;
+                                const isFirstRow: boolean = row === 0;
+                                const isFirstCol: boolean = col === 0;
 
-                    const isFirstCell: boolean = isFirstRow && isFirstCol;
-                    const isFirstCellEmpty: boolean = tableNode.firstChild?.firstChild?.firstChild?.textContent === "";
+                                const isFirstCell: boolean = isFirstRow && isFirstCol;
+                                const isFirstCellEmpty: boolean = tableNode.firstChild?.firstChild?.firstChild?.textContent === "";
 
-                    if (isFirstCell && isFirstCellEmpty) 
-                            this.editor.chain().focus().deleteTable().run();
+                                if (isFirstCell && isFirstCellEmpty) {
+                                    return this.editor.chain().focus().deleteTable().run();
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        // Fallback safely if table inspection fails
+                        return false;
+                    }
                 }
 
                 if (
-                    isCodeblock && this.storage.isInsideTab && 
-                    (text[fromInCode - 1] == "{" || text[fromInCode - 1] == "(" || text[fromInCode - 1] == "[")) {
-                        this.storage.isInsideTab = false;
-                        return commands.deleteRange({ from: from - 1, to: from + 1 });
+                    isCodeblock && 
+                    this.storage.isInsideTab && 
+                    fromInCode > 0 &&
+                    (text[fromInCode - 1] === "{" || text[fromInCode - 1] === "(" || text[fromInCode - 1] === "[")
+                ) {
+                    this.storage.isInsideTab = false;
+                    return commands.deleteRange({ from: from - 1, to: from + 1 });
                 }
                 
-                return false;
+                return false; // Yields backspace to ProseMirror's native handlers
             },
             "Alt-ArrowRight": () => {
                 const { state } = this.editor;

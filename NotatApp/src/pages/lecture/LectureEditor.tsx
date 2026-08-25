@@ -9,6 +9,7 @@ import { MenuBar } from "./MenuBar";
 import Sidebar from "./Sidebar";
 import React from "react";
 import { format } from "date-fns";
+import { uploadAndInsertImages } from "../../api";
 
 interface LectureEditorProps {
     sheet?: Sheet;
@@ -93,6 +94,37 @@ const LectureEditor: React.FC<LectureEditorProps> = ({ sheet, handleUpdateTitle,
             contentTimeoutRef.current = window.setTimeout(() => {
                 handleUpdateContent(editor.getHTML());
             }, 2000);
+        },
+        editorProps: {
+            handlePaste(view, event) {
+                // Extract files directly from clipboardData
+                const files = Array.from(event.clipboardData?.files || []);
+                const imageFiles = files.filter(file => file.type.startsWith('image/'));
+
+                if (imageFiles.length > 0) {
+                    // 1. Prevent default browser and Tiptap image handling
+                    event.preventDefault();
+
+                    // 2. Run your existing upload function
+                    uploadAndInsertImages(imageFiles, (url: string) => {
+                        const { state, dispatch } = view;
+                        
+                        // Create image node in ProseMirror schema
+                        const imageType = state.schema.nodes.image;
+                        if (imageType) {
+                            const node = imageType.create({ src: url });
+                            const transaction = state.tr.replaceSelectionWith(node);
+                            dispatch(transaction);
+                        }
+                    });
+
+                    // 3. Return true to signal ProseMirror that the event was completely handled
+                    return true;
+                }
+
+                // Return false to allow plain text / HTML paste to function normally
+                return false;
+            },
         }
     });
 
