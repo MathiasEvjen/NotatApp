@@ -157,7 +157,7 @@ const LecturePage: React.FC<LecurePageProps> = ({ smallMenu, handleSetSmallMenu 
                 [... openedLectureCourseSheets, {
                 tempId: generateUUID(),
                 title: "",
-                content: "",
+                content: "<p></p>".repeat(30),
                 noteType: "Lecture",
                 createdAt: new Date(),
                 editedAt: new Date(),
