@@ -13,8 +13,9 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, handleTodoCompleted, handleDe
     return(
         <div  
             className="todo-entry" 
+            onClick={() => handleTodoCompleted(todo)}
         >
-            <div className="todo-content" onClick={() => handleTodoCompleted(todo)}>
+            <div className="todo-content" >
                 <div className="todo-entry-checkbox">
                     {todo.isCompleted 
                     ? (<IoMdCheckboxOutline />) 
