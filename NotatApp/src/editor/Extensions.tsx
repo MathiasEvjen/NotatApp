@@ -65,7 +65,7 @@ export const extensions = [
             }),
         }),
         Image.configure({
-            inline: false,
+            inline: true,
             allowBase64: false
         }),
         FileHandler.configure({
