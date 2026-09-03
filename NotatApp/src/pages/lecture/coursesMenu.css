@@ -96,10 +96,7 @@
     padding-right: 0.5rem;
 
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: 5px;
+    flex-direction: column;
 
     box-sizing: border-box;
     border-bottom: 2px solid var(--clr-surface-tonal-a30);
@@ -121,8 +118,21 @@
     background-color: var(--clr-primary-a20);
 }
 
+.course-menu-sheet p {
+    font-size: 10px;
+}
+
 .course-menu-sheet button {
     width: 1.8rem;
+}
+
+.course-menu-sheet-content {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 5px;
 }
 
 .course-menu-new-sheet {

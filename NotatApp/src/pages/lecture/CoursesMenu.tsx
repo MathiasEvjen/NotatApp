@@ -5,6 +5,7 @@ import { IoMdArrowDropdown } from "react-icons/io";
 import { FaPlus, FaTrash } from "react-icons/fa";
 import { RxCross1 } from "react-icons/rx";
 import type { Sheet } from "../../types/sheet";
+import { format } from "date-fns/format";
 
 interface CoursesMenuProps {
     selectedCourseId: number | null;
@@ -92,18 +93,21 @@ const CoursesMenu: React.FC<CoursesMenuProps> = ({
                                         </>
                                     ) : (
                                         <>
-                                            {sheet.title}
-                                            <button 
-                                                className="btn-trash" 
-                                                onClick={
-                                                    (e) => {
-                                                        e.stopPropagation();
-                                                        handleActivateConfirmDelete(sheet.sheetId!, sheet.lectureCourseId!);
+                                            <div className="course-menu-sheet-content">
+                                                {sheet.title}
+                                                <button 
+                                                    className="btn-trash" 
+                                                    onClick={
+                                                        (e) => {
+                                                            e.stopPropagation();
+                                                            handleActivateConfirmDelete(sheet.sheetId!, sheet.lectureCourseId!);
+                                                        }
                                                     }
-                                                }
-                                            >
-                                                <FaTrash />
-                                            </button>
+                                                >
+                                                    <FaTrash />
+                                                </button>
+                                            </div>
+                                            <p>{format(sheet?.createdAt, "do MMM y")}</p>
                                         </>
                                     )}
                                 </div>
