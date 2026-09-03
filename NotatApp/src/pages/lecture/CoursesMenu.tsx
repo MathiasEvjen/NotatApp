@@ -2,7 +2,6 @@ import "./coursesMenu.css";
 import type { LectureCourse } from "../../types/lectureCourse";
 import { IoMdArrowDropright } from "react-icons/io";
 import { IoMdArrowDropdown } from "react-icons/io";
-import { useNavigate } from "react-router-dom";
 import { FaPlus, FaTrash } from "react-icons/fa";
 import { RxCross1 } from "react-icons/rx";
 import type { Sheet } from "../../types/sheet";
