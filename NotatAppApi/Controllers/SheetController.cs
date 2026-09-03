@@ -38,6 +38,23 @@ namespace NotatAppApi.Controllers
             return Ok(sheet);
         }
 
+        [HttpGet("getUpdatedSheetById/{id}")]
+        public async Task<IActionResult> GetUpdatedSheetById(int id, [FromQuery] DateTimeOffset editedTime)
+        {
+            var sheet = await _sheetRepository.GetById(id);
+            if (sheet == null)
+            {
+                _logger.LogError("[SheetController - GetUpdatedSheetById] Sheet not found");
+                return NotFound("Sheet not found");
+            }
+
+            bool isUnchanged = Math.Abs((sheet.EditedAt - editedTime).TotalMilliseconds) < 1;
+
+            if (isUnchanged) return NoContent();
+
+            return Ok(sheet);
+        }
+
         [HttpGet("getLastEdited")]
         public async Task<IActionResult> GetLastEdited()
         {
