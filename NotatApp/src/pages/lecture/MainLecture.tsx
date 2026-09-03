@@ -3,7 +3,7 @@ import "./mainLecture.css";
 import { useEffect, useRef, useState } from "react";
 import type { LectureCourse } from "../../types/lectureCourse";
 import type { Sheet } from "../../types/sheet";
-import { createSheet, fetchAllLectureCourses, updateSheet } from "../../api";
+import { createSheet, fetchAllLectureCourses, fetchUpdateSheet, updateSheet } from "../../api";
 import CoursesMenu from "./CoursesMenu";
 import LectureEditor from "./LectureEditor";
 
@@ -197,7 +197,6 @@ const MainLecture: React.FC = () => {
 
     const fetchAndSetLectureCourses = async () => {
         const fetchedLectureCourses = await fetchAllLectureCourses();
-        console.log(fetchedLectureCourses);
 
         const updatedCourses = fetchedLectureCourses.map(course => 
             course.lectureCourseId === courseId 
@@ -222,6 +221,27 @@ const MainLecture: React.FC = () => {
         isTypingTitle.current = false;
     }, [sheetId]);
 
+    const handleChangeSheet = async (sheet: Sheet) => {
+        const updatedSheet = await fetchUpdateSheet(sheet.sheetId!, sheet.editedAt);
+
+        if (updatedSheet !== null) {
+            setLectureCourses(prevCourses => 
+                prevCourses?.map(course => 
+                    course.lectureCourseId === updatedSheet.lectureCourseId
+                    ? 
+                        {...course,
+                            sheets: course.sheets.map(sheet => 
+                                sheet.sheetId === updatedSheet.sheetId ? updatedSheet : sheet
+                            )
+                        }
+                    : course
+                )
+            )
+        }
+        
+        navigate(`/lecture/document?course=${sheet.lectureCourseId}&sheet=${sheet.sheetId}`);
+    };
+
     return(
         <div className="main-lecture-wrapper">
             <CoursesMenu 
@@ -232,7 +252,8 @@ const MainLecture: React.FC = () => {
                 addSheetToLectureCourse={addSheetToLectureCourse}
                 handleActivateConfirmDelete={handleActivateConfirmDelete}
                 handleCancelDeleteSheet={handleCancelDeleteSheet}
-                handleDeleteSheet={handleDeleteSheet} />
+                handleDeleteSheet={handleDeleteSheet}
+                handleChangeSheet={handleChangeSheet} />
             {selectedSheet && (
                 <LectureEditor 
                     sheet={selectedSheet}
