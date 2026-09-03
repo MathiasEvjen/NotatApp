@@ -93,7 +93,7 @@ const LectureEditor: React.FC<LectureEditorProps> = ({ sheet, handleUpdateTitle,
 
             contentTimeoutRef.current = window.setTimeout(() => {
                 handleUpdateContent(editor.getHTML());
-            }, 2000);
+            }, 1000);
         },
         editorProps: {
             handlePaste(view, event) {
