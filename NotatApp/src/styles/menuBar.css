@@ -1,6 +1,6 @@
 button {
     width: auto;
-    height: 1.8rem;
+    height: 2rem;
     font-size: 15px;
 }
 
@@ -13,7 +13,6 @@ button svg {
     display: flex;
     align-items: flex-end;
     
-    padding-top: 2.6rem;
 
     flex-direction: column;
     gap: 8px;
