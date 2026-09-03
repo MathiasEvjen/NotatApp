@@ -1,11 +1,11 @@
 import "./coursesMenu.css";
 import type { LectureCourse } from "../../types/lectureCourse";
-import type { Sheet } from "../../types/sheet";
 import { IoMdArrowDropright } from "react-icons/io";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { FaPlus, FaTrash } from "react-icons/fa";
 import { RxCross1 } from "react-icons/rx";
+import type { Sheet } from "../../types/sheet";
 
 interface CoursesMenuProps {
     selectedCourseId: number | null;
@@ -18,6 +18,7 @@ interface CoursesMenuProps {
     handleActivateConfirmDelete: (sheetId: number, lectureCourseId: number) => void;
     handleDeleteSheet: (sheetId: number) => void;
     handleCancelDeleteSheet: (sheetId: number, lectureCourseId: number) => void;
+    handleChangeSheet: (sheet: Sheet) => void;
 }
 
 const CoursesMenu: React.FC<CoursesMenuProps> = ({ 
@@ -28,16 +29,11 @@ const CoursesMenu: React.FC<CoursesMenuProps> = ({
     addSheetToLectureCourse, 
     handleActivateConfirmDelete,
     handleDeleteSheet,
-    handleCancelDeleteSheet
+    handleCancelDeleteSheet,
+    handleChangeSheet
 }) => {
-    const navigate = useNavigate();
-
     const isCourseSelected = (courseId: number) => {
         return courseId === selectedCourseId;
-    };
-
-    const handleChangeSheet = (sheet: Sheet) => {
-        navigate(`/lecture/document?course=${sheet.lectureCourseId}&sheet=${sheet.sheetId}`);
     };
 
     return (
