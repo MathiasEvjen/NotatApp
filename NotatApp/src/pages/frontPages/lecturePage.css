@@ -1,5 +1,5 @@
 .lecture-page-wrapper {
-    margin: 3rem 4rem;
+    /* margin: 1rem 2rem; */
     width: 100%;
 
     padding: 2rem;
@@ -12,7 +12,7 @@
     box-sizing: border-box;
 
     background-color: var(--clr-surface-a20);
-    border-radius: 25px;
+    /* border-radius: 5px; */
 
     overflow: hidden;
 
@@ -25,7 +25,7 @@
     flex: 1;
 
     background-color: var(--clr-surface-a10);
-    border-radius: 20px;
+    border-radius: 5px;
 
     display: flex;
     flex-direction: column;
