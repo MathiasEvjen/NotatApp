@@ -20,7 +20,8 @@
   position: sticky;
   top: 1rem;
   box-sizing: border-box;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .table-of-contents {
