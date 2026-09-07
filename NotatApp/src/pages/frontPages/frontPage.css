@@ -1,5 +1,5 @@
 .front-page-content-container {
-    margin: 3rem 4rem 3rem 4rem;
+    /* margin: 3rem 4rem 3rem 4rem; */
     width: 100%;
 
     padding: 2rem;
@@ -13,7 +13,7 @@
     box-sizing: border-box;
 
     background-color: var(--clr-surface-a20);
-    border-radius: 25px;
+    /* border-radius: 25px; */
 
     overflow-y: auto;
 
@@ -51,7 +51,7 @@
 
     font-size: 24px;
 
-    border-radius: 25px;
+    border-radius: 5px;
     flex-shrink: 0;
 
     box-sizing: border-box;

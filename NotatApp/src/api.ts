@@ -67,6 +67,12 @@ export const fetchUpdateSheet = async (id: number, editedTime: Date): Promise<Sh
     return response.data;
 };
 
+export const fetchLastEdited = async (): Promise<Sheet[]> => {
+    const response = await api.get(`/api/Sheet/getLastEdited`);
+
+    return response.data;
+};
+
 export const createSheet = async (sheet: Sheet): Promise<Sheet> => {
     const response = await api.post(`/api/Sheet/create/`, sheet);
     return response.data;

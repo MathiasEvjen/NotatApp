@@ -12,7 +12,7 @@ import MainLecture from './pages/lecture/MainLecture';
 
 function App() {
 
-    const [smallMenu, setSmallMenu] = useState<boolean>(true);
+    const [smallMenu, setSmallMenu] = useState<boolean>(false);
 
     const handleSetSmallMenu = () => {
         setSmallMenu(!smallMenu);
@@ -25,8 +25,8 @@ function App() {
                     <SideMenu smallMenu={smallMenu} handleSetSmallMenu={handleSetSmallMenu} />
                 </div>
                 <Routes>
-                    <Route path='/' element={<FrontPage />} />
-                    <Route path='/home' element={<FrontPage />} />
+                    <Route path='/' element={<FrontPage smallMenu={smallMenu} handleSetSmallMenu={handleSetSmallMenu} />} />
+                    <Route path='/home' element={<FrontPage smallMenu={smallMenu} handleSetSmallMenu={handleSetSmallMenu} />} />
                     <Route path='/lecture' element={<LecturePage smallMenu={smallMenu} handleSetSmallMenu={handleSetSmallMenu} />} />
                     <Route path='/lecture/document' element={<MainLecture />} />
                 </Routes>
