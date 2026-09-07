@@ -17,6 +17,9 @@
     display: flex;
     flex-direction: column;
 
+    overflow: auto;
+    scrollbar-width: none;
+
     border-left: 3px solid var(--clr-surface-tonal-a0);
 }
 
